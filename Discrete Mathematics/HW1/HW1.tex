@@ -201,7 +201,7 @@ From (1), we can know
   &= A \cap (A \cup C) &(\rm From \; (1)) \nonumber \\
   &= A &(A \subseteq A \cup C)
 \end{align}
-Also (2) gives $(A\cap C) \cap (B\cap C) = B \cap (A \cap C) = A \cap C$, therefore 
+Also (2) gives $(A\cap C) \cap (B\cap C) = A \cap B \cap C = B \cap (A \cap C) = A \cap C$, therefore 
 \begin{equation}
   A \cap C \subseteq B
 \end{equation}
@@ -209,8 +209,8 @@ From (3) and (4), we can know
 \begin{align*}
   A \cap B &= \qty((A \cap B) \cup (A \cap C)) \cap B &(\rm From \; (3))\\
   &= \qty((A \cap B) \cap B) \cup \qty((A \cap C) \cap B) & (\rm Distributive \; Law) \\
-  &= B \cup (A \cap C) &(B \subseteq A \cap B \; / \; \rm From \; (4)) \\
-  &= B &(\rm From \; (4))
+  &= (A \cap B) \cup (A \cap C) &(A \cap B \subseteq B \; / \; \rm From \; (4)) \\
+  &= A &(\rm From \; (3))
 \end{align*}
 Therefore $A \subseteq B$. 
 
