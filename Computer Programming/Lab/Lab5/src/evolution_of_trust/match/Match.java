@@ -35,8 +35,8 @@ public class Match {
     }
 
     public void playGame() {
-        int choiceA = agentA.choice(prevPreviousChoiceA, previousChoiceB);
-        int choiceB = agentB.choice(prevPreviousChoiceB, previousChoiceA);
+        int choiceA = agentA.choice(prevPreviousChoiceB, previousChoiceB);
+        int choiceB = agentB.choice(prevPreviousChoiceA, previousChoiceA);
 
         agentA.setScore(agentA.getScore() + ruleMatrix[choiceA][choiceB][0]);
         agentB.setScore(agentB.getScore() + ruleMatrix[choiceA][choiceB][1]);
