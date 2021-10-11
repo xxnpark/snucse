@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>와플고등학교 명단 관리 프로그램</title>
+    <link href="./static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <header id="logo">
+        <a href="https://wafflestudio.com" target="_blank">
+            <img src="./src/images/wafflestudio.svg" alt="Waffle Studio" width="70px">
+        </a>
+        <a href="https://github.com/wafflestudio/19.5-rookies" target="_blank">
+            <img src="./src/images/github.svg" alt="Github" width="30px">
+        </a>
+    </header>
+    <h1 id="title">와플고등학교 명단 관리 프로그램</h1>
+    <div id="container">
+        <ul id="box">
+            <li class="name">김와플</li>
+            <li class="name">이와플</li>
+            <li class="name">박와플</li>
+        </ul>
+    </div>
+    <input id="input" type="text" onkeypress="enterkey()">
+    <button id="button" onclick="add()">추가</button>
+    <script src="static/js/addstudent.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+.Students {
+    box-sizing: border-box;
+    inset: 343px 42px 39px;
+    position: fixed;
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+}
+
+.ManageStudentList {
+    box-sizing: border-box;
+    width: 45%;
+    height: 100%;
+}
+
+.StudentListHeader {
+    height: 30px;
+    margin-bottom: 14px;
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+}
+
+.Divider {
+    box-sizing: border-box;
+    background-color: rgb(221, 221, 221);
+    width: 1px;
+    height: 100%;
+}

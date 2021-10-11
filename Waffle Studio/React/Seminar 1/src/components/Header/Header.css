@@ -1,0 +1,16 @@
+.Header {
+    box-sizing: border-box;
+    position: fixed;
+    top: 24px;
+    left: 42px;
+    right: 42px;
+    height: 76px;
+    padding: 9px 0px;
+    display: flex;
+    gap: 22px;
+    line-height: 58px;
+}
+
+#Title {
+    margin: 0;
+}

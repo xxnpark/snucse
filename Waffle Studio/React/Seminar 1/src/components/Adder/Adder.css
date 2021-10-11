@@ -1,0 +1,81 @@
+.Adder {
+    box-sizing: border-box;
+    width: 100vw;
+    height: 100vh;
+    left: 0px;
+    top: 0px;
+    display: none;
+    position: fixed;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 15;
+    animation: opacityIn 0.15s ease-out 0s 1 normal;
+}
+.Adder.open {
+    display: flex;
+}
+@keyframes opacityIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.Wrapper {
+    box-sizing: border-box;
+    background-color: white;
+    width: 669px;
+    height: 281px;
+    padding: 30px 30px 0px;
+    position: relative;
+}
+
+.Form {
+    box-sizing: border-box;
+    padding: 5px 20px;
+    height: 40px;
+    width: 100%;
+}
+
+.FormType {
+    box-sizing: border-box;
+    display: inline-block;
+    width: 60px;
+}
+
+.FormInput {
+    box-sizing: border-box;
+    width: calc(100% - 60px);
+    height: 30px;
+}
+
+.Close {
+    box-sizing: border-box;
+    width: 72px;
+    height: 34px;
+    border: none;
+    position: absolute;
+    font-size: 16px;
+    bottom: 16px;
+    right: 120px;
+    background-color: rgb(202, 202, 202);
+}
+.Close:Hover {
+    background-color: rgb(220, 220, 220);
+}
+
+.Add {
+    box-sizing: border-box;
+    width: 72px;
+    height: 34px;
+    border: none;
+    position: absolute;
+    font-size: 16px;
+    bottom: 16px;
+    right: 30px;
+    background-color: rgb(191, 248, 197);
+}
+.Add:Hover {
+    background-color: rgb(205, 255, 196);
+}

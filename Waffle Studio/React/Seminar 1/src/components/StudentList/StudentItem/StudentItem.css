@@ -1,0 +1,66 @@
+.ListElement {
+    list-style-type: none;
+    height: 73px;
+    border-bottom: 1px solid rgb(172, 172, 172);
+    line-height: 73px;
+    position: relative;
+    background-color: rgb(248, 248, 248);
+    display: list-item;
+    text-align: -webkit-match-parent;
+}
+.ListElement.Selected {
+    background-color: rgb(172, 172, 172);
+}
+.ListElement.Selected:hover {
+    background-color: rgb(187, 187, 187);
+}
+.ListElement.Selected .Button {
+    right: 20px;
+}
+.ListElement.NotSelected {
+    background-color: rgb(248, 248, 248);
+}
+.ListElement.NotSelected:hover {
+    background-color: rgb(253, 253, 253);
+}
+.ListElement.NotSelected:hover .Button {
+    right: 20px;
+}
+
+.NameElement {
+    box-sizing: border-box;
+    width: 160px;
+    display: inline-block;
+    text-align: center;
+}
+
+.GradeElement {
+    box-sizing: border-box;
+    width: 78px;
+    text-align: center;
+    display: inline-block;
+}
+
+.Button {
+    box-sizing: border-box;
+    transition: right 0.2s ease 0s;
+    position: absolute;
+    top: 20px;
+    padding: 5px;
+    height: 33px;
+    line-height: 23px;
+    right: -40px;
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    font-size: x-large;
+}
+.ButtonImg {
+    transition: 0.2s all ease;
+    height: 90%;
+}
+.ButtonImg.Selected {
+    transform: rotate(-180deg);
+}

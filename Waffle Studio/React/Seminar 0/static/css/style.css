@@ -1,0 +1,91 @@
+#logo {
+    position: fixed;
+    top: 10px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#title {
+    box-sizing: border-box;
+    position: fixed;
+    width: 80%;
+    height: 40px;
+    line-height: 40px;
+    top: 9%;
+    left: 10%;
+    margin: 0;
+    text-align: center;
+}
+
+#container {
+    position: fixed;
+    width: 600px;
+    top: 20%;
+    bottom: 16%;
+    left: calc(50% - 317px);
+    padding: 16px;
+    border: 1px solid black;
+    border-radius: 8px;
+    box-shadow: 0 0 4px dimgray;
+    overflow:auto;
+}
+#container::-webkit-scrollbar{
+    display:none;
+}
+
+#box {
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    overflow:auto;
+}
+
+#box::-webkit-scrollbar{
+    display:none;
+}
+
+.name {
+    width: 100px;
+    height: 80px;
+    line-height: 80px;
+    margin: 5px;
+    padding: 4px;
+    border: 1px dashed black;
+    border-radius: 8px;
+    text-align: center;
+    display: list-item;
+    list-style-type: none;
+}
+
+.name:hover {
+    background: #eeeeee;
+}
+
+#input {
+    box-sizing: border-box;
+    position: fixed;
+    width: 120px;
+    height: 40px;
+    line-height: 40px;
+    left: calc(50% - 100px);
+    bottom: calc(8% - 20px);
+    font-size: 20px;
+    padding-inline: 10px;
+}
+
+#button {
+    box-sizing: border-box;
+    position: fixed;
+    width: 70px;
+    height: 40px;
+    line-height: 36px;
+    right: calc(50% - 100px);
+    bottom: calc(8% - 20px);
+    font-size: 20px;
+}

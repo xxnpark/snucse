@@ -1,0 +1,40 @@
+.StudentList {
+    box-sizing: border-box;
+    border: 1px solid rgb(199, 199, 199);
+    height: calc(100% - 44px);
+    overflow-y: scroll;
+}
+.StudentList::-webkit-scrollbar {
+    display: none;
+}
+
+.Type {
+    box-sizing: border-box;
+    height: 59px;
+    line-height: 59px;
+    background-color: rgb(196, 196, 196)
+}
+
+.Name {
+    box-sizing: border-box;
+    width: 160px;
+    line-height: 59px;
+    display: inline-block;
+    text-align: center;
+}
+
+.Grade {
+    box-sizing: border-box;
+    width: 78px;
+    line-height: 59px;
+    text-align: center;
+    display: inline-block;
+}
+
+.List {
+    box-sizing: border-box;
+    padding: 0px;
+    width: 100%;
+    margin: 0px;
+}
+
