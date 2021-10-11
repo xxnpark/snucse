@@ -1,4 +1,4 @@
-# waffle-rookies-19.5-backend-2
+# Django Assignment 2
 
 와플스튜디오 19.5기 루키 Django 세미나 2 [과제](https://github.com/wafflestudio/19.5-rookies/tree/master/django/seminar2/assignment2)
 

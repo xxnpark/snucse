@@ -1,6 +1,6 @@
-# Backend Assignment 1
+# Django Assignment 1
 
-와플스튜디오 19.5기 루키 Backend 세미나 1 [과제](https://github.com/wafflestudio/19.5-rookies/tree/master/django/seminar1/assignment1)
+와플스튜디오 19.5기 루키 Django 세미나 1 [과제](https://github.com/wafflestudio/19.5-rookies/tree/master/django/seminar1/assignment1)
 
 ---
 
