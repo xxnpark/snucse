@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.db import transaction
 from rest_framework import status
-import json
 
 User = get_user_model()
 
@@ -115,6 +114,61 @@ class PostUserTestCase(TestCase):
         self.assertEqual(participant_count, 2)
         instructor_count = InstructorProfile.objects.count()
         self.assertEqual(instructor_count, 0)
+
+
+class PostLoginTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.participant = UserFactory(
+            username='part',
+            password='password',
+            first_name='Davin',
+            last_name='Byeon',
+            email='bdv111@snu.ac.kr',
+            is_participant=True
+        )
+        cls.participant.participant.university = '서울대학교'
+        cls.participant.participant.save()
+        cls.participant_token = 'JWT ' + jwt_token_of(User.objects.get(email='bdv111@snu.ac.kr'))
+
+    def test_post_login_incomplete_request(self):
+        # No Email or Password
+        response = self.client.post('/api/v1/login/',
+                                   data={"email": "bdv111@snu.ac.kr"},
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.participant_token)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.client.post('/api/v1/login/',
+                                   data={"password": "password"},
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.participant_token)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Wrong Email or Password
+        response = self.client.post('/api/v1/login/',
+                                   data={"email": "wrong@snu.ac.kr", "password": "password"},
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.participant_token)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.client.post('/api/v1/login/',
+                                   data={"email": "bdv111@snu.ac.kr", "password": "wrong"},
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.participant_token)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_post_login(self):
+        response = self.client.post('/api/v1/login/',
+                                   data={"email": "bdv111@snu.ac.kr", "password": "password"},
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.participant_token)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        self.assertIn('token', data)
+
+        self.assertIsNotNone(User.objects.get(email='bdv111@snu.ac.kr').last_login)
 
 
 class PutUserMeTestCase(TestCase):
@@ -399,3 +453,5 @@ class PostUserParticipantTestCase(TestCase):
         self.assertEqual(instructor["company"], "Naver")
         self.assertEqual(instructor["year"], 2)
         self.assertIsNone(instructor["charge"])
+
+        self.assertIsNotNone(User.objects.get(email="i1@snu.ac.kr").participant)

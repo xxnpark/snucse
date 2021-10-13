@@ -1,8 +1,10 @@
-# Django Assignment 3
+# waffle-rookies-19.5-backend-2
 
 와플스튜디오 19.5기 루키 Django 세미나 3 [과제](https://github.com/wafflestudio/19.5-rookies/tree/master/django/seminar3/assignment3)
 
-> 학교 과제와 백신 2차 접종 등으로 제시간에 과제를 완료하지 못해 grace day 1일 사용합니다.
+> ~~학교 과제와 백신 2차 접종 등으로 제시간에 과제를 완료하지 못해 grace day 1일 사용합니다.~~
+> 수정사항이 발생하여 grace day 2일 사용합니다.
+> 
 > 
 > 자유과제는 아직 하지 못했습니다.
 
@@ -65,7 +67,7 @@
 ### Coverage 내역
 ```zsh
 (venv) $ coverage run manage.py test
-(venv) $ coverage report            
+(venv) $ coverage report
 Name                                                         Stmts   Miss  Cover
 --------------------------------------------------------------------------------
 manage.py                                                       12      2    83%
@@ -78,7 +80,7 @@ seminar/migrations/0003_auto_20211006_1829.py                    6      0   100%
 seminar/migrations/__init__.py                                   0      0   100%
 seminar/models.py                                               22      0   100%
 seminar/serializers.py                                         133      4    97%
-seminar/tests.py                                               394      0   100%
+seminar/tests.py                                               403      0   100%
 seminar/urls.py                                                  6      0   100%
 seminar/views.py                                                49      1    98%
 survey/__init__.py                                               0      0   100%
@@ -104,14 +106,13 @@ user/migrations/0004_remove_instructorprofile_charge.py          4      0   100%
 user/migrations/0005_auto_20211006_1830.py                       4      0   100%
 user/migrations/__init__.py                                      0      0   100%
 user/models.py                                                  51      8    84%
-user/serializers.py                                            177     23    87%
-user/tests.py                                                  214      0   100%
+user/serializers.py                                            177     16    91%
+user/tests.py                                                  236      0   100%
 user/urls.py                                                     7      0   100%
-user/views.py                                                   62      6    90%
+user/views.py                                                   62      2    97%
 waffle_backend/__init__.py                                       0      0   100%
 waffle_backend/settings.py                                      30      3    90%
 waffle_backend/urls.py                                           9      2    78%
 --------------------------------------------------------------------------------
-TOTAL                                                         1340     78    94%
-
+TOTAL                                                         1371     67    95%
 ```

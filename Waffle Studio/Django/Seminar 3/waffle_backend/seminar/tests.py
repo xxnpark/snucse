@@ -2,9 +2,8 @@ from factory.django import DjangoModelFactory
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from django.db import transaction
+from datetime import time
 from rest_framework import status
-import json
 
 User = get_user_model()
 
@@ -25,7 +24,6 @@ class SeminarFactory(DjangoModelFactory):
 
 
 class PostSeminarTestCase(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.participant = UserFactory(
@@ -174,6 +172,9 @@ class PostSeminarTestCase(TestCase):
         self.assertEqual(instructor['last_name'], 'ione')
         self.assertIn('joined_at', instructor)
 
+        self.assertEqual(Seminar.objects.count(), 1)
+        self.assertEqual(User.objects.get(email="i1@snu.ac.kr").user_seminars.filter(role="instructor").count(), 1)
+
         # With online data
         self.post_data['online'] = False
         response = self.client.post('/api/v1/seminar/',
@@ -184,6 +185,7 @@ class PostSeminarTestCase(TestCase):
 
         data = response.json()
         self.assertEqual(data['online'], False)
+
 
 class PutSeminarSeminarIdTestCase(TestCase):
     @classmethod
@@ -333,6 +335,12 @@ class PutSeminarSeminarIdTestCase(TestCase):
         self.assertEqual(data['count'], 3)
         self.assertEqual(data['time'], '16:00:00')
         self.assertEqual(data['online'], False)
+
+        self.assertEqual(Seminar.objects.get(id=self.seminar_id).name, 'iOS')
+        self.assertEqual(Seminar.objects.get(id=self.seminar_id).capacity, 30)
+        self.assertEqual(Seminar.objects.get(id=self.seminar_id).count, 3)
+        self.assertEqual(Seminar.objects.get(id=self.seminar_id).time, time(16, 0))
+        self.assertEqual(Seminar.objects.get(id=self.seminar_id).online, False)
 
 class GetSeminarTestCase(TestCase):
     @classmethod
@@ -745,6 +753,8 @@ class PostSeminarSeminarIdUserTestCase(TestCase):
         self.assertEqual(participant['is_active'], True)
         self.assertIsNone(participant['dropped_at'])
 
+        self.assertEqual(UserSeminar.objects.filter(seminar__id=self.seminar2_id, role='participant').count(), 1)
+
         response = self.client.post('/api/v1/seminar/%d/user/'%self.seminar2_id,
                                    data={'role': 'instructor'},
                                    content_type='application/json',
@@ -761,6 +771,8 @@ class PostSeminarSeminarIdUserTestCase(TestCase):
         self.assertEqual(instructor['first_name'], 'ithree')
         self.assertEqual(instructor['last_name'], 'ithree')
         self.assertIn('joined_at', instructor)
+
+        self.assertEqual(UserSeminar.objects.filter(seminar__id=self.seminar2_id, role='instructor').count(), 2)
 
 
 class DeleteSeminarSeminarIdUserTestCase(TestCase):
@@ -926,6 +938,8 @@ class DeleteSeminarSeminarIdUserTestCase(TestCase):
         self.assertIn('joined_at', participant)
         self.assertEqual(participant['is_active'], False)
         self.assertIsNotNone(participant['dropped_at'])
+
+        self.assertIsNotNone(UserSeminar.objects.get(user__id=self.participant2.id, seminar__id=self.seminar1_id).dropped_at)
 
         # Can't re-enter the seminar
         response = self.client.post('/api/v1/seminar/%d/user/'%self.seminar1_id,
