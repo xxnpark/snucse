@@ -1,0 +1,290 @@
+\documentclass[10pt]{article}
+\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+%\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.2}
+\usepackage{amsmath,amssymb,amsthm,physics,units}
+\usepackage[shortlabels]{enumitem}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{algorithm,algpseudocode}
+
+\begin{document}
+\vspace{4mm}
+\begin{center}
+    {\LARGE Discrete Mathematics Problem Set 2} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 1}
+\begin{proof}
+    Suppose that there are a finite number($=n$) of Ulam numbers. 
+    $$u_1, \; u_2, \; u_3, \; \cdots \;, \; u_{n-1}, \; u_n$$
+    Let's consider an integer $N = u_{n-1} + u_n$. 
+    Since there is no Ulam number larger than $u_n$, $N$ should be given as another sum of two Ulam numbers.
+
+    \vspace{0.3cm} However, Since $u_{n-1}$ and $u_n$ are the two largest Ulam numbers, there cannot be a sum of two other Ulam numbers that gives $N$. 
+    This is a contradiction, thus there are infinitely many Ulam numbers.
+
+\end{proof}
+
+\section*{Problem 2}
+The pseudocode is:
+\begin{algorithm}[H]
+    \caption{Search Problem}
+    \begin{algorithmic}[1]
+        \State \textbf{procedure} \textsc{Ternary Search} ($x$: integer, $a_1, a_2, \cdots , a_n$: increasing integers)
+            \State \hspace{0.53cm}$i := 1$ \Comment{left endpoint of interval}
+            \State \hspace{0.53cm}$j := n$ \Comment{right endpoint of interval}
+            \State \hspace{0.53cm}\textbf{while} {$i < j$}
+                \State \hspace{1.06cm}$p := \lfloor(i * 2 + j) / 3\rfloor$ \Comment{1/3 point of interval}
+                \State \hspace{1.06cm}$q := \lfloor(i + j * 2) / 3\rfloor$ \Comment{2/3 point of interval}
+                \State \hspace{1.06cm}\textbf{if} $x \leq a_p$ \textbf{then} $j := p$
+                \State \hspace{1.06cm}\textbf{else if} $x > a_q$ \textbf{then} $i := q + 1$
+                \State \hspace{1.06cm}\textbf{else} $i := p + 1$, $j := q$
+            \State \hspace{0.53cm}\textbf{if} $x = a_i$ \textbf{then} $location := i$
+            \State \hspace{0.53cm}\textbf{else} $location := 0$
+            \State \hspace{0.53cm}\textbf{return} $location$ \Comment{returns the index $i$ where $a_i = x$, or 0 if $x$ is not found}
+    \end{algorithmic}
+\end{algorithm}
+Up to three comparisons, $i < j$, $x \leq a_p$, $x > a_q$ are made at each stage in the while loop. 
+
+\vspace{0.3cm} Let's consider the worst case where $x$ is at the midpoint. 
+After the first step the size of the list is $3^{k-1}$, and after each step it decreases similarly until it becomes $3^1$.
+When the size is $3^1$, the last step occurs and gives $i = j = \nicefrac{3^k+1}{2}$. 
+After that, a comparison $i < j$ gives false and the while loop breaks. Finally the comparison $x=a_i$ gives true and returns the location.
+
+\vspace{0.3cm} The loop occurs $k$ times with three comparisons per step, and there are two extra copmarisons after the final step. 
+Thus $3k+2 = \log_3n + 2$ comparisons are made in total. The time complexity is $\Theta\qty(\log n)$.
+
+\section*{Problem 3}
+\paragraph{(a)} False / Counterexample : $f(x) = x$, $g(x) = -x^2$
+
+\vspace{0.3cm} For $c=1$, $k=1$, the following is true.
+$$x>k \Rightarrow \qty|x| \leq c\qty|-x^2|$$
+Thus $f(x)=O(g(x))$. However, we cannot find $c$, $k$ that makes $2^{f(x)}=O\qty(2^{g(x)})$.
+
+\vspace{0.3cm} If such $c$, $k$ exists, the following should be true.
+$$x>k \Rightarrow \qty|2^x| \leq c\qty|2^{-x^2}|$$
+Then $c \geq 2^{x^2+x}$ for all $x>k$. However since $2^{x^2+x} \rightarrow \infty$ when $x \rightarrow \infty$, there is no such fixed $c$, $k$.
+
+\paragraph{(b)} True
+\begin{proof}
+    For any integer $n$, we can obtain the following.
+    \begin{align*}
+        e^x &= \sum_{k=0}^{\infty}\frac{x^k}{k!} \\
+        &= 1 + x + \frac{x^2}{2} + \cdots + \frac{x^n}{n!} + \cdots \\
+        &\geq \frac{x^n}{n!}
+    \end{align*}
+    Substituting $n$ for $x$ gives
+    $$e^n \geq \frac{n^n}{n!}, \,\; n! \geq \qty(\frac{n}{e})^n$$
+    $$\therefore \log{n!} \geq \log{\qty(\frac{n}{e})^n} = n\log{n} - n$$
+    Also, since $n! = n\times (n-1) \times \cdots \times 1$, we can obtain
+    $$\log{n!} = \log\qty(n\times (n-1) \times \cdots \times 1) \leq \log\qty(n \times n \times \cdots \times n) = n\log{n}$$
+    $$n\log{n} - n \leq \log{n!} \leq n\log{n}$$
+    $$\therefore 1 - \frac{1}{\log{n}} \leq \frac{\log{n!}}{n\log{n}} \leq 1$$
+    Since $\displaystyle \lim_{n \to \infty} \qty(1 - \frac{1}{\log{n}}) = \lim_{n \to \infty} 1 = 1$, we can obtain
+    $$\lim_{n \to \infty} \frac{\log{n!}}{n\log{n}} = 1$$
+    Therefore an integer $N$ exists where
+    $$\forall\epsilon \in \mathbb{R}, \;\; n>N \Rightarrow \qty|\frac{\log{n!}}{n\log{n}} - 1| < \epsilon$$
+    When $\epsilon = 0.5$,
+    $$n>N \Rightarrow 0.5 \leq \frac{\log{n!}}{n\log{n}} \leq 1.5$$
+    $$\therefore \qty|\log{n!}| \leq 1.5\qty|n\log{n}|,\;\; \qty|\log{n!}| \geq 0.5\qty|n\log{n}|$$
+    Therefore $\log{n!} = O(n\log{n})$ and $\log{n!} = \Omega(n\log{n})$, so $\log{n!} = \Theta(n\log{n})$.
+
+\end{proof}
+
+\section*{Problem 4}
+\paragraph{(a)} The pseudocode is:
+\begin{algorithm}[H]
+    \caption{Stable Matching Problem}
+    \begin{algorithmic}[1]
+        \State \textbf{procedure} \textsc{\small Gale-Shapley Algorithm} ($m_1, \cdots , m_n$: unengaged men, $w_1,  \cdots , w_n$: unengaged women)
+            \State \hspace{0.53cm}\textbf{while} an unengaged man exists
+                \State \hspace{1.06cm}\textbf{for} $m :=$ all men who are unengaged
+                    \State \hspace{1.59cm}$w := $ most preferred woman whom $m_i$ has not yet proposed
+                    \State \hspace{1.59cm}\textbf{if} $w$ is engaged \textbf{then}
+                        \State \hspace{2.12cm}$m' :=$ man who is engaged to $w$
+                        \State \hspace{2.12cm}\textbf{if} $w$ prefers $m$ to $m'$ \textbf{then}
+                            \State \hspace{2.65cm}$m' \leftarrow$ unengaged
+                            \State \hspace{2.65cm}$\qty(m,\; w) \leftarrow$ engaged
+                    \State \hspace{1.59cm}\textbf{else}
+                        \State \hspace{2.12cm}$\qty(m, \; w) \leftarrow$ engaged
+    \end{algorithmic}
+\end{algorithm}
+Let's consider the worst case where all men and women have the same order of preference. 
+Without loss of generality, assume the order is  $m_1 < m_2 < \cdots < m_n$ and $w_1 < w_2 < \cdots < w_n$.
+
+\vspace{0.3cm} Consider the $k$th repeat of the \textbf{while} loop. 
+The \textbf{for} loop repeats $n-k+1$ times, and makes two comparisons each in the \textbf{if} statement except the first case, which makes one. 
+(Since $w$ is equal for all $m_i$, $w$ is always engaged to the previous man except the first case.)
+The \textbf{while} loop repeates $n$ times, from $k=1$ to $k=n$.
+Therefore the total number of comparisons is
+$$\sum_{k=1}^{n}\qty(1 + 2(n-k)) = n^2 - n + 1$$
+The time complexity is $\Theta\qty(n^2)$.
+
+\paragraph{(b)} The proof can be done in two steps.
+
+\vspace{0.3cm}\hspace{0.2cm}(1) The Gale-Shapley algorithm guarantees perfect matching.
+\begin{proof}
+    Suppose there is a case where the output is not a perfect matching. 
+    Then at least one man and woman who are unengaged must exist.
+
+    \vspace{0.3cm} Applying this algorithm gives two observations. 
+    First, if a woman is once engaged, she stays or only gets engaged to better men and never becomes unengaged.
+    Second, if a man is once engaged, he stays or only gets engaged with worse women.
+
+    \vspace{0.3cm} According to these observations, the situation results in a contradiction.
+    For the man and woman to remain unengaged, the man should have proposed to the woman before and got rejected.
+    To become rejected, there should have been another better man who proposed at that time or later, and the woman should have been engaged to that man.
+    However, the first observation states that a woman once engaged never becomes unengaged. 
+    Therefore this is a contradiction, and the algorithm guarantees perfect matching.
+
+\end{proof}
+\hspace{0.2cm}(2) The output of the Gale-Shapley algorithm is stable.
+\begin{proof}
+    Suppose there is a case where the output is not stable. 
+    There should exist a man $m$ engaged to a woman $w'$ and a woman $w$ engaged to a man $m'$ but both prefer each other over their pairs.
+
+    \vspace{0.3cm} $m$ should have proposed to $w$ prior to $w'$. 
+    If $m$ and $w$ got engaged to each other at that time, $w$ cannot get engaged to a man worse than $m$, according to our first observation.
+    However, the result shows that $w$ is engaged to $m'$, who she prefers less than $m$. 
+
+    \vspace{0.3cm} Therefore $m$ and $w$ wouldn't have got engaged to each other at that time.
+    This indicates there was a man better than $m$ who proposed to $w$ at that time, and the two got engaged to each other.
+    However, since $m'$ is worse than $m$, he is also worse than this man who got engaged with $w$.
+    This is a contradiction, since $w$ got engaged to someone worse than her previous pair.
+    Therefore the output of the algorithm is always stable.
+
+\end{proof}
+
+\paragraph{(c)} Let's consider a case where $n=3$ and the order of preferences is the following.
+\begin{gather*}
+    m_1 : (w_3, w_1, w_2),\; m_2 : (w_1, w_3, w_2),\; m_3 : (w_1, w_2, w_3) \\
+    w_1 : (m_1, m_2, m_3),\; w_2 : (m_2, m_1, m_3),\; w_3 : (m_2, m_1, m_3)
+\end{gather*}
+The original match results in $(m_1, w_3), (m_2, w_1), (m_3, w_2)$.
+However, if $w_1$ misrepresents her preferences as $(m_1, m_3, m_2)$ she can get a better result.
+The result is $(m_1, w_1), (m_2, w_3), (m_3, w_2)$.
+
+\section*{Problem 5}
+\paragraph{(a)} 
+\begin{proof}
+    Let's consider a case where there are two items $i$ and $j$, where $v_1 = 2$, $w_1 = 1$ and $v_2 = W$, $w_2 = W$.
+    The goal of the algorithm is to maximize the total value.
+    Since $\nicefrac{2}{1} > \nicefrac{W}{W}$, the greedy algorithm will take only the first item, while the optimal input is taking the second item.
+
+    \vspace{0.3cm} If this algorithm is a $c$-approximation algorithm, $c$ should satisfty the following.
+    $$2 \geq cW, \; c \leq \frac{2}{W}$$
+    However when $W \to \infty$, $\dfrac{2}{W} \to 0$, so a fixed positive real number $c$ doesn't exist. 
+    Therefore the algorithm is arbitrarily bad.
+
+\end{proof}
+
+\paragraph{(b)}
+\begin{proof}
+    Suppose the items are sorted in increasing value/weight order. Let's say the items selected by the greedy algorithm are $1, 2, \cdots, k$.
+    We can think of a more general problem:
+    $$\textrm{when} \; \sum_{i=1}^{n}w_ix_i \leq W, \; \textrm{maximize} \; \sum_{i=1}^{n}v_ix_i \;\; \qty(\forall i, \, 0 \leq x_i \leq 1)$$
+    The knapsack problem is a typical case of this problem, when $x_i = 0 \; \textrm{or} \; 1$ for all $i$. 
+    Therefore the optimal input of the knapsack problem is also a possible input of this problem, and the optimal result of this problem should be larger than the optimal result of the knapsack problem.
+    Let's call each OPT$'$ and OPT.
+
+    \vspace{0.3cm} Since the items are sorted, if we lessen $x_i$ and greaten $x_j$ when $i < j$, the result will become smaller.
+    For example let's say $x_i = p$, $x_j=q$ initally, and we change the value to $x_i = p'$, $x_j = q'$ to match the whole weight. 
+    Then we can obtain
+    $$pw_i + qw_j = p'w_i + q'w_j, \; \frac{w_j}{w_i} = \frac{p-p'}{q'-q}$$
+    Since $i<j$ and the items are sorted, $\dfrac{v_i}{w_i} > \dfrac{v_j}{w_j}$. Therefore $\dfrac{v_j}{v_i} < \dfrac{w_j}{w_i} = \dfrac{p-p'}{q'-q}$, and the sum becomes smaller.
+    $$\qty(pv_i + qv_j) - \qty(p'v_i + q'v_j) = \qty(p-p')v_i + (q-q')v_j > 0$$
+    Therefore if we lessen $x_i$ and greaten $x_j$ when $i < j$, the result will become smaller. The optimal input will give more weight on items with smaller $i$.
+    Therefore the following is the optimal input of this new problem. 
+    \begin{equation*}
+        x_i = \begin{cases}
+            1 &(1 \leq i \leq k) \\
+            \dfrac{W - \qty(w_1 + \cdots + w_k)}{w_{k+1}} &(i = k+1) \\
+            0 &(k+1 < i \leq n)
+        \end{cases}
+    \end{equation*}
+    Since we know OPT$'$ $>$ OPT,
+    \begin{align*}
+        \textrm{OPT}' &= v_1 + v_2 + \cdots + v_k + \frac{W - \qty(w_1 + \cdots + w_k)}{w_{k+1}}v_{k+1} \\
+        &> \textrm{OPT}
+    \end{align*}
+    Also, since $\dfrac{W - \qty(w_1 + \cdots + w_k)}{w_{k+1}} < 1$ we can obtain $v_1 + v_2 + \cdots + v_{k+1} > \textrm{OPT}' > \textrm{OPT}$.
+
+    \vspace{0.3cm} Let's say the item with maximum value is $l$. Then $v_l \geq v_{k+1}$, and this gives
+    $$v_1 + v_2 + \cdots + v_k + v_l \geq v_1 + v_2 + \cdots + v_k + v_{k+1} > \textrm{OPT}$$
+    Therefore, either $v_1 + v_2 + \cdots + v_k > \dfrac{\textrm{OPT}}{2}$ or $v_l > \dfrac{\textrm{OPT}}{2}$. 
+    
+    \vspace{0.3cm} The modified greedy algorithm for the knapsack problem selects either $1, 2, \cdots , k$ or only $l$. 
+    Therefore the result given by the modified algorithm is always larger than $\dfrac{\textrm{OPT}}{2}$, so this is a $\nicefrac{1}{2}$-approximation algorithm.
+
+
+\end{proof}
+
+\section*{Problem 6}
+\paragraph{(a)} 
+\begin{proof}
+    Let's say $\max_{1\le j\le n}t_j = t_J$, and job $J$ is assigned to machine $K$.
+    This gives $L_K \geq t_J$.
+    Since $L^*$ is a makespan, it should be the maximum of all loads. Therefore we can obtain the following.
+    $$L^* \geq L_K \geq t_J = \max_{1\le j\le n}t_j$$
+    Also, the sum of all loads should be equal to the sum of all job times. 
+    $$\sum_{k=1}^{m}L_k = \sum_{j=1}^{n}t_j$$
+    Since $L^*$ is a makespan, it is larger than all other loads. Therefore we can obtain the following.
+    $$L^* = \frac{1}{m}\sum_{k=1}^{m}L^* \geq \frac{1}{m}\sum_{k=1}^{m}L_k = \frac{1}{m}\sum_{j=1}^{n}t_j$$
+
+\end{proof}
+
+\paragraph{(b)} The pseudocode is:
+\begin{algorithm}[H]
+    \caption{Load Balancing}
+    \begin{algorithmic}[1]
+        \State \textbf{procedure} \textsc{Greedy Algorithm} ($m$: integer, $t_1, \cdots , t_n$: time)
+            \State \hspace{0.53cm}\textbf{for} $j := 1$ \textbf{to} $n$
+                \State \hspace{1.06cm}$min :=$ MAXIMUM INTEGER
+                \State \hspace{1.06cm}\textbf{for} $k := 1$ \textbf{to} $m$
+                    \State \hspace{1.59cm}\textbf{if} $L_k < L_{min}$ \textbf{then} $min := k$
+                \State \hspace{1.06cm}$L_{min} := L_k + t_j$
+            \State \hspace{0.53cm}$makespan :=$ MINIMUM NUMBER
+            \State \hspace{0.53cm}\textbf{for} $k := 1$ \textbf{to} $m$
+                \State \hspace{1.06cm}\textbf{if} $L_k > makespan$ \textbf{then} $makespan := L_k$
+            \State \hspace{0.53cm}\textbf{return} $makespan$
+    \end{algorithmic}
+\end{algorithm}
+\begin{proof}
+    Let's say machine $p$ has the maximum load. Also let's say $q$ the last job assigned to $K$.
+    Then before $q$ was assigned, $p$ would have had the smallest load. 
+    Therefore $L_p$ at that step would have been same or smaller than the average load. 
+    Also, if $J$ is the job that takes the longest time, $t_q \leq t_J$. This gives
+    $$L_p = (L_p - t_q) + t_q \leq \frac{1}{m}\sum_{j=1}^{n}t_j + t_J$$
+    From \textbf{(a)}, we know $L^* \geq \displaystyle \frac{1}{m}\sum_{j=1}^{n}t_j$ and $L^* \geq t_J$ where $L^*$ is the makespan. This gives
+    $$L_p \leq \frac{1}{m}\sum_{j=1}^{n}t_j + t_J \leq 2L^*$$
+    Therefore the greedy algorithm is a 2-approximation algorithm.
+
+\end{proof}
+
+\paragraph{(c)}
+\begin{proof}
+    Let's say machine $p$ has the maximum load. we can consider two possible situations. 
+
+    \vspace{0.3cm} First, if $p$ has only one job assigned, it is optimal. Therfore this gives
+    $$L_p \leq \max_{1 \leq j \leq n}t_j \leq 1.5\max_{1 \leq j \leq n}t_j \leq 1.5L^*$$
+    Second, if $p$ has more than one job assigned, there are at least $m+1$ jobs.
+    Considering the first $m+1$ jobs, in the optimal case there should be a machine that has at least two jobs assigned. 
+    Thus optimal makespan is same or larger than the sum of the time of these two jobs.
+    Also, since the jobs are sorted by time in decreasing order, all of the first $m+1$ jobs take longer than $t_{m+1}$. 
+    This gives
+    $$L^* \geq 2t_{m+1}$$
+    Now let's consider the situation in \textbf{(b)}.
+    Since $p$ has more than one job assigned, $q \geq m+1$. From that the jobs are sorted, we can obtain
+    $$t_{q} \leq t_{m+1}$$
+    Therefore, the makespan that the modified algorith gives satisfies the following.
+    $$L_p = (L_p - t_q) + t_q \leq \frac{1}{m}\sum_{j=1}^{n}t_j + t_{m+1} \leq L^* + \frac{1}{2}L^* = \frac{3}{2}L^*$$
+    Therefore the greedy algorithm is a $\nicefrac{3}{2}$-approximation algorithm.
+
+\end{proof}
+\end{document}
