@@ -1,0 +1,3 @@
+PRINT &Course!
+PRINT_SPACE
+PRINT 2*0-2+1%
