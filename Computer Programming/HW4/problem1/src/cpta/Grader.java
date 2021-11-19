@@ -34,6 +34,7 @@ public class Grader {
             Map<String, List<Double>> studentGrades = new HashMap<>();
 
             for (Problem problem : problems) {
+                Map<String, Double> problemStudentGradesMap = new HashMap<>();
                 List<Double> problemStudentGrades = new LinkedList<>();
 
                 try {
@@ -63,7 +64,19 @@ public class Grader {
                             score = 0;
                         }
 
-                        problemStudentGrades.add(score);
+                        problemStudentGradesMap.put(testCase.id, score);
+                    }
+
+                    List<String> testCaseIds = new LinkedList<>(problemStudentGradesMap.keySet());
+                    testCaseIds.sort(new Comparator<String>() {
+                        @Override
+                        public int compare(String id1, String id2) {
+                            return id1.compareTo(id2);
+                        }
+                    });
+
+                    for (String testCaseId : testCaseIds) {
+                        problemStudentGrades.add(problemStudentGradesMap.get(testCaseId));
                     }
 
                     studentGrades.put(problem.id, problemStudentGrades);
@@ -103,6 +116,7 @@ public class Grader {
             }
 
             for (Problem problem : problems) {
+                Map<String, Double> problemStudentGradesMap = new HashMap<>();
                 List<Double> problemStudentGrades = new LinkedList<>();
                 List<TestCase> testCases = problem.testCases;
 
@@ -219,13 +233,26 @@ public class Grader {
                             score = 0.0;
                         }
 
-                        problemStudentGrades.add(score);
+                        problemStudentGradesMap.put(testCase.id, score);
                     }
                 } catch (CompileErrorException | InvalidFileTypeException | FileSystemRelatedException e) {
                     for (TestCase testCase : testCases) {
                         problemStudentGrades.add(0.0);
                     }
                 }
+
+                List<String> testCaseIds = new LinkedList<>(problemStudentGradesMap.keySet());
+                testCaseIds.sort(new Comparator<String>() {
+                    @Override
+                    public int compare(String id1, String id2) {
+                        return id1.compareTo(id2);
+                    }
+                });
+
+                for (String testCaseId : testCaseIds) {
+                    problemStudentGrades.add(problemStudentGradesMap.get(testCaseId));
+                }
+
                 studentGrades.put(problem.id, problemStudentGrades);
             }
 
