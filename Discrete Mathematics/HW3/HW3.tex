@@ -1,0 +1,253 @@
+\documentclass[10pt]{article}
+\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+%\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.2}
+\usepackage{amsmath,amssymb,amsthm,physics,units}
+\usepackage[shortlabels]{enumitem}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{algorithm,algpseudocode}
+\usepackage[shortlabels]{enumitem}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+}
+
+\begin{document}
+\vspace{4mm}
+\begin{center}
+    {\LARGE Discrete Mathematics Problem Set 3} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 1}
+
+Suppose there exists at least one positive integer $n$ such that $P(n)$ is false. 
+If $S$ is the set of all such `$n$'s, $S$ is a nonempty set of positive integers.
+Thus according to the well-ordering property, $S$ has a least element.
+Let this element $m$.
+
+\vspace{3mm}
+Considering the basis step, $m > b$ since $P(m)$ is false.
+Also he contrapositive of the inductive step states the following.
+\begin{center}
+   If $P(k+b)$ is false, $P(k) \wedge P(k+1) \wedge \cdots \wedge P(k+b-1)$ is false.
+\end{center}
+Therefore, since $P(m)$ is false, $P(m-b) \wedge P(m-b+1) \wedge \cdots \wedge P(m-1)$ is false.
+This gives that at least one of $P(m-b)$, $P(m-b+1)$, $\cdots$, $P(m-1)$ is false. (These are all valid positive integers since $m-b > 0$.)
+However, since $m$ is the least element of $S$, there shouldn't be an integer smaller than $m$ that makes $P(n)$ false.
+Therefore this is a contradiction, and the given form of mathematical induction is valid to prove that $P(n)$ is true for all positive integers $n$.
+
+\section*{Problem 2}
+
+First, let's consider cases when $n$ is a power of 2. Let $n = 2^m$.
+
+\vspace{3mm}
+Sort the numbers first in order of mod $2^m$, then mod $2^{m-1}$, and so on until mod $2^1$. (When the modulo values are equal, leave them in the order of the previous sort.)
+For example, for $n=16$, we can sort as :
+\begin{center}
+    1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 \\
+    $\downarrow$ \\
+    1 9 2 10 3 11 4 12 5 13 6 14 7 15 8 16 \\
+    $\downarrow$ \\
+    1 9 5 13 2 10 6 14 3 11 7 15 4 12 8 16 \\
+    $\downarrow$ \\
+    1 9 5 13 3 11 7 15 2 10 6 14 4 12 8 16
+\end{center}
+Now if we divide the numbers into $2^k \; (l = 1, \cdots , m)$ groups with equal size starting from the front, all groups have numbers with same mod $2^k$ values, and the groups each other have different mod $2^k$ values.
+Let's call each group `Group$(k, p)$' where all elements' mod $2^k$ values are $p$.
+
+\vspace{3mm}
+For $\forall k$ and $0 \leq \forall p, q < 2^k \; (p \neq q)$, arbitrary integers $a$ and $b$ where $a \equiv p \; ({\rm mod} \; 2^k)$, $b \equiv q \; ({\rm mod} \; 2^k)$ shows
+$$\frac{a+b}{2} \equiv \frac{p+q}{2} \not\equiv p {\; \rm or \;} q \; ({\rm mod} \; 2^k)$$
+Therefore, when two groups Group$(k, p)$ and Group$(k, q)$ are adjacent, choosing two numbers from each group cannot have their average between them. 
+Only choosing two numbers from the same group can have a possibility of having their average between them.
+
+\vspace{3mm}
+Considering the sorted list of numbers, suppose there is a pair of numbers where their average exists between them. 
+However first, numbers of Group(1, 1) and Group(1, 0) don't have such a pair in between them, so we should find the pair inside each group.
+But Group(1,1) is consisted of Group(2,1) and Group(2,3) so we should also find the pair inside each group.
+This repeats until Group(k, 1), $\cdots$, Group$(k, 2^k-1)$, Group$(k, 0)$. So we cannot find such a pair in the sorted list of numbers.
+Therefore if $n$ is a power of 2, it is possible to sort the numbers in a row so that the average of any two number never appears between them.
+
+\vspace{3mm}
+Now if $n$ is not a power of 2, consider the smallest power of 2 larger than $n$.
+We can sort the numbers so that it satisfies the condition, and remove all numbers larger than $n$.
+Before removing, all pairs of numbers in the sorted list didn't have their average between them.
+Therefore after removing some numbers all pairs of numbers will also not have their average between them.
+Therefore we can find a an arrangement of numberes for any positive integer $n$ so that the average of any two number never appears between them.
+
+\section*{Problem 3}
+
+We must make $n-1$ breaks to break the bar into $n$ separate squares. We can prove this using strong induciton.
+
+\vspace{3mm}
+First, consider the case when $n=1$. Then the entire bar is already a separate square, so it requires $0 \; (=n-1)$ breaks.
+
+\vspace{3mm}
+Let's assume the proposition is true for $n=1, \; n=2, \; \cdots , \; n=k$.
+When $n=k+1$, we can make a first valid break, and say it results in two rectangular bars of size $m$ and $k+1-m$.
+The assumption gives that each bars need $m-1$, $k-m$ breaks to make it into separate pieces.
+Therefore a bar of $k+1$ squares needs the following number of breaks in total.
+\begin{align*}
+    {\rm Number \; of \; Breaks} &= 1 + (m-1) + (k-m) \\
+    &= k = (k+1) - 1
+\end{align*}
+Therefore the proposition is true for $n=k+1$, and using strong induction, the proposition is true for any positive integer $n$.
+
+\section*{Problem 4}
+
+First, let's count the number of strings that contain five consecutive 0s.
+Consider the first index(indexes given 1 - 10) of the 0 with four consecutive 0s continued.
+It can have values among 1, 2, 3, 4, 5, 6.
+
+\vspace{3mm}
+If the index is 1, indexes 1 - 5 are assigned 0, and indexes 6 - 10 can have any value among 0 or 1.
+The total number of possibilities is $2^5 = 32$.
+
+\vspace{3mm}
+If the index is 2 or 3 or 4 or 5 or 6, five indexes starting from that are assigned 0 and the index before that is assigned 1. The remaining four indexes can have any value among 0 or 1.
+The total number of possibilities is $2^4 = 16$ for each.
+
+\vspace{3mm}
+Therefore the number of strings that contain five consecutive 0s is $32 + 16 \times 5 = 112$.
+Similarly, the number of strings that contain five consecutive 1s is also 112.
+However the strings `0000011111' and `1111100000' are counted in both cases, so we should exclude the repeated counts.
+Therefore the total number of strings is $112 + 112 - 2 = 222$.
+
+\section*{Problem 5}
+
+The number of multiples of $p$ not exceeding $n$ is $\dfrac{n}{p} = qr$.
+Similarly the number of multiples of $q$ and $r$ not exceeding $n$ are $pr$, $pq$ each.
+
+\vspace{3mm}
+Multiples of $pq$, $qr$, $rp$ are counted twice each, so we should exclude the repeated counts.
+The number of multiples of $pq$, $qr$, $rp$ not exceeding $n$ are $r, p, q$ each.
+
+\vspace{3mm}
+Now multiples of $pqr$ are excluded, so we should add the number of these.
+The number of multiples of $pqr$ not exceeding $n$ is 1.
+
+\vspace{3mm}
+Therefore using the principle of inclusion-exclusion, the number of positive integers not exceeding $n$ that are relatively prime to $n$ is $pq + qr + rp - p - q - r + 1$.
+
+\section*{Problem 6}
+Consider a situation where there is a group of $n$ mathematics professors and another group of $n$ computer science professors.
+We would like to select a committee of $n$ members from any group, instead the chairperson is a mathematics professor.
+We can count this in two ways.
+
+\vspace{3mm}
+First, consider all cases where $k$ mathematics professors and $n-k$ computer science professors are selected ($k = 0, 1, \cdots, n$).
+For each case, selecting mathematics professors gives ${n \choose k}$ possibilities and selecting computer science professors gives ${n \choose n-k}$ possibilities. Also selecting the chairperson gives $k$ possibilities, since there are $k$ mathematics professors.
+Therefore the total number of selections is 
+$$\sum_{k=0}^{n}k{n \choose k}{n \choose n - k} = \sum_{k=0}^{n}k{n \choose k}^2$$
+
+\vspace{3mm}
+Second, consider choosing one chairperson from the $n$ mathematics professors, and then choosing $n-1$ professors from the remaining $2n-1$ professors.
+Choosing one chairperson has $n$ possibilities and choosing other professors gives $n{2n-1 \choose n-1}$ possibilities.
+Therefore the total number of selections is 
+$$n{2n-1 \choose n-1}$$
+
+$$\therefore \sum_{k=0}^{n}k{n \choose k}^2 = n{2n-1 \choose n-1}$$
+
+\section*{Problem 7}
+
+Let's define a random variable $X$ as the number of balls tossed until every bin contains a ball.
+Also define a random varaiable $X_k$ as the number of balls tossed until a ball goes into a unfilled bin, after $k$ bins contain a ball.
+The definition of each varaibles gives :
+$$X = \sum_{k=0}^{b-1}X_k$$
+
+$X_k$ can be any positive integer. Since the probability of a single toss to fall in one of the $k$ bins is $\dfrac{k}{b}$, the probability of $X_k$ having a certain value $n$ is :
+$$P(X_k = n) = \qty(\frac{k}{b})^{n-1}\qty(1-\frac{k}{b})$$
+Therefore $X_k$ has a geometric distribution with parameter $1 - \dfrac{k}{b}$, so the expectation of $X_k$ is :
+\begin{align*}
+    E\qty(X_k) &= \sum_{n=1}^{\infty}n\qty(\frac{k}{b})^{n-1}\qty(1-\frac{k}{b}) \\
+    &= \frac{b}{b-k}
+\end{align*}
+
+Therefore the expectation of $X$ is :
+\begin{align*}
+    E(X) &= E\qty(\sum_{k=0}^{b-1}X_k) \\
+    &= \sum_{k=0}^{b-1}E\qty(X_k) = \sum_{k=0}^{b-1}\frac{b}{b-k} \\
+    &= b\qty(1 + \frac{1}{2} + \cdots + \frac{1}{b})
+\end{align*}
+
+\section*{Problem 8}
+
+\begin{enumerate}[leftmargin=*]
+    \item Let the event where 0 is sent as S, and the event where 0 is received R
+    The probability that 0 is received is given by the probability of 0 sent mulitplied by the probability of 0 received correctly when it is sent.
+    \begin{align*}
+        P(R) &= P(S)P(R|S) + P\qty(\overline{S})P\qty(R|\overline{S}) \\
+        &= \frac{2}{3}\cdot 0.9 + \frac{1}{3}\cdot 0.2 \\
+        &= \frac{2}{3}
+    \end{align*}
+    \item The probability is :
+    \begin{align*}
+        P(S|R) &= \frac{P(S)P(R|S)}{P(S)P(R|S) + P\qty(\overline{S})P\qty(R|\overline{S})} \\
+        &= \frac{\dfrac{2}{3}\cdot 0.9}{\dfrac{2}{3}} \\
+        &= 0.9
+    \end{align*}
+\end{enumerate}
+
+\section*{Problem 9}
+
+Let's define a random variable $X$ as the number of tails that come up when the coin is tossed $n$ times.
+$X$ has a binomial distribution, and $P(X=k) = C(n, k)\cdot{0.8}^k{0.2}^{n-k}$.
+Therefore the expectation and variance of $X$ are :
+$$E(X) = \sum_{k=0}^{n}k{n \choose k}{0.8}^k{0.2}^{n-k} = 0.8n$$
+$$V(X) = \sum_{k=0}^{n}\qty(k-E(X))^2{n \choose k}{0.8}^k{0.2}^{n-k} = 0.16n$$
+Therefore Chebyshev's inequality gives :
+$$P\qty(\qty|X(s) - 0.8n| \geq \sqrt{n}) \leq \frac{0.16n}{n} = 0.16$$
+
+\section*{Problem 10}
+
+If random variables $X$ and $Z$, $Y$ and $Z$ are independent, we can say $E(XZ) = E(X)E(Z)$, $E(YZ) = E(Y)E(Z)$.
+This gives $E((X+Y)Z) = E(XZ + YZ) = E(XZ) + E(YZ) = E(X)E(Z) + E(Y)E(Z) = (E(X) + E(Y))E(Z) = E(X+Y)E(Z)$.
+Therefore $X+Y$ and $Z$ are independent.
+
+\vspace{3mm}
+Likewise, all sums of $X_i (i = 1, 2, \cdots, 10)$ are independent with each other.
+
+\vspace{3mm}
+For all two independent random varaiables $X$ and $Y$, we can derive the following.
+\begin{align*}
+    V(X + Y) &= E\qty(\qty(X + Y)^2) - {E\qty(X + Y)}^2 \\
+    &= E\qty(X^2 + 2XY + Y^2) - \qty({E\qty(X)}^2 + 2E\qty(X)E\qty(Y) + {E\qty(Y)}^2) \\
+    &= E\qty(X^2) + 2E\qty(X)E\qty(Y) + E\qty(Y^2) - {E\qty(X)}^2 - 2E\qty(X)E\qty(Y) - {E\qty(Y)}^2 \\
+    &= E\qty(X^2) - {E\qty(X)}^2 + E\qty(Y^2) - {E\qty(Y)}^2 \\
+    &= V\qty(X) + V\qty(Y)
+\end{align*}
+
+Therefore we can show:
+\begin{align*}
+    V(X_1 + X_2 + \cdots X_n) &= V(X_1 + X_2 + \cdots X_{n-1}) + V(X_n) \\
+    &= V(X_1 + X_2 + \cdots X_{n-2}) + V(X_{n-1}) + V(X_n) \\
+    &= V(X_1 + X_2 + \cdots X_{n-3}) + V(X_{n-2}) + V(X_{n-1}) + V(X_n) \\
+    &= \cdots \\
+    &= V(X_1) + V(X_2) + \cdots + V(X_n)
+\end{align*}
+
+\section*{References}
+\begin{enumerate}[leftmargin=*, label={[\arabic*]}]
+    \item `Ordering of natural numbers', \textit{Mathematics Stack Exchange}, 2021. Available: \url{https://math.stackexchange.com/questions/1403694/ordering-of-natural-numbers}.
+    \item `Coupon collector's problem', \textit{Wikipedia}, 2021. Available: \url{https://en.wikipedia.org/wiki/Coupon_collector%27s_problem}.
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Usage of References}
+
+\vspace{0.2cm}
+Problem 2 : I referred to the solution of the same problem in [1]. \\
+Problem 7 : I referred to the solution of a similar problem in [2].
+
+\end{document}
