@@ -1,0 +1,271 @@
+\documentclass[10pt]{article}
+\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+%\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.2}
+\usepackage{amsmath,amssymb,amsthm,physics,units}
+\usepackage[shortlabels]{enumitem}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{multirow, booktabs}
+\usepackage{algorithm,algpseudocode}
+\usepackage[shortlabels]{enumitem}
+\usepackage{hyperref}
+\usepackage{algorithm,algpseudocode}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+}
+
+\begin{document}
+\vspace{4mm}
+\begin{center}
+    {\LARGE Discrete Mathematics Problem Set 4} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 1}
+\begin{enumerate}[leftmargin=*]
+    \item When $a_1, a_2, \cdots , a_k$ are given as intial states, $p_0, p_1, \cdots , p_t$ can be determined to satisfy the following, since it is a linear system of independent states.
+    \begin{align*}
+        a_1 &= \qty(p_t + p_{t-1} + \cdots + p_0) \cdot s \\
+        a_2 &= \qty(p_t\cdot2^t + p_{t-1}\cdot2^{t-1} + \cdots + p_0) \cdot s^2 \\
+        &\cdots \\
+        a_k &= \qty(p_t\cdot k^t + p_{t-1}\cdot k^{t-1} + \cdots + p_0) \cdot s^k
+    \end{align*}
+    Suppose the given equation is a particular solution of the relation at $n=i-1, i-2, \cdots , i-k$.
+    Now we should prove that it is also a particular solution at $n=i$.
+    
+    We know that
+    \begin{align*}
+        a_{i-1} &= \qty(p_t\cdot\qty(i-1)^t + p_{t-1}\cdot\qty(i-1)^{t-1} + \cdots + p_0) \cdot s^\qty(i-1) \\
+        a_{i-2} &= \qty(p_t\cdot\qty(i-2)^t + p_{t-1}\cdot\qty(i-2)^{t-1} + \cdots + p_0) \cdot s^\qty(i-2) \\
+        &\cdots \\
+        a_{i-k} &= \qty(p_t\cdot\qty(i-k)^t + p_{t-1}\cdot\qty(i-k)^{t-1} + \cdots + p_0) \cdot s^\qty(i-k)
+    \end{align*}
+    Therefore the recurrence relation gives :
+    \begin{align*}
+        a_i &= c_1\cdot a_\qty(i-1) + c_2\cdot a_\qty(i-2) + \cdots + c_k\cdot a_{n-k} + F(n) \\ 
+        &= c_1\qty(p_t\cdot\qty(i-1)^t + p_{t-1}\cdot\qty(i-1)^{t-1} + \cdots + p_0) \cdot s^\qty(i-1) \\
+        &\;\; + c_2\qty(p_t\cdot\qty(i-2)^t + p_{t-1}\cdot\qty(i-2)^{t-1} + \cdots + p_0) \cdot s^\qty(i-2) \\ 
+        &\;\; + \cdots + c_k\qty(p_t\cdot\qty(i-k)^t + p_{t-1}\cdot\qty(i-k)^{t-1} + \cdots + p_0) \cdot s^\qty(i-k) \\
+        &\;\; + \qty(b_t\cdot i^t + b_{t-1}\cdot i^{t-1} + \cdots + b_0)\cdot s^{i} \\
+        &= \qty(p_t\cdot i^t + p_{t-1}\cdot i^{t-1} + \cdots + p_0)\cdot s^i
+    \end{align*}
+    \item 
+\end{enumerate}
+
+\section*{Problem 2}
+
+\begin{enumerate}[leftmargin=*]
+    \item When $n$ people vote twice each there are total $2n$ votes, so the maximum number of candidates with more than $n/2$ votes is three.
+    
+    \vspace{1mm}
+    Also, if we devide the people into two groups, for a candidate to get more than votes from half of the people, that candidate should get more than votes from half of the people in at least one group.
+
+    \vspace{1mm}
+    Therefore dividing groups will give a maximum of three candidates with more than votes from half of the people each, and the positions will go to two of these candidates. (There can be repeated candidates in both groups.) 
+    So the following algorithm will give all candidates with more than $n/2$ votes and their count of votes, and then we can determine whom the winners are.
+    
+    \begin{algorithm}[H]
+        \caption{Candidate Qualify Algorithm}\label{alg:cap}
+        \begin{algorithmic}
+            \Function{Election}{\small $a_{11}, a_{12}, a_{21}, a_{22}, \; \cdots , a_{n1}, a_{n2}$ : list of integers, all votes of $n$ people}
+            \State $\qty(r_{11}, c_{11}), \qty(r_{12}, c_{12}), \qty(r_{13}, c_{13}) =$ \textsc{Election}($a_{11}, a_{12}, \; \cdots , a_{\left\lfloor\frac{n}{2}\right\rfloor1}, a_{\left\lfloor\frac{n}{2}\right\rfloor2}$)
+            \State $\qty(r_{21}, c_{21}), \qty(r_{22}, c_{22}), \qty(r_{23}, c_{23}) =$ \textsc{Election}($a_{\left\lfloor\frac{n}{2}+1\right\rfloor1}, a_{\left\lfloor\frac{n}{2}+1\right\rfloor2}, \; \cdots , a_{n1}, a_{n2}$)
+            \For{$p \in \qty{11, 12, 13}, \; q \in \qty{21, 22, 23}$}
+                \If{$r_{p} = r_{q}$} \Comment{same candidate in both groups}
+                    \State $c_p, c_q = c_p + c_q$ \Comment{add count of votes}
+                \EndIf
+            \EndFor
+            \State \textbf{return} $\qty{\qty(r_i, c_i)}$ : list of (candidate, count) with more than $n/2$ votes \Comment{\small maximum three returns}
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+
+    \item We devide the problem into two problems of size $n/2$. 
+    After that, $3 \times 3 = 9$ comparisons are made to find if there are any repeated candidates from both groups.
+    Finally, we compare the (maximum) six candidates' count of votes with $n/2$ to find who to return.
+    (An additional step to determine two winners out of three possible candidates is also needed too, but it isn't part of the recursive algorithm.)
+    $$T(n) = 2T\qty(\frac{n}{2}) + 15$$
+    Therefore the recurrence relation is as the above, and the algorithm's complexity is :
+    $$T(n) = O\qty(n^{\log_{2}2}) = O(n)$$
+\end{enumerate}
+
+\section*{Problem 3}
+\begin{enumerate}[leftmargin=*]
+    \item Let's call the divided parts $A$, $B$, $C$, and $D$.
+    Now two queries can be made, selecting $A \cup B$ and $A \cup C$.
+    \begin{table}[H]
+        \centering
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabular}{|cc|cc|cc|cc|c|}
+            \hline
+            $A \cup B$ & $A \cup C$ & True & True & True & False & False & True & In Common\\ \hline
+            Yes & Yes  & \multicolumn{2}{|c|}{Always in $A$} & \multicolumn{2}{|c|}{Always in $B$} & \multicolumn{2}{|c|}{Always in $C$} & Eliminate $D$ \\
+            Yes & No & \multicolumn{2}{|c|}{Always in $B$} & \multicolumn{2}{|c|}{Always in $A$} & \multicolumn{2}{|c|}{Always in $D$} & Eliminate $C$ \\
+            No & Yes & \multicolumn{2}{|c|}{Always in $C$} & \multicolumn{2}{|c|}{Always in $D$} & \multicolumn{2}{|c|}{Always in $A$} & Eliminate $B$ \\
+            No & No & \multicolumn{2}{|c|}{Always in $D$} & \multicolumn{2}{|c|}{Always in $C$} & \multicolumn{2}{|c|}{Always in $B$} & Eliminate $A$ \\
+            \hline
+        \end{tabular}
+    \end{table}
+    As shown in the table above, for all cases where the first person lies or not, we can eliminate one part, which is $1/4$ of the entire set.
+
+    \item Since we showed that we can eliminate $1/4$ of the elements by two queries, after that we should solve a problem with $3n/4$ numbers. Therefore the recurrence relation is:
+    $$f(n) = f\qty(\frac{3}{4}n) + 2$$
+    Now since $n$ is a multiple of 4, set $n = 4k$. Therefore
+    \begin{align*}
+        f(n) &= f\qty(\left\lceil\frac{3}{4}n\right\rceil) + 2 \\
+        &= f\qty(\left\lceil\frac{3}{4}\left\lceil\frac{3}{4}n\right\rceil\right\rceil) + 2\cdot2 \\
+        &\leq f\qty(\left\lceil\frac{3}{4}\qty(\frac{3}{4}n + 1)\right\rceil) + 2\cdot2 = f\qty(\left\lceil\qty(\frac{3}{4})^2n + \frac{3}{4}\right\rceil) + 2\cdot2 \\
+        &\leq f\qty(\left\lceil\qty(\frac{3}{4})^3n + \qty(\frac{3}{4})^2 + \frac{3}{4}\right\rceil) + 2\cdot3 \\
+        &\leq \cdots \leq f\qty(\left\lceil\qty(\frac{3}{4})^kn + \sum_{i=1}^{k-1}\qty(\frac{3}{4})^i\right\rceil) + 2k
+    \end{align*}
+    When $k \approx \log_{4/3}{n}$, 
+    $$\left\lceil\qty(\frac{3}{4})^kn + \sum_{i=1}^{k-1}\qty(\frac{3}{4})^i\right\rceil \approx \left\lceil{1 + 3 - 3\qty(\frac{3}{4})^{k-1}}\right\rceil = 4$$
+    Therefore 
+    $$f(n) \leq \cdots \leq f\qty(\left\lceil\qty(\frac{3}{4})^kn + \sum_{i=1}^{k-1}\qty(\frac{3}{4})^i\right\rceil) + 2k = f(4) + 2k$$
+
+    when $k \approx \log_{4/3}{n}$. Therefore $f(n) = O(2k) = O(2\log_{4/3}{n}) = O(\log n)$.
+\end{enumerate}
+
+\section*{Problem 4}
+Let $U$ the set of all permutations, $F$, $R$, $B$ the set of permutations that include \textit{fish}, \textit{rat} and \textit{bird}.
+The number of permutations containing \textit{fish} can be considered as ordering 23 objects: \textit{fish}, \textit{a}, \textit{b}, $\cdots$, \textit{z}. 
+Other cases can be thought of as the same way.
+
+\vspace{1mm}
+Therefore, using the principle of inclusion-exclusion gives :
+\begin{align*}
+    \qty|F^C \cap R^C \cap B^C| &= 1 - \qty|F \cup R \cup B| \\
+    &= \qty|U| - \qty(\qty|F| + \qty|R| + \qty|B|) + \qty(\qty|F \cap R| + \qty|R \cap B| + \qty|B \cap F|) - \qty|F \cap R \cap B| \\
+    &= 26! - \qty(23! + 24! + 23!) + (20! + 0 + 0) + 0 \\
+    &= 16419539410212005217738692971219157417
+\end{align*}
+
+\section*{Problem 5}
+\begin{enumerate}[leftmargin=*]
+    \item If $w_j > w$, item $j$ cannot be chosen since that one element will exceed the maximum weight.
+    
+    \vspace{1mm}
+    If $w_j \leq w$, we can think of two cases, whether $j$ is included in the optimal solution or not.
+    If $j$ isn't included, the maximum weight will be same as $M(j-1, w)$.
+    If it is included, we should choose the best set of items from $1, 2, \cdots , j-1$ not to exceed a total weight of $w - w_j$
+    The total weight then becomes $w_j + M(j-1, w-w_j)$.
+    Therefore the maximum value between these two cases will be the answer.
+
+    \item Using the recurrence relation shown in 5-1, we can write the following pseudocode.
+    
+    \vspace{1mm}
+    Calculating \textsc{MaxWeight}($i$, $W$) will give the maximum total weight.
+    \begin{algorithm}[H]
+        \caption{Knapsack Problem}\label{alg:knapsack_weightonly}
+        \begin{algorithmic}
+            \Function{MaxWeight}{$j$, $w$ : positive integers}
+            \If{$w_j > w$}
+                \State \textbf{return} \textsc{MaxWeight}($j-1$, $w$)
+            \Else
+                \State $ex$ = \textsc{MaxWeight}($j-1$, $w$)
+                \State $in$ = $w_j$ + \textsc{MaxWeight}($j-1$, $w-w_j$)
+                \State \textbf{return} max\{$ex$, $in$\}
+            \EndIf
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+
+    \item From the same algorithm from 5-1 and 5-2, returning both the maximum weight and the chosen set of items will help find the subset of items we want to find.
+    
+    \vspace{1mm}
+    Calculating \textsc{MaxWeight}($i$, $W$) will give the maximum total weight and the corresponding subset.
+    \begin{algorithm}[H]
+        \caption{Knapsack Problem}\label{alg:knapsack_set}
+        \begin{algorithmic}
+            \Function{MaxWeightSet}{$j$, $w$ : positive integers}
+            \If{$w_j > w$}
+                \State \textbf{return} \textsc{MaxWeightSet}($j-1$, $w$)
+            \Else
+                \State $ex$, ${set}_{ex}$ = \textsc{MaxWeightSet}($j-1$, $w$)
+                \State $in$ = $w_j$ + \textsc{MaxWeightSet}($j-1$, $w-w_j$).$weight$
+                \State ${set}_{in}$ = $\qty{j}$ + \textsc{MaxWeightSet}($j-1$, $w-w_j$).$set$
+                \If{$ex > in$}
+                    \State \textbf{return} ($ex$, ${set}_{ex}$) \Comment{return both maximum weight and set of items}
+                \Else
+                \State \textbf{return} ($in$, ${set}_{in}$) \Comment{return both maximum weight and set of items}
+                \EndIf
+            \EndIf
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+\end{enumerate}
+
+\section*{Problem 6}
+$R$ is antisymmetric if and only if the following is true.
+\begin{center}
+    If $(a, b) \in R$ and $(b, a) \in R$, $a = b$.
+\end{center}
+Since we defined $R^{-1}=\{(b,a)~|~(a,b)\in R\}$, $(b, a) \in R$ is equivlent to $(a, b) \in R^{-1}$.
+Therefore the above statement is equivalent to
+\begin{center}
+    If $(a, b) \in R$ and $(a, b) \in R^{-1}$, $a = b$. $\Leftrightarrow$ If $(a, b) \in R \cap R^{-1}$, $a = b$.
+\end{center}
+For $\forall (a, b) \in R \cap R^{-1}$, $a \in A$ and $b \in A$ since $R$ is a relation on $A$. Also $a = b$ according to the above statement.
+Therefore $(a, b) = (a, a) \in \Delta = \qty{(a, a) ~|~ a \in A}$, and $R \cap R^{-1} \in \Delta$.
+
+\section*{Problem 7}
+Let's consider an initial relation $R$ on a set $A$.
+Then its transitive closure is equal to the connectivity relation $R^*$.
+If we define $\Delta = \qty{(a, a) ~|~ a \in A}$, the reflexive closure should contain $\Delta$, so the reflexive closure of $R^*$ is $R^* \cup \Delta$.
+Now let $S = R^* \cup \Delta$. 
+If we define $S^{-1} = \qty{(b,a)~|~(a,b)\in S}$, the symmetric closure of $S$ should contain $S^{-1}$, so the symmetric closure of $S$ is $S \cup S^{-1}$. Now let $T = S \cup S^{-1}$.
+
+\vspace{3mm}
+Since $T$ is a symmetric closure of a relation($S$), it is symmetric itself.
+Also, since $T = S \cup S^{-1} = R^* \cup \Delta \cup S^{-1}$, it contains $\Delta$ and is consequently reflexive.
+Now for $T$ to be an equivalence relation, it should be transitive.
+
+\vspace{3mm}
+However there is a counterexample, where $A = \qty{a, b ,c}$ and $R = \qty{(a, b), (c, b)}$.
+Then $R^* = \qty{(a, b), (c, b)}$ and $\Delta = \qty{(a, a), (b, b), (c, c)}$, so $S = \qty{(a, a), (a, b), (b, b), (c, b), (c, c)}$.
+Then $S^{-1} = \qty{(a, a), (b, a), (b, b), (b, c), (c, c)}$.
+Therefore $T = \qty{(a, a), (a, b), (b, a), (b, b), (b, c), (c, b), (c, c)}$.
+Now $(a, b), (b, c) \in T$ but $(a, c) \notin T$. Therefore $T$ is not transitive, and is not an equivalence relation.
+
+\section*{Problem 8}
+Let's say two graphs $G$, $G'$ are isomorphic and a bijection $f \colon V \rightarrow V'$ satisfies the following.
+\begin{center}
+    $\forall a, b \in V$, $a, b$ are adjacent in $G$ iff $f(a), f(b)$ are adjacent in $G'$.
+\end{center}
+If $G$ is bipartite, we can divide the vertices of $G$ into two subsets $V_1$ and $V_2$, where there are no edges connecting vertices between each set.
+Then we can define :
+\begin{center}
+    $V_1' := \qty{f(v) ~|~ v \in V_1}$, $V_2' := \qty{f(v) ~|~ v \in V_2}$
+\end{center}
+If $G'$ is not bipartite, $V_1'$ and $V_2'$ cannot be a partition that don't have any edges in between. 
+Therefore suppose an edge $e' \in G'$' exists which connects $v_i' \in V_1'$ and $v_j' \in V_2'$.
+Since $G$ and $G'$ are isomorphic, an edge $e$ exists in $G$ which connects $f^{-1}\qty(v_i') := v_i$ and $f^{-1}\qty(v_j') := v_j$. 
+Since $v_i' \in V_1'$ and $v_j' \in V_2'$, $v_i \in V_1$ and $v_j \in V_2$ according to the definition of $V_1'$ and $V_2'$.
+
+\vspace{3mm}
+However $G$ is bipartite, and there shouldn't be an edge connecting vertices between $V_1$ and $V_2$. 
+This is a contradiction, and $G'$ should be bipartite. 
+Therefore a graph being bipartite can be an isomorphic invariant.
+
+\section*{References}
+\begin{enumerate}[leftmargin=*, label={[\arabic*]}]
+    \item `Divide-and-conquer: Determining the top two candidates and whether these two candidates received', \textit{Computer Science Stack Exchange}, 2018. Available: \url{https://cs.stackexchange.com/questions/96960/divide-and-conquer-determining-the-top-two-candidates-and-whether-these-two-can}.
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Usage of References}
+
+\vspace{0.2cm}
+Problem 2 : I referred to the idea of the same problem's answer in [1], gave a new written solution.
+
+\end{document}
