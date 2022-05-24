@@ -1,0 +1,398 @@
+\documentclass[10pt]{article}
+%\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{amsmath,amssymb,amsthm,physics,units}
+\usepackage[shortlabels]{enumitem}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{algorithm,algpseudocode}
+\usepackage[shortlabels]{enumitem}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+}
+
+\begin{document}
+\begin{center}
+    {\LARGE Engineering Mathematics 1 Problem Set 1} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 1}
+\begin{enumerate}[leftmargin=*, label={(\alph*)}]
+    \item \textit{False } Choosing two symmetric matrices
+    $$\mathbf{A} = \begin{bmatrix}
+        1 & 0 \\ 0 & -1
+    \end{bmatrix}, \; \mathbf{B} = \begin{bmatrix}
+        0 & 1 \\ 1 & 0
+    \end{bmatrix}$$
+    gives
+    $$\mathbf{AB} = \begin{bmatrix}
+        0 & 1 \\ -1 & 0
+    \end{bmatrix}, \; \mathbf{BA} = \begin{bmatrix}
+        0 & -1 \\ 1 & 0
+    \end{bmatrix}$$
+    therefore $\mathbf{AB} \neq \mathbf{BA}$.
+    \item \textit{False } The example from (a) gives an example where $\mathbf{AB}$ is not symmetric.
+    \item \textit{False } Choosing $\mathbf{B} = \mathbf{I}_2$ and 
+    $$\mathbf{A} = \begin{bmatrix}
+        1 & 0 \\ 0 & -1
+    \end{bmatrix}, \; \mathbf{C} = \begin{bmatrix}
+        0 & 1 \\ 1 & 0
+    \end{bmatrix}$$ satisfies
+    $$\mathbf{AB} = \mathbf{BA} = \mathbf{A}, \; \mathbf{BC} = \mathbf{CB} = \mathbf{C}$$
+    but
+    $$\mathbf{AC} = \begin{bmatrix}
+        0 & 1 \\ -1 & 0
+    \end{bmatrix}, \; \mathbf{CA} = \begin{bmatrix}
+        0 & -1 \\ 1 & 0
+    \end{bmatrix}$$
+    therefore $\mathbf{AC} \neq \mathbf{CA}$.
+    \item \textit{True } Since $\mathbf{A}$ and $\mathbf{B}$ are upper triangular, 
+    $$\mathbf{A}_{ij} = 0, \; \mathbf{B}_{ij} = 0 \;\; (\forall \, i, j \in \mathbb{N} \; \mathrm{s.t.} \; 1 \leq j < i \leq n)$$
+    Therefore, if $i > j$, 
+    \begin{align*}
+        (\mathbf{AB})_{ij} &= \sum_{k=1}^{n}\mathbf{A}_{ik}\mathbf{B}_{kj} \\
+        &= \sum_{k=1}^{i-1}\mathbf{A}_{ik}\mathbf{B}_{kj} + \sum_{k=i}^{n}\mathbf{A}_{ik}\mathbf{B}_{kj} = 0
+    \end{align*} 
+    so $\mathbf{AB}$ is an upper triangular matrix.
+\end{enumerate}
+
+\section*{Problem 2}
+Define $\mathbf{S}$ and $\mathbf{T}$ as
+$$\mathbf{S}_{ij} = \mathbf{S}_{ji} = \frac{\mathbf{A}_{ij} + \mathbf{A}_{ji}}{2}, \; \mathbf{T}_{ij} = \frac{\mathbf{A}_{ij} - \mathbf{A}_{ji}}{2}, \; \mathbf{T}_{ji} = \frac{\mathbf{A}_{ji} - \mathbf{A}_{ij}}{2} \;\; (1 \leq i < j \leq n)$$
+$$\mathbf{S}_{ii} = \mathbf{T}_{ii} = \frac{\mathbf{A}_{ii}}{2} \;\; (1 \leq i \leq n)$$
+Then
+$$(\mathbf{S+T})_{ij} = \frac{\mathbf{A}_{ij} + \mathbf{A}_{ji}}{2} + \frac{\mathbf{A}_{ij} - \mathbf{A}_{ji}}{2} = \mathbf{A}_{ij} \;\; (1 \leq i < j \leq n)$$
+$$(\mathbf{S+T})_{ji} = \frac{\mathbf{A}_{ij} + \mathbf{A}_{ji}}{2} + \frac{\mathbf{A}_{ji} - \mathbf{A}_{ij}}{2} = \mathbf{A}_{ji} \;\; (1 \leq i < j \leq n)$$
+$$(\mathbf{S+T})_{ii} = \frac{\mathbf{A}_{ii}}{2} + \frac{\mathbf{A}_{ii}}{2} = \mathbf{A}_{ii} \;\; (1 \leq i \leq n)$$
+Therefore $\mathbf{S + T} = \mathbf{A}$.
+
+\section*{Problem 3}
+We should prove the following:
+$$\qty(\mathbf{A}^k)_{ij} = 0 \;\; (k \geq 1, \; \forall \, i, j \in \mathbb{N} \; \mathrm{s.t.} \; i \geq j - k + 1)$$
+When $k = 1$, $\mathbf{A}_{ij} = 1$ for all $i \geq j$.
+\vspace{3mm}
+
+Suppose the statement is true at $k = m$. Then
+$$\qty(\mathbf{A}^m)_{ij} = 0 \;\; (\forall \, i, j \in \mathbb{N} \; \mathrm{s.t.} \; i \geq j - m + 1)$$
+If $i \geq j - m$,
+\begin{align*}
+    \qty(\mathbf{A}^{m+1})_{ij} &= \sum_{k=1}^{n}\qty(\mathbf{A}^m)_{ik}\mathbf{A}_{kj} \\
+    &= \sum_{k=1}^{i+m-1}\qty(\mathbf{A}^m)_{ik}\mathbf{A}_{kj} + \sum_{k=i+m}^{n}\qty(\mathbf{A}^m)_{ik}\mathbf{A}_{kj} \\
+    &= 0
+\end{align*}
+The statement is also true at $k = m+1$.
+Using mathematical induction, the statement is true is at all $k \geq 1$.
+\vspace{3mm}
+
+Therefore for $\mathbf{A}^{n}$, $\qty(\mathbf{A}^{n})_{ij} = 0$ for all $i \geq j - n + 1$. Since $j \leq n$, it satisfies for all $i, j$. 
+\vspace{3mm}
+
+$\therefore \mathbf{A} = \mathbf{0}$
+
+\section*{Problem 4}
+\begin{enumerate}[leftmargin=*, label={(\alph*)}]
+    \item Geometrically, `rotating' two vectors and `adding' them is equal to `adding' them first and then `rotating' them.
+    Adding to vectors can be calculated by drawing a parallelogram with the vectors, but rotation of vectors similarly rotates the parallelogram too, so the result is equivalent.
+    Also `rotating' a vector and `multiplying' it is equal to the opposite.
+    Multiplying a scalar to a vector doesn't change its orientation but only its size, rotating a vector doesn't change its size but only is orientation. Thus the result is equivalent.
+    Since rotation preserves both adding and scalar multiplication, it is a linear transformation.
+    \item Rotations of the standard bases of $\mathbb{R}^2$ will give the corresponding matrix.
+    \vspace{2mm}
+
+    Let $\mathbf{x} = (x, y) = x\mathbf{e_1} + y\mathbf{e_2}$, then
+    $$L_\theta(\mathbf{x}) = L_\theta\qty(x\mathbf{e_1} + y\mathbf{e_2}) = xL_\theta\qty(\mathbf{e_1}) + yL_\theta\qty(\mathbf{e_2})$$
+    since $L_\theta$ is a linear transformation.
+    \vspace{2mm}
+
+    Rotating $\mathbf{e_1} = (1, 0)$ and $\mathbf{e_2} = (0, 1)$ gives $L_\theta\qty(\mathbf{e_1}) = (\cos\theta, \sin\theta), \; L_\theta\qty(\mathbf{e_2}) = (-\sin\theta, \cos\theta)$.
+    \vspace{2mm}
+
+    Therefore
+    \begin{align*}
+        L_\theta(\mathbf{x}) &= x(\cos\theta, \sin\theta) + y(-\sin\theta, \cos\theta) \\
+        &= \begin{bmatrix}
+            \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta
+        \end{bmatrix}\begin{bmatrix}
+            x \\ y
+        \end{bmatrix}
+    \end{align*}
+    $\therefore \mathbf{A}_\theta = \begin{bmatrix}
+        \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta
+    \end{bmatrix}$
+    \item Since $L_\theta$ is a linear transformation and $\mathbf{A}_\theta$ is its corresponding matrix, the fundamental theorem of linear algebra gives:
+    $$\qty(L_\alpha \circ L_\beta)(\mathbf{x}) = \mathbf{A}_\alpha\mathbf{A}_\beta\mathbf{x}$$
+    Since $L_\theta$ is the map of counterclockwise rotation, $L_{\alpha+\beta} = L_\alpha \circ L_\beta$. $\therefore L_{\alpha+\beta}(\mathbf{x}) = \mathbf{A}_\alpha\mathbf{A}_\beta\mathbf{x}$
+    \vspace{2mm}
+    
+    Let $\mathbf{x} = (x, y)$, then
+    \begin{align*}
+        L_{\alpha+\beta}(\mathbf{x}) &= \mathbf{A}_{\alpha+\beta}\mathbf{x} \\
+        &= \begin{bmatrix}
+            \cos\qty(\alpha+\beta) & -\sin\qty(\alpha+\beta) \\ \sin\qty(\alpha+\beta) & \cos\qty(\alpha+\beta)
+        \end{bmatrix}\begin{bmatrix}
+            x \\ y
+        \end{bmatrix} \\
+        \mathbf{A}_\alpha\mathbf{A}_\beta\mathbf{x} &= \begin{bmatrix}
+            \cos\alpha & -\sin\alpha \\ \sin\alpha & \cos\alpha
+        \end{bmatrix}\begin{bmatrix}
+            \cos\beta & -\sin\beta \\ \sin\beta & \cos\beta
+        \end{bmatrix}\begin{bmatrix}
+            x \\ y
+        \end{bmatrix} \\
+        &= \begin{bmatrix}
+            \cos\alpha\cos\beta - \sin\alpha\sin\beta & - \sin\alpha\cos\beta - \cos\alpha\sin\beta \\ \sin\alpha\cos\beta + \cos\alpha\sin\beta & \cos\alpha\cos\beta - \sin\alpha\sin\beta
+        \end{bmatrix}\begin{bmatrix}
+            x \\ y
+        \end{bmatrix}
+    \end{align*}
+    Therefore, 
+    \begin{align*}
+        \cos\qty(\alpha+\beta) &= \cos\alpha\cos\beta - \sin\alpha\sin\beta \\
+        \sin\qty(\alpha+\beta) &= \sin\alpha\cos\beta + \cos\alpha\sin\beta
+    \end{align*}
+\end{enumerate}
+
+\section*{Problem 5}
+The rank of a matrix is equivalent to that of its row-equivalent matrices.
+We can find the row reduced echelon form of $\mathbf{A}$.
+\begin{align*}
+    \mathbf{A} &= \begin{bmatrix}
+        c+2 & c+3 & \cdots & c+1+n \\
+        c+3 & c+4 & \cdots & c+2+n \\
+        \vdots & \vdots & \ddots & \vdots \\
+        c+n+1 & c+n+2 & \cdots & c+n+n
+    \end{bmatrix} \\
+    &\rightarrow \begin{bmatrix}
+        c+2 & c+3 & \cdots & c+1+n \\
+        1 & 1 & \cdots & 1 \\
+        2 & 2 & \cdots & 2 \\
+        \vdots & \vdots & \ddots & \vdots \\
+        n-1 & n-1 & \cdots & n-1
+    \end{bmatrix} 
+    \rightarrow \begin{bmatrix}
+        c+2 & c+3 & \cdots & c+1+n \\
+        1 & 1 & \cdots & 1 \\
+        0 & 0 & \cdots & 0 \\
+        \vdots & \vdots & \ddots & \vdots \\
+        0 & 0 & \cdots & 0
+    \end{bmatrix}
+\end{align*}
+Since $(c+2, \; c+3, \; \cdots, \; c+1+n)$ and $(1, \; 1, \; \cdots, \; 1)$ are linearly independent, the rank of $\mathbf{A}$ is 2.
+
+\section*{Problem 6}
+Let the column vectors of $\mathbf{B}$ as $\mathbf{B}_1, \; \mathbf{B}_2, \; \cdots , \; \mathbf{B}_n$.
+Then the columns of AB will be $\mathbf{AB}_1, \; \mathbf{AB}_2, \; \cdots , \; \mathbf{AB}_n$.
+\vspace{2mm}
+
+Let $\mathrm{rank}(\mathbf{B}) = r$, then we can choose $I = \qty{i_1, \; i_2, \; \cdots , \; i_r}$ such that $\mathbf{B}_{i_1}, \; \mathbf{B}_{i_2}, \; \cdots , \; \mathbf{B}_{i_r} \in \mathbf{B}$ are linearly independent.
+Then for $\mathbf{B}_k \in \mathbf{B}$, we can claim the following:
+$$\forall k \notin I, \; \exists \, a_1, \; \cdots ,\; a_r \;\; \mathrm{s.t.} \;\; \mathbf{B}_k = a_1\mathbf{B}_{i_1} + \cdots + a_r\mathbf{B}_{i_r}$$
+$$\mathbf{AB}_k = a_1\mathbf{AB}_{i_1} + \cdots + a_r\mathbf{AB}_{i_r}$$
+Therefore $\mathbf{AB}_{i_1}, \; \cdots , \; \mathbf{AB}_{i_r}, \; \mathbf{AB}_k$ are linearly dependent.
+$\therefore \mathrm{rank}(\mathbf{AB}) \leq r = \mathrm{rank}(\mathbf{B})$
+\vspace{2mm}
+
+Then for any matrix $\mathbf{A}, \mathbf{B}$, $\mathrm{rank}\qty(\mathbf{B}^T\mathbf{A}^T) \leq \mathrm{rank}\qty(\mathbf{A}^T)$.
+The rank theorem gives $\mathrm{rank}(\mathbf{M}) = \mathrm{rank}\qty(\mathbf{M}^T)$ for any matrix $\mathbf{M}$. Therefore
+\begin{align*}
+    \mathrm{rank}(\mathbf{AB}) &= \mathrm{rank}\qty((\mathbf{AB})^T) = \mathrm{rank}\qty(\mathbf{B}^T\mathbf{A}^T) \\
+    &\leq \mathrm{rank}\qty(\mathbf{A}^T) = \mathrm{rank}(\mathbf{A})
+\end{align*}
+Since $\mathrm{rank}(\mathbf{AB}) \leq \mathrm{rank}(\mathbf{A})$ and $\mathrm{rank}(\mathbf{AB}) \leq \mathrm{rank}(\mathbf{B})$, 
+$$\mathrm{rank}(\mathbf{AB}) \leq \min\qty{\mathrm{rank}(\mathbf{A}), \; \mathrm{rank}(\mathbf{B})}$$
+
+If we take $\mathbf{A} = \begin{bmatrix}
+    1 & 0 \\ 0 & 0
+\end{bmatrix}$ and  $\mathbf{B} = \begin{bmatrix}
+    0 & 0 \\ 0 & 1
+\end{bmatrix}$, then $\mathbf{AB} = \begin{bmatrix}
+    0 & 0 \\ 0 & 0
+\end{bmatrix}$, so $\mathrm{rank}(\mathbf{AB}) = 0$ and $\min\qty{\mathrm{rank}(\mathbf{A}), \mathrm{rank}(\mathbf{B})} = 1$, which satisfies $\mathrm{rank}(\mathbf{AB}) < \min\qty{\mathrm{rank}(\mathbf{A}), \; \mathrm{rank}(\mathbf{B})}$.
+
+\section*{Problem 7}
+\begin{enumerate}[leftmargin=*, label={(\alph*)}]
+    \item For $\forall \mathbf{x} \in \ker{\mathbf{A}^T\mathbf{A}}$, $\mathbf{A}^T\mathbf{Ax = 0}$. Then
+    $$\mathbf{x}^T\mathbf{A}^T\mathbf{Ax = 0}, \; \qty(\mathbf{Ax})^T\mathbf{Ax = 0}$$
+    Since $\mathbf{Ax} \in \mathbb{R}^{m \times 1}$ and is a column vector, 
+    $$\qty(\mathbf{Ax})^T\mathbf{Ax} = \langle \mathbf{Ax}, \; \mathbf{Ax} \rangle = \mathbf{0}$$
+    Therefore $\mathbf{Ax = 0}$, so $\mathbf{x} \in \ker{\mathbf{A}}$. $\therefore \ker{\mathbf{A}^T\mathbf{A}} \subseteq \ker{\mathbf{A}}$
+    \vspace{2mm}
+
+    For $\forall \mathbf{x} \in \ker{\mathbf{A}}$, $\mathbf{Ax = 0}$. Then $\mathbf{A}^T\mathbf{Ax = 0}$, therefore $\mathbf{x} \in \ker{\mathbf{A}^T\mathbf{A}}$. $\therefore \ker{\mathbf{A}} \subseteq \ker{\mathbf{A}^T\mathbf{A}}$
+    \vspace{2mm}
+
+    Therefore $\ker{\mathbf{A}} = \ker{\mathbf{A}^T\mathbf{A}}$. The rank-nullity theorem gives:
+    \begin{align*}
+        \mathrm{rank}\qty(\mathbf{A}^T\mathbf{A}) &= n - \dim\qty(\ker{\mathbf{A}^T\mathbf{A}}) \\
+        &= n - \dim\qty(\ker{\mathbf{A}}) \\
+        &= \mathrm{rank}\qty(\mathbf{A})
+    \end{align*}
+    \item 
+
+\end{enumerate}
+
+\section*{Problem 8}
+\begin{enumerate}[leftmargin=*, label={(\alph*)}]
+    \item When $n = 1$, $\mathbf{X} = \begin{bmatrix}
+        1
+    \end{bmatrix}$, so $\det\mathbf{X} = 1$. The statement is true.
+    \vspace{2mm}
+    
+    When $n = 2$, $\mathbf{X} = \begin{bmatrix}
+        1 & x_1 \\
+        1 & x_2 
+    \end{bmatrix}$, so $\det\mathbf{X} = x_2 - x_1$. The statement is true.
+    \vspace{2mm}
+
+    Suppose the statement is true at $n = k \; (k \geq 2)$, then $\det\mathbf{X} = \prod_{1 \leq i < j \leq k}\qty(x_j - x_i)$. Now we can claim the following:
+
+    \begin{align*}
+        \det\mathbf{X}\Big|_{n=k+1} &= \det\begin{bmatrix}
+            1 & x_1 & \cdots & x_1^{k} \\
+            1 & x_2 & \cdots & x_2^{k} \\
+            \vdots & \vdots & \ddots & \vdots \\
+            1 & x_{k+1} & \cdots & x_{k+1}^{k}
+        \end{bmatrix} = \det\begin{bmatrix}
+            1 & x_1 & \cdots & x_1^{k} \\
+            0 & x_2 - x_1 & \cdots & x_2^{k} - x_1^{k} \\
+            \vdots & \vdots & \ddots & \vdots \\
+            0 & x_{k+1} - x_1 & \cdots & x_{k+1}^{k} - x_1^{k}
+        \end{bmatrix} \\
+        &= \det\begin{bmatrix}
+            x_2 - x_1 & x_2^2 - x_1^2 & \cdots & x_2^{k} - x_1^{k} \\
+            x_3 - x_1 & x_3^2 - x_1^2 & \cdots & x_3^{k} - x_1^{k} \\
+            \vdots & \vdots & \ddots & \vdots \\
+            x_{k+1} - x_1 & x_{k+1}^2 - x_1^2 & \cdots & x_{k+1}^{k} - x_1^{k}
+        \end{bmatrix} \\
+        &= \det\qty(\begin{bmatrix}
+            x_2 - x_1 & 0 & \cdots & 0 \\
+            0 & x_3 - x_1 & \cdots & 0 \\
+            \vdots & \vdots & \ddots & \vdots \\
+            0 & 0 & \cdots & x_{k+1} - x_1
+        \end{bmatrix}\begin{bmatrix}
+            1 & x_2 + x_1 & \cdots & \sum_{i=0}^{k-1}x_2^{k-1-i}x_1^{i} \\
+            1 & x_3 + x_1 & \cdots & \sum_{i=0}^{k-1}x_3^{k-1-i}x_1^{i} \\
+            \vdots & \vdots & \ddots & \vdots \\
+            1 & x_{k+1} + x_1 & \cdots & \sum_{i=0}^{k-1}x_{k+1}^{k-1-i}x_1^{i} \\
+        \end{bmatrix}) \\ 
+        &= \prod_{j=2}^{k+1}\qty(x_j - x_1)\det\begin{bmatrix}
+            1 & x_2 + x_1 & \cdots & \sum_{i=0}^{k-1}x_2^{k-1-i}x_1^{i} \\
+            1 & x_3 + x_1 & \cdots & \sum_{i=0}^{k-1}x_3^{k-1-i}x_1^{i} \\
+            \vdots & \vdots & \ddots & \vdots \\
+            1 & x_{k+1} + x_1 & \cdots & \sum_{i=0}^{k-1}x_{k+1}^{k-1-i}x_1^{i} \\
+        \end{bmatrix} \\
+        &= \prod_{j=2}^{k+1}\qty(x_j - x_1)\det\qty(\begin{bmatrix}
+            1 & x_2 & x_2^2 & \cdots & x_2^{k-1} \\
+            1 & x_3 & x_3^2 & \cdots & x_3^{k-1} \\
+            \vdots & \vdots & \vdots & \ddots & \vdots \\
+            1 & x_{k+1} & x_{k+1}^2 & \cdots & x_{k+1}^{k-1} \\
+        \end{bmatrix}\begin{bmatrix}
+            1 & x_1 & x_1^2 & \cdots & x_1^{k-1} \\
+            0 & 1 & x_1 & \cdots & x_1^{k-2} \\
+            \vdots & \vdots & \vdots & \ddots & \vdots \\
+            0 & 0 & 0 & \cdots & 1 \\
+        \end{bmatrix}) \\
+        &= \prod_{j=2}^{k+1}\qty(x_j - x_1)\det\mathbf{X}\Big|_{n=k, \; 2 \leq i, \, j \leq k+1} \\
+        &= \prod_{1 = i < j \leq k+1}\qty(x_j - x_1)\prod_{2 \leq i < j \leq k+1}\qty(x_j - x_i) \\
+        &= \prod_{1 \leq i < j < k+1}\qty(x_j - x_i)
+    \end{align*}
+    The statement is also true at $n = k+1$. Using mathematical induction, it is true at all $n \geq 1$.
+    \item Let $p(x) = p_0 + p_1x + \cdots + p_{n-1}x^{n-1}$, we should prove that a set $\qty{p_j : 0 \leq j < n}$ exists and is unique.
+    \begin{gather*}
+        p(x_1) = p_0 + p_1x_1 + \cdots + p_{n-1}x_1^{n-1} = y_1 \\
+        \cdots \\
+        p(x_n) = p_0 + p_1x_n + \cdots + p_{n-1}x_n^{n-1} = y_n \\
+    \end{gather*}
+    Equations $p(x_i) = y_i \; (1 \leq i \leq n)$ are like the above.
+    It can be written as:
+    $$\begin{bmatrix}
+        1 & x_1 & \cdots & x_1^{n-1} \\
+        1 & x_2 & \cdots & x_2^{n-1} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        1 & x_{n} & \cdots & x_{n}^{n-1}
+    \end{bmatrix}\begin{bmatrix}
+        p_0 \\ p_1 \\ \vdots \\ p_{n-1}
+    \end{bmatrix} = \begin{bmatrix}
+        y_1 \\ y_2 \\ \vdots \\ y_n
+    \end{bmatrix}$$
+    Since all $x_i$'s are distinct, $\det\begin{bmatrix}
+        1 & x_1 & \cdots & x_1^{n-1} \\
+        1 & x_2 & \cdots & x_2^{n-1} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        1 & x_{n} & \cdots & x_{n}^{n-1}
+    \end{bmatrix} = \prod_{1 \leq i < j \leq k}\qty(x_j - x_i) \neq 0$.
+    \vspace{2mm}
+
+    Therefore the linear system above has a unique and existing solution, therefore a set of solutions $\qty{p_j : 0 \leq j < n}$ exists and is unique. 
+\end{enumerate}
+
+\section*{Problem 9}
+\begin{algorithm}[H]
+    \caption{Gauss-Jordan Elimination}        
+    \begin{algorithmic}
+        \Function{Gauss-Jordan Elimination }{$\mathbf{A}$ : $n \times n+1$ augmented matrix}
+        \While{$i = 1 \; \mathbf{to} \; n$}
+            \While{$j = i \; \mathbf{to} \; n$}
+                \If{$\mathbf{A}_{ji} \neq 0$}
+                    \State $\mathbf{A}_i \leftrightarrow \mathbf{A}_j$
+                    \State $\mathbf{A}_{ik} = \dfrac{\mathbf{A}_{ik}}{\mathbf{A}_{ii}}$ \Comment{$k = 1, \; 2, \; \cdots, \; n+1$}
+                    \State $\mathbf{A}_{lk} = \mathbf{A}_{lk} - \dfrac{\mathbf{A}_{li}}{\mathbf{A}_{ii}} \mathbf{A}_{ik}$ \Comment{$l = i+1, \; i+2, \; \cdots, \; n \; \mathrm{and} \; k = 1, \; 2, \; \cdots, \; n+1$}
+                    \State \textbf{break}
+                \EndIf
+            \EndWhile
+        \EndWhile
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+There are several loops in this algorithm. First, a loop is used to gow through each row and change it, repeated $n$ times. 
+Next, a loop is used to find the next row with a nonzero element at its specified index, which has a complexity of $O(1)$, since the lower loops are only executed once when the nonzero element is found.
+Next, a loop is used to change the elements in each row, which have a complexity of $O\qty(n^2)$ since it goes through all elements of the matrix.
+Therefore the overall complexity of the algorithm is $O\qty(n^3)$.
+
+\section*{Problem 10}
+All calculated bases from the process can be written as:
+$$\mathbf{e}_i = \frac{\mathbf{v}_i - \langle\mathbf{v}_i, \mathbf{e}_1\rangle\mathbf{e}_1 - \cdots - \langle\mathbf{v}_i, \mathbf{e}_{i-1}\rangle\mathbf{e}_{i-1}}{\norm{\mathbf{v}_i - \langle\mathbf{v}_i, \mathbf{e}_1\rangle\mathbf{e}_1 - \cdots - \langle\mathbf{v}_i, \mathbf{e}_{i-1}\rangle\mathbf{e}_{i-1}}}$$
+Any inner product of two calculated bases are:
+\begin{align*}
+    \langle\mathbf{e}_i, \mathbf{e}_j\rangle &= \left\langle\frac{\mathbf{v}_i - \langle\mathbf{v}_i, \mathbf{e}_1\rangle\mathbf{e}_1 - \cdots - \langle\mathbf{v}_i, \mathbf{e}_{i-1}\rangle\mathbf{e}_{i-1}}{\norm{\mathbf{v}_i - \langle\mathbf{v}_i, \mathbf{e}_1\rangle\mathbf{e}_1 - \cdots - \langle\mathbf{v}_i, \mathbf{e}_{i-1}\rangle\mathbf{e}_{i-1}}}, \mathbf{e}_j\right\rangle \\
+    &= \frac{\langle\mathbf{v}_i, \mathbf{e}_j\rangle - \langle\mathbf{v}_i, \mathbf{e}_j\rangle}{\norm{\mathbf{v}_i - \langle\mathbf{v}_i, \mathbf{e}_1\rangle\mathbf{e}_1 - \cdots - \langle\mathbf{v}_i, \mathbf{e}_{i-1}\rangle\mathbf{e}_{i-1}}} \\
+    &= 0
+\end{align*}
+Therefore all bases are orthogonal and their size are 1. Thus they are all orthonormal bases.
+\vspace{2mm}
+
+Let the dimension of vectors $\mathbf{v}_i$ each $m$. 
+Then the process goes through $n$ operations to earn $n$ orthonormal basis vectors.
+In each process, up to $n-1$ calculations are made to get projection vectors. 
+Calculating a projection vector requires calculating two inner products of the vectors, and since the dimension of each vector is $m$, it requires $2m$ operations.
+Therefore the overall complexity is equivalent to $O(2mn(n-1))$, which can be simplified as $O\qty(mn^2)$.
+
+
+\section*{References}
+\begin{enumerate}[leftmargin=*, label={[\arabic*]}]
+    \item `How to prove $\text{Rank}(AB)\leq \min(\text{Rank}(A), \text{Rank}(B))$?', \textit{Mathematics Stack Exchange}, 2016. Available: \url{https://math.stackexchange.com/q/48989}.
+    \item Thomas Hughes, `The Vandermonde Determinant, A Novel Proof', 2020. Available: \url{https://towardsdatascience.com/the-vandermonde-determinant-a-novel-proof-851d107bd728}.
+    \item `Gram–Schmidt process', \textit{Wikipedia}. Available: \url{https://en.wikipedia. org/wiki/Gram-Schmidt_process}.
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Usage of References}
+
+\vspace{0.2cm}
+[1] : Problem 6 \newline
+[2] : Problem 8 \newline
+[3] : Problem 10
+
+\end{document}
