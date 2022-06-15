@@ -6,4 +6,5 @@
 * [공학수학 1 (Engineering Mathematics 1)](./Engineering%20Mathematics%201)
 * [이산수학 (Discrete Mathematics)](./Discrete%20Mathematics)
 * [컴퓨터 프로그래밍 (Computer Programming)](./Computer%20Programming)
+* [논리설계 (Logic Design)](./Logic%20Design/)
 * [자료구조 (Data Structure)](./Data%20Structure)
