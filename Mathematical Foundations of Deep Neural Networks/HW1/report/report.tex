@@ -1,0 +1,118 @@
+\documentclass[10pt]{article}
+%\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{amsmath,amssymb,amsthm,physics,units}
+\usepackage[shortlabels]{enumitem}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{algorithm,algpseudocode}
+\usepackage[shortlabels]{enumitem}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+}
+
+\begin{document}
+\begin{center}
+    {\LARGE MathDNN Homework 1} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 1}
+\begin{enumerate}[leftmargin=*, label={(\alph*)}]
+    \item Let $X_i = \begin{bmatrix}
+        x_{i1} \\ \vdots \\ x_{ip}
+    \end{bmatrix}$ and $\theta = \begin{bmatrix}
+        \theta_1 \\ \vdots \\ \theta_p
+    \end{bmatrix}$, then for $j = 1, \cdots, p$, 
+    \begin{align*}
+        \frac{\partial}{\partial\theta_j}l_i(\theta) &= \frac{\partial}{\partial\theta_j}\qty[\frac{1}{2}\qty(X_i^\intercal \theta - Y_i)^2]\\
+        &= \frac{\partial}{\partial\theta_j}\qty[\frac{1}{2}\qty(x_{i1}\theta_1 + \cdots + x_{ip}\theta_p - Y_i)^2] \\
+        &= \qty(x_{i1}\theta_1 + \cdots + x_{ip}\theta_p - Y_i)x_{ij} \\
+        &= \qty(X_i^\intercal \theta - Y_i)x_{ij}.
+    \end{align*}
+    Therefore
+    \begin{align*}
+        \nabla_\theta l_i(\theta) &= \begin{bmatrix}
+            \frac{\partial}{\partial\theta_1}l_i(\theta) \\ \vdots \\ \frac{\partial}{\partial\theta_p}l_i(\theta)
+        \end{bmatrix} \\
+        &= \begin{bmatrix}
+            \qty(X_i^\intercal \theta - Y_i)x_{i1} \\ \vdots \\ \qty(X_i^\intercal \theta - Y_i)x_{ip}
+        \end{bmatrix} = \qty(X_i^\intercal \theta - Y_i)\begin{bmatrix}
+            x_{i1} \\ \vdots \\ x_{ip}
+        \end{bmatrix} \\
+        &= \qty(X_i^\intercal \theta - Y_i)X_i.
+    \end{align*}
+    \item Let $X_i = \begin{bmatrix}
+        x_{i1} \\ \vdots \\ x_{ip}
+    \end{bmatrix}$ and $\theta = \begin{bmatrix}
+        \theta_1 \\ \vdots \\ \theta_p
+    \end{bmatrix}$, then for $j = 1, \cdots, p$,
+    \begin{align*}
+        \frac{\partial}{\partial\theta_j}\mathcal{L}(\theta) &= \frac{\partial}{\partial\theta_j}\qty[\frac{1}{2}\left\Vert X\theta - Y \right\Vert^2] \\
+        &= \frac{\partial}{\partial\theta_j}\qty[\frac{1}{2}\begin{Vmatrix}
+            X_1^\intercal \theta - Y_1 \\ \vdots \\ X_N^\intercal \theta - Y_N
+        \end{Vmatrix}^2] = \frac{\partial}{\partial\theta_j}\qty[\sum_{i=1}^{N}\frac{1}{2}\qty(X_i^\intercal \theta - Y_i)^2] = \frac{\partial}{\partial\theta_j}\qty[\sum_{i=1}^{N}l_i(\theta)] \\
+        &= \sum_{i=1}^{N}\frac{\partial}{\partial\theta_j}l_i(\theta) = \sum_{i=1}^{N}\qty(X_i^\intercal \theta - Y_i)x_{ij}.
+    \end{align*}
+    Therefore
+    \begin{align*}
+        \nabla_\theta\mathcal{L}(\theta) &= \begin{bmatrix}
+            \sum_{i=1}^{N}\qty(X_i^\intercal \theta - Y_i)x_{i1} \\ \vdots \\ \sum_{i=1}^{N}\qty(X_i^\intercal \theta - Y_i)x_{ip}
+        \end{bmatrix} \\ 
+        &= \begin{bmatrix}
+            \qty(X_1^\intercal \theta - Y_1)x_{11} + \qty(X_2^\intercal \theta - Y_2)x_{21} + \cdots + \qty(X_N^\intercal \theta - Y_N)x_{N1} \\
+            \vdots \\
+            \qty(X_1^\intercal \theta - Y_1)x_{1p} + \qty(X_2^\intercal \theta - Y_2)x_{2p} + \cdots + \qty(X_N^\intercal \theta - Y_N)x_{Np} \\
+        \end{bmatrix} \\
+        &= \sum_{i=1}^{N}X_i\qty(X_i^\intercal \theta - Y_i) = \sum_{i=1}^{N}\qty(X^\intercal )_{:,i}\qty(X\theta-Y)_i \\
+        &= X^\intercal \qty(X\theta-Y).
+    \end{align*}
+\end{enumerate}
+
+\section*{Problem 2}
+Since $f(\theta) = \theta^2 / 2$, we can get $f'(\theta) = \theta$ and the iteration equation can be written as 
+$$\theta^{k+1} = (1-\alpha)\theta^k.$$
+Thus the $n$th iteration gives
+$$\theta^n = (1-\alpha)\theta^{n-1} = \cdots = (1-\alpha)^n\theta^0.$$
+Therefore if $\alpha>2$ and $\theta^0 \neq 0$, $\theta^n$ diverges since it is a geometric sequence where its ratio is less than $-1$.
+
+\section*{Problem 3}
+Since $f(\theta) = \dfrac{1}{2}\left\Vert X\theta - Y \right\Vert^2$, we can get $\nabla f(\theta) = X^\intercal \qty(X\theta-Y)$ and the iteration equation can be written as 
+$$\theta^{k+1} = \theta^{k} - \alpha X^\intercal \qty(X\theta^k-Y).$$
+Assume $X^\intercal X$ is invertible and let $\theta^* = \qty(X^\intercal X)^{-1}X^\intercal Y$, then
+\begin{align*}
+    \theta^{k+1} - \theta^* &= \theta^{k} - \alpha X^\intercal \qty(X\theta^k-Y) - \qty(X^\intercal X)^{-1}X^\intercal Y \\
+    &= \theta^k - \alpha X^\intercal X\theta^k + \alpha X^\intercal Y - \qty(X^\intercal X)^{-1}X^\intercal Y \\
+    &= \qty(I - \alpha X^\intercal X)\theta^k + \qty(\alpha X^\intercal X - I)\qty(X^\intercal X)^{-1}X^\intercal Y = \qty(I - \alpha X^\intercal X)\theta^k + \qty(\alpha X^\intercal X - I)\theta^* \\
+    &= \qty(I - \alpha X^\intercal X)\qty(\theta^k - \theta^*)
+\end{align*}
+where $I \in \mathbb{R}^{p \times p}$ is an identity matrix. Thus the $n$th iteration gives
+$$\theta^n - \theta^* = \qty(I - \alpha X^\intercal X)\qty(\theta^{n-1} - \theta^*) = \cdots = \qty(I - \alpha X^\intercal X)^n\qty(\theta^0 - \theta^*).$$
+Since $X^\intercal X$ is a symmetric matrix and a positive matrix, it has $p$ real positive eigenvalues and is diagonalizable by them.
+Let $\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_p \geq 0$ the eigenvalues and $M$ the matrix with the eigenvectors as its columns, then 
+$$M^{-1}X^\intercal XM = \mathrm{diag}\qty(\lambda_1, \cdots, \lambda_p), \;\; X^\intercal X \sim \mathrm{diag}\qty(\lambda_1, \cdots, \lambda_p)$$
+and gradually
+\begin{align*}
+    I - \alpha X^\intercal X &= I - \alpha M \mathrm{diag}\qty(\lambda_1, \cdots, \lambda_p)M^{-1} \\
+    &= MIM^{-1} - M\qty(\alpha\,\mathrm{diag}\qty(\lambda_1, \cdots, \lambda_p))M^{-1} \\
+    &= M\qty(I - \alpha\,\mathrm{diag}\qty(\lambda_1, \cdots, \lambda_p))M^{1}
+    = M\mathrm{diag}\qty(1-\alpha\lambda_1, \cdots, 1-\alpha\lambda_p)M^{-1}
+\end{align*}
+so $I - \alpha X^\intercal X \sim \mathrm{diag}\qty(1-\alpha\lambda_1, \cdots, 1-\alpha\lambda_p)$. Therefore
+\begin{align*}
+    \qty(I - \alpha X^\intercal X)^n &= M\mathrm{diag}\qty(1-\alpha\lambda_1, \cdots, 1-\alpha\lambda_p)^nM^{-1} \\
+    &= M\mathrm{diag}\qty(\qty(1-\alpha\lambda_1)^n, \cdots, \qty(1-\alpha\lambda_p)^n)M^{-1}.
+\end{align*}
+If $\alpha > {2}/{\rho\qty(X^\intercal X)}$, we can obtain $1-\alpha\lambda_1 < -1$ since $\rho\qty(X^TX) = \lambda_1 \geq 0$. Therefore $\qty(1-\alpha\lambda_1)^n$ diverges, and consequently $\qty(I - \alpha X^\intercal X)^n$, $\theta^n - \theta^*$, and $\theta^n$ also diverge.
+\end{document}
