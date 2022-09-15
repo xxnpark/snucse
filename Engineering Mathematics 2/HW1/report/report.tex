@@ -1,0 +1,121 @@
+\documentclass{article}
+\usepackage{bm}
+\usepackage{amsmath, amsfonts, amssymb, physics}
+\usepackage{graphicx}
+\usepackage{mdwlist}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{palatino}
+
+
+\usepackage{paralist}
+
+\usepackage{todonotes}
+\setlength{\marginparwidth}{2.15cm}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,backgrounds}
+
+\begin{document}
+\vspace*{-1.5cm}
+{\centering \vbox{%
+\vspace{2mm}
+\large
+Engineering Mathematics 2 \hfill
+\\
+Seoul National University
+\\[4mm]
+Homework 1\\
+\textbf{2021-16988 Jaewan Park} \\[0.8mm]
+}}
+\par\noindent\rule{\textwidth}{0.5pt}
+
+\section*{Exercise 1.4}
+The winner and loser should have won $n$, $k$ games each when the match is over.
+Since t winner must have won the last game, the loser should have taken $k$ games out of the remaining $n+k-1$ games.
+The number of cases for this situation is ${n+k-1 \choose k}$.
+All probabilities for a win or lose decision for each game is $\dfrac{1}{2}$, so the total probability for each case is $\dfrac{1}{2^{n+k}}$.
+Therefore the probability for a winner and loser decision is $\dfrac{{n+k-1 \choose k}}{2^{n+k}}$, and since the winner and loser can be the opposite of the two, the total probability would be $\dfrac{{n+k-1 \choose k}}{2^{n+k-1}}$.
+
+\section*{Exercise 1.6}
+Let $E_{n}^{k}$ the event where there are $n$ balls in the bin and $k$ of them are white.
+We can use mathematical induction on $n$ to obtain the probability of this event.
+First claim 
+$$P\qty[E_{n}^{k}] = \begin{cases}
+  \dfrac{1}{n-1} & (1 \leq k < n) \\
+  0 & (k \geq n)
+\end{cases}$$
+for each $n$.
+If $n=2$, $P\qty[E_2^1] = 1$ so the hypothesis holds.
+Now suppose that the the inductive hypothesis holds for $n=m-1$. 
+For the bin to have $k \; (1 \leq k < n)$ white balls at $n=m$, it should have had $k-1$ or $k$ white balls in the previous iteration.
+Therefore
+\begin{align*}
+  P\qty[E_{m}^{k}] &= P\qty[E_{m}^{k} \cap E_{m-1}^{k}] + P\qty[E_{m}^{k} \cap E_{m-1}^{k-1}] \\
+  &= P\qty[E_{m}^{k} \,|\, E_{m-1}^{k}]P\qty[E_{m-1}^{k}] + P\qty[E_{m}^{k} \,|\, E_{m-1}^{k-1}]P\qty[E_{m-1}^{k-1}] \\
+  &= \frac{m-1-k}{m-1} \times \frac{1}{m-2} + \frac{k-1}{m-1} \times \frac{1}{m-2} \\
+  &= \frac{1}{m-1}
+\end{align*}
+and the claim holds also at $n=m$.
+If $k > m$, $P\qty[E_{m-1}^{k}] = P\qty[E_{m-1}^{k}] = 0$ so $P\qty[E_{m}^{k}] = 0$, thus the claim holds.
+Therefore for all $n$, the probability for the number of white balls to be any number between $1$ and $n-1$ is all equal to $\dfrac{1}{n-1}$.
+
+\section*{Exercise 1.8}
+Let $E_{n}$ the event where a number chosen is divisible by $n \in \mathbb{N}$. Then the inclusion-exclusion gives
+\begin{align*}
+  P\qty[E_4 \cup E_6 \cup E_9] &= P\qty[E_4] + P\qty[E_6] + P\qty[E_9] - P\qty[E_4 \cap E_6] - P\qty[E_6 \cap E_9] - P\qty[E_9 \cap E_4] + P\qty[E_4 \cap E_6 \cap E_9] \\
+  &= P\qty[E_4] + P\qty[E_6] + P\qty[E_9] - P\qty[E_{12}] - P\qty[E_{18}] - P\qty[E_{36}] + P\qty[E_{36}] \\
+  &= \frac{250000}{1000000} + \frac{166666}{1000000} + \frac{111111}{1000000} - \frac{83333}{1000000} - \frac{55555}{1000000} \\
+  &= \frac{388889}{1000000}.
+\end{align*}
+
+\section*{Exercise 1.15}
+Let $E_{n}^{k}$ the event where the remainder when dividing the sum up to the $n$-th roll is $k$.
+We can use mathematical induction to obtain the probability.
+First claim that at for all $n$, $E_n^k = \dfrac{1}{6}$ equally for $k = 0, 1, \cdots, 5$.
+If $n = 1$, the claim holds.
+Suppose the hypothesis holds at $n=m-1$.
+For any remainder of the sum up to the $(m-1)$-th roll, the $m$-th roll can have only one determined value to make the remainder of the sum up to the $n$-th roll to be $k$. 
+Therefore for all $i = 0, 1, \cdots, 5$, $P\qty[E_m^k \;|\; E_{m-1}^{i}] = \dfrac{1}{6}$. This gives the following.
+\begin{align*}
+  P\qty[E_m^k] &= P\qty[E_m^k \;|\; E_{m-1}^{1}]P\qty[E_{m-1}^1] + P\qty[E_m^k \;|\; E_{m-1}^{2}]P\qty[E_{m-1}^2] + \cdots + P\qty[E_m^k \;|\; E_{m-1}^{5}]P\qty[E_{m-1}^5] \\
+  &= \frac{1}{6}\times\frac{1}{6} + \frac{1}{6}\times\frac{1}{6} + \cdots + \frac{1}{6}\times\frac{1}{6} = \frac{1}{6}
+\end{align*}
+The claim also holds at $n=m$, so it holds for all $n \in \mathbb{N}$. 
+Therefore the probability that the sum up to the tenth roll is divisible by $6$ is $\dfrac{1}{6}$.
+
+\section*{Exercise 1.18}
+We can use an algorithm going through the following steps:
+\begin{enumerate}
+  \item Choose a random integer $x \in \qty{0, 1, \cdots , n-1}$.
+  \item Define $y:= \qty(z - x) \mod{n}$.
+  \item Assume $F(z) = \qty(F(x) + F(y)) \mod{m}$.
+\end{enumerate}
+The input is $z$, and the algorithm uses two lookups $F(x)$ and $F(y)$ to return $\qty(F(x) + F(y)) \mod{m}$ as the output.
+
+\vspace{2mm}
+\noindent From step 2, we can obtain $z = (x + y) \mod{n}$, so
+$$P\qty[F(z) = \qty(F(x) + F(y)) \mod{m}] = P\qty[F((x + y) \mod{n}) = \qty(F(x) + F(y)) \mod{m}]$$
+`$F((x + y) \mod{n}) = \qty(F(x) + F(y)) \mod{m}$' is always true when $F$ is not disrupted, but since $F$ is partially uncorrect, the probability of it being true is larger than the probability of $F(x)$ and $F(y)$ not both being wrong.
+($F(x) + F(y)$ may have the same $\mod{m}\;\;$ value even if the two are all incorrect, so the probabilty is \textbf{larger}, not equal to the probabilty of not both being wrong.)
+Let $E_k$ the event where $F(k)$ is incorrect, then $\forall k$, $P\qty[E_k] = \dfrac{1}{5}$, so
+\begin{align*}
+  P\qty[F((x + y) \mod{n}) = \qty(F(x) + F(y)) \mod{m}] &\geq 1 - P\qty[E_x \cap E_y] \\
+  &\geq 1 - \qty(P\qty[E_x] + P\qty[E_y]) = \frac{3}{5}
+\end{align*}
+Therefore the algorithm has an accuracy larger than $\dfrac{1}{2}$ and works for every possible value of $z$.
+
+\vspace{2mm}
+\noindent If we run the algorithm three times, choosing the result that appears multiple times (if there exists) would be the best method.
+The probability of two attempts giving the correct answer is at least $3 \cdot \qty(\dfrac{3}{5})^2 \cdot \dfrac{2}{5} = \dfrac{54}{125}$, and the probability of three attempts giving the correct answer is at least $\qty(\dfrac{3}{5})^3 = \dfrac{27}{125}$.
+Therefore the probability of getting a correct answer is at least $\dfrac{54}{125} + \dfrac{27}{125} = \dfrac{81}{125}$, which is enhanced than the non-repeated algorithm.
+
+
+\section*{Exercise 1.23}
+The randomized min-cut algorithm outputs a specific minimum cut-set with probability at least $\dfrac{2}{n(n-1)}$.
+Suppose there are $k$ distinct min-cut sets, then the probability that the algorithm outputs any minimum cut-set is at least $\dfrac{2k}{n(n-1)}$.
+Since a probability cannot be larger than 1, we obtain the following.
+$$\frac{2k}{n(n-1)} \leq 1, \;\; k \leq \frac{n(n-1)}{2}$$
+Therefore there can be at most $\dfrac{n(n-1)}{2}$ distinct min-cut sets.
+\end{document}
