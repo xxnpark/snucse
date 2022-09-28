@@ -1,0 +1,129 @@
+\documentclass[10pt]{article}
+%\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{amsmath,amssymb,amsthm,physics,units,mathtools}
+\usepackage[shortlabels]{enumitem}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{algorithm,algpseudocode}
+\usepackage[shortlabels]{enumitem}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+}
+
+\begin{document}
+\begin{center}
+    {\LARGE MathDNN Homework 4} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 1}
+The parameters for convolution are $C_{\mathrm{in}} = 1$, $C_{\mathrm{out}} = 2$, $F = 3$, $S = 1$, $P = 1$.
+Then the relationship between $X$ and $Y$ becomes
+$$Y_{l, i, j} = \sum_{\alpha = 1}^{F}\sum_{\beta = 1}^{F}w_{l, \alpha, \beta}X_{i + \alpha - 1, j + \beta - 1} + b_{l}$$
+Therefore,
+$$Y_{1, i, j} = \sum_{\alpha = 1}^{3}\sum_{\beta = 1}^{3}w_{1, \alpha, \beta}X_{i + \alpha - 1, j + \beta - 1} + b_{1} = X_{i+1, j} - X_{i, j}$$
+$$Y_{2, i, j} = \sum_{\alpha = 1}^{3}\sum_{\beta = 1}^{3}w_{2, \alpha, \beta}X_{i + \alpha - 1, j + \beta - 1} + b_{2} = X_{i, j+1} - X_{i, j}$$
+$$\therefore w_{1, \alpha, \beta} = \begin{cases}
+    1  & (\alpha = 2, \; \beta = 1) \\
+    -1 & (\alpha = 1, \; \beta = 1) \\
+    0  & (\textrm{otherwise})
+\end{cases}, \;\; w_{2, \alpha, \beta} = \begin{cases}
+    1  & (\alpha = 1, \; \beta = 2) \\
+    -1 & (\alpha = 1, \; \beta = 1) \\
+    0  & (\textrm{otherwise})
+\end{cases}, \;\; b = 0.$$
+
+\section*{Problem 2}
+A common 2D convolution has the following relationship between $X$ and $Y$. (Assume the batch size is 1.)
+$$Y_{l, i, j} = \sum_{\gamma = 1}^{C_{\mathrm{in}}}\sum_{\alpha = 1}^{f_1}\sum_{\beta = 1}^{f_2}w_{l, \gamma, \alpha, \beta}X_{\gamma, S(i-1) + \alpha, S(j-1) + \beta} + b_{l}$$
+In the case of the given average pooling operation, $C_{\mathrm{in}} = C_{\mathrm{out}} = C$, $f_1 = f_2 = S = k$, $b=0$, $P=0$, and $$w_{l,\gamma, \alpha, \beta} = \begin{cases}
+    \dfrac{1}{k^2} & (\gamma = l) \\
+    0 & (\mathrm{otherwise})
+\end{cases}.$$
+Substituting these to the above equation gives
+\begin{align*}
+    Y_{l, i, j} &= \sum_{\gamma = 1}^{C}\sum_{\alpha = 1}^{k}\sum_{\beta = 1}^{k}w_{l, \gamma, \alpha, \beta}X_{\gamma, k(i-1) + \alpha, k(j-1) + \beta} \\
+    &= \frac{1}{k^2}\sum_{\alpha = 1}^{k}\sum_{\beta = 1}^{k}X_{l, k(i-1) + \alpha, k(j-1) + \beta}
+\end{align*}
+which equals to the given relationship where indices $\alpha, \beta, l$ correspond to $a, b, c$.
+Also, 
+$$W_{\mathrm{out}} = \left\lfloor{\frac{W_\mathrm{in} - f_1 + 2P}{S} + 1}\right\rfloor = \left\lfloor{\frac{m - k + 0}{k} + 1}\right\rfloor = \frac{m}{k}$$
+$$H_{\mathrm{out}} = \left\lfloor{\frac{H_\mathrm{in} - f_2 + 2P}{S} + 1}\right\rfloor = \left\lfloor{\frac{m - k + 0}{k} + 1}\right\rfloor = \frac{m}{k}$$
+so the input and output dimensions match with the given conditions.
+In this way, average pooling can be represented as a convolution.
+
+\section*{Problem 3}
+Consider an unbiased convolution and set parameters $C_{\mathrm{in}} = 3$, $C_{\mathrm{out}} = 1$, $F = 1$, $S = 1$, $P = 0$. Then substituting these parameters gives
+\begin{align*}
+    Y_{i, j} &= \sum_{\gamma = 1}^{C_{\mathrm{in}}}\sum_{\alpha = 1}^{F}\sum_{\beta = 1}^{F}w_{\gamma, \alpha, \beta}X_{\gamma, S(i-1) + \alpha, S(j-1) + \beta} + b_{l} \\
+    &= w_{1, 1, 1}X_{1, i, j} + w_{2, 1, 1}X_{2, i, j} + w_{3, 1, 1}X_{3, i, j}
+\end{align*}
+Therefore $w_{1, 1, 1} = 0.299$, $w_{2, 1, 1} = 0.587$, $w_{3, 1, 1} = 0.114$.
+
+\section*{Problem 4}
+Two functions $\sigma$ and $\rho$ are commute as the following.
+\begin{align*}
+    \qty[\sigma(\rho(X))]_{i, j} &= \sigma\qty(\qty[\rho(X)]_{i, j}) \\
+    &= \sigma\qty(\max_{1 \leq p \leq \frac{m}{k}, \;  1 \leq q \leq \frac{n}{l}}{X_{\frac{m}{k}(i-1) + p, \frac{n}{l}(j-1) + q}}) \\
+    &= \max_{1 \leq p \leq \frac{m}{k}, \;  1 \leq q \leq \frac{n}{l}}\sigma\qty(X_{\frac{m}{k}(i-1) + p, \frac{n}{l}(j-1) + q}) \;\; (\because \sigma\text{ is a nondecreasing function}) \\
+    &= \max_{1 \leq p \leq \frac{m}{k}, \;  1 \leq q \leq \frac{n}{l}}\qty[\sigma\qty(X)]_{\frac{m}{k}(i-1) + p, \frac{n}{l}(j-1) + q} \\
+    &= \qty[\rho(\sigma(X))]_{i, j}
+\end{align*}
+
+\section*{Problem 6}
+\textit{Notation} For a matrix or vector $X$, the notation $[X]_{i, j}$ or $[X]$ refers to the element of $X$ at that index, and $\qty{f(i, j)}_{i, j}$ refers to a matrix of which element at $(i, j)$ is $f(i, j)$.
+\begin{enumerate}[leftmargin=*, label=(\alph*)]
+    \item Since $y_L = A_Ly_{L-1} + b_L$, it is trivial that 
+    $$\frac{\partial y_L}{\partial b_L} = 1, \;\; \frac{\partial y_L}{\partial y_{L-1}} = A_L.$$
+    For $y_\ell = \sigma\qty(A_\ell y_{\ell-1} + b_\ell)$, we can obtain the following.
+    \begin{align*}
+        \frac{\partial y_\ell}{\partial b_\ell} &= \frac{\partial}{\partial b_\ell}\sigma\qty(A_\ell y_{\ell-1} + b_\ell)\\
+        &= \qty{\frac{\partial}{\partial\qty[b_\ell]_j}\qty[\sigma\qty(A_\ell y_{\ell-1} + b_\ell)]_i}_{i, j} = \qty{\frac{\partial}{\partial\qty[b_\ell]_j}\sigma\qty(\qty[A_\ell y_{\ell-1} + b_\ell]_i)}_{i, j} \\
+        &= \qty{\frac{\partial}{\partial\qty[b_\ell]_j}\sigma\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)}_{i, j} \\
+        &= \qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\cdot\frac{\partial}{\partial\qty[b_\ell]_j}\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)}_{i, j} \\
+        &= \qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\cdot\delta_{ij}}_{i, j} \;\; (\delta_{ij} \text{: Kronecker Delta})\\
+        &= \text{diag}\:\Big(\sigma'\qty(A_\ell y_{\ell-1} + b_\ell)\Big)
+    \end{align*}
+    \begin{align*}
+        \frac{\partial y_\ell}{\partial y_{\ell-1}} &= \frac{\partial}{\partial y_{\ell-1}}\sigma\qty(A_\ell y_{\ell-1} + b_\ell) \\
+        &= \qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\cdot\frac{\partial}{\partial\qty[y_{\ell-1}]_j}\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)}_{i, j} \\
+        &= \qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\cdot\frac{\partial}{\partial\qty[y_{\ell-1}]_j}\qty(\sum_{k=1}^{n_{\ell-1}}\qty[A_\ell]_{i,k}\qty[y_{\ell-1}]_k + \qty[b_\ell]_i)}_{i, j} \\
+        &= \qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\cdot\qty[A_\ell]_{i, j}}_{i, j} \\
+        &= \text{diag}\:\Big(\sigma'\qty(A_\ell y_{\ell-1} + b_\ell)\Big) A_\ell
+    \end{align*}
+    \item Since $y_L = A_Ly_{L-1} + b_L$, 
+    \begin{align*}
+        \qty[\frac{\partial y_L}{\partial A_L}]_{1, j} &= \frac{\partial y_L}{\partial \qty[A_L]_{1, j}} \\
+        &= \frac{\partial}{\partial \qty[A_L]_{1, j}}\qty(A_L y_{L-1} + b_L) = \frac{\partial}{\partial \qty[A_L]_{1, j}}\qty(\sum_{k=1}^{n_{\ell-1}}\qty[A_L]_{1,k}\qty[y_{L-1}]_k) \\
+        &= \qty[y_{L-1}]_j
+    \end{align*}
+    so $\dfrac{\partial y_L}{\partial A_L} = y_{L-1}^\intercal$. For $\ell = 1, \cdots, L-1$, we can obtain the following.
+    \begin{align*}
+        \qty[\frac{\partial y_L}{\partial A_\ell}]_{i, j} &= \frac{\partial y_L}{\partial \qty[A_\ell]_{i, j}} = \frac{\partial y_L}{\partial y_\ell}\frac{\partial y_\ell}{\partial \qty[A_\ell]_{i, j}} \\
+        &= \frac{\partial y_L}{\partial y_\ell}\qty{\frac{\partial\qty[y_\ell]_k}{\partial \qty[A_\ell]_{i, j}}}_{k} \\
+        &= \frac{\partial y_L}{\partial y_\ell}\qty{\frac{\partial}{\partial \qty[A_\ell]_{i, j}}\sigma\qty(\qty[A_\ell y_{\ell-1}]_k + \qty[b_\ell]_k)}_{k} \\
+        &= \frac{\partial y_L}{\partial y_\ell}\qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_k + \qty[b_\ell]_k)\qty(\frac{\partial}{\partial \qty[A_\ell]_{i, j}}\qty(\qty[A_\ell y_{\ell-1}]_k + \qty[b_\ell]_k))}_{k} \\
+        &= \frac{\partial y_L}{\partial y_\ell}\begin{bmatrix}
+            0 \\ \vdots \\ {\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\qty[y_{\ell - 1}]_j} \\ \vdots \\ 0
+        \end{bmatrix} \;\; (\text{All elements except the } i \text{-th element are }0.)\\
+        &= \qty[\frac{\partial y_L}{\partial y_\ell}]_{i}\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\qty[y_{\ell - 1}]_j \\
+        &= \qty[\sigma'\qty(A_\ell y_{\ell-1} + b_\ell)]_i\qty[\frac{\partial y_L}{\partial y_\ell}]_{i}\qty[y_{\ell - 1}]_j
+    \end{align*}
+    Therefore $\dfrac{\partial y_L}{\partial A_\ell} = \text{diag}\:\qty(\sigma'\qty(A_\ell y_{\ell-1} + b_\ell))\qty(\dfrac{\partial y_L}{\partial y_\ell})^\intercal y_{\ell-1}^\intercal$.
+
+\end{enumerate}
+
+\end{document}
