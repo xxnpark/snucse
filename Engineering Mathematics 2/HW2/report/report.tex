@@ -1,0 +1,106 @@
+\documentclass{article}
+\usepackage{bm}
+\usepackage{amsmath, amsfonts, amssymb, physics}
+\usepackage{graphicx}
+\usepackage{mdwlist}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{palatino}
+\usepackage{hyperref}
+\usepackage{paralist}
+\usepackage{todonotes}
+\setlength{\marginparwidth}{2.15cm}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,backgrounds}
+
+\begin{document}
+\vspace*{-1.5cm}
+{\centering \vbox{%
+\vspace{2mm}
+\large
+Engineering Mathematics 2 \hfill
+\\
+Seoul National University
+\\[4mm]
+Homework 2\\
+\textbf{2021-16988 Jaewan Park} \\[0.8mm]
+}}
+\par\noindent\rule{\textwidth}{0.5pt}
+
+\section*{Exercise 2.9}
+\begin{enumerate}[(a)]
+  \item The probability of $\max\qty(X_1, X_2)$ or $\min\qty(X_1, X_2)$ to be a specific value is the following.
+  $$\mathbf{Pr}\qty[\max\qty(X_1, X_2) = n] = \frac{2n-1}{k^2}$$
+  $$\mathbf{Pr}\qty[\min\qty(X_1, X_2) = n] = \frac{2k-2n+1}{k^2}$$
+  Therefore
+  $$\mathbf{E}\qty[\max\qty(X_1, X_2)] = \sum_{n=1}^{k}n\cdot\frac{2n-1}{k^2} = \frac{k(k+1)(4k-1)}{6k^2}$$
+  $$\mathbf{E}\qty[\min\qty(X_1, X_2)] = \sum_{n=1}^{k}n\cdot\frac{2k-2n+1}{k^2} = \frac{k(k+1)(2k+1)}{6k^2}$$
+  \item Since $\displaystyle \mathbf{E}\qty[X_1] = \mathbf{E}\qty[X_2] = \sum_{n=1}^{k}\dfrac{1}{k}n = \dfrac{k+1}{2}$,
+  $$\mathbf{E}\qty[\max\qty(X_1, X_2)] + \mathbf{E}\qty[\min\qty(X_1, X_2)] = \mathbf{E}\qty[X_1] + \mathbf{E}\qty[X_2] = k+1$$
+  \item Since $\max\qty(X_1, X_2) + \min\qty(X_1, X_2) = X_1 + X_2$, 
+  $$\mathbf{E}\qty[\max\qty(X_1, X_2)] + \mathbf{E}\qty[\min\qty(X_1, X_2)] = \mathbf{E}\qty[\max\qty(X_1, X_2) + \min\qty(X_1, X_2)] = \mathbf{E}\qty[X_1 + X_2] = \mathbf{E}\qty[X_1] + \mathbf{E}\qty[X_2]$$
+\end{enumerate}
+
+\section*{Exercise 2.15}
+Let $X$ the random variable of the number of total flips until the $k$th head, and $X_i$ the random variable of the number of flips from the $(i-1)$th head to the $i$th head. 
+Then $X_i$ has a geometric distribution with probability $p$. Therefore $\mathbf{E}\qty[X_i] = \dfrac{1}{p}$.
+Then
+$$\mathbf{E}\qty[X] = \mathbf{E}\qty[\sum_{i=1}^{k}X_i] = \sum_{i=1}^{k}\mathbf{E}\qty[X_i] = \frac{k}{p}.$$
+
+\section*{Exercise 2.18}
+We should prove that the item stored in the memory at each step is uniform over the items that have appeared.
+At the first step, it is trivial that the first and only item is uniform over the items that have appeared.
+Suppose the item in the memory at the $k$th step satisfies this condition.
+Then at the $(k+1)$th step, with a probability of $\dfrac{k}{k+1}$ the item will stay in the memory.
+Since the previous item is uniformly distributed over the first $k$ items, the first $k$ items can be in the memory at the $(k+1)$th step with a uniform probability of $\dfrac{1}{k+1}$.
+On the other hand, with a probability of $\dfrac{1}{k+1}$ the item in the memory will be transferred at the $(k+1)$th step.
+Therefore the $(k+1)$ items all have the same probability $=\dfrac{1}{k+1}$ to be in the memory at the $(k+1)$th step.
+Using mathematical induciton, we can claim that item stored in the memory is uniformly distributed over the items that have appeared until that step.
+
+\section*{Exercise 2.22}
+Define $X_{ij}$ the random variable that has the value 1 when $a_i$ and $a_j$ are inverted, and 0 otherwise.
+Then $$\mathbf{Pr}\qty[X_{ij}=1] = \mathbf{Pr}\qty[X_{ij}=0] = \frac{1}{2}$$
+since there are an equal number of possible orderings where the two are inverted or not.
+Therefore the expectation of $X_{ij}$ is $\dfrac{1}{2}$. 
+Now let $X$ the random variable of the number of total inversions needed on a list, then $X$ is equal to the sum of $X_{ij}$s without repeats.
+Therefore
+\begin{align*}
+  \mathbf{E}\qty[X] &= \mathbf{E}\qty[\sum_{1 \leq i < j \leq n}X_{ij}] \\
+  &= \sum_{1 \leq i < j \leq n}\mathbf{E}\qty[X_{ij}] = \sum_{1 \leq i < j \leq n}\frac{1}{2} \\
+  &= \frac{1}{2} \cdot \frac{n(n-1)}{2} = \frac{n(n-1)}{4}.
+\end{align*}
+
+\section*{Exercise 2.27}
+From $\mathbf{Pr}\qty[X=x] = \dfrac{6}{\pi^2x^2}$ we obtain the following.
+\begin{align*}
+  \mathbf{E}\qty[X] &= \sum_{x=1}^{\infty}x\mathbf{Pr}\qty[X=x] \\
+  &= \sum_{x=1}^{\infty}\frac{6}{\pi^2x} = \infty
+\end{align*}
+Therefore the expectation diverges.
+
+\section*{Exercise 2.32}
+\begin{enumerate}[(a)]
+  \item For $E_i$ to happen, the $i$th candidate should actually be the best candidate, $i$ should be larger than $m$, and the second best candidate should be among the first $m$ candidates.
+  Therefore
+  $$\mathbf{Pr}\qty[E_i] = \begin{cases}
+    \dfrac{1}{n} \times \dfrac{m}{i-1} & (i > m) \\
+    0 & (\text{otherwise})
+  \end{cases}$$
+  and we finally obtain the following.
+  \begin{align*}
+    \mathbf{Pr}\qty[E] &= \mathbf{Pr}\qty[\sum_{i=1}^{n}E_i] = \sum_{i=1}^{n}\mathbf{Pr}\qty[E_i] \\
+    &= \frac{m}{n}\sum_{i = m+1}^{n}\frac{1}{i-1}
+  \end{align*}
+  \item We can bound $\sum_{i = m+1}^{n}\frac{1}{i-1}$ like the following:
+  $$\int_{m+1}^{n+1}\frac{1}{x-1}dx \leq \sum_{i = m+1}^{n}\frac{1}{i-1} \leq \int_{m}^{n}\frac{1}{x-1}dx$$
+  Therefore 
+  $$\frac{m}{n}\qty(\ln{n}-\ln{m}) \leq \sum_{i = m+1}^{n}\frac{1}{i-1} \leq \frac{m}{n}\qty(\ln\qty(n-1)-\ln\qty(m-1)).$$
+  \item Let $f(m) = \dfrac{m}{n}\qty(\ln{n}-\ln{m})$, then
+  $$\frac{df}{dm} = \frac{\ln{n} - \ln{m} - 1}{n}, \;\; \frac{d^2f}{dm^2} = -\frac{1}{mn}$$
+  thus $\dfrac{df}{dm} = 0$ when $m = \dfrac{n}{e}$, and $f(m)$ is at its maximum since $\dfrac{d^2f}{dm^2}\biggr\rvert_{m=\frac{n}{e}} = -\dfrac{e}{n^2} < 0$.
+  Since the above inequality holds for all $m$ and $n$, we can find the lower bound of $\mathbf{Pr}\qty[E]$.
+  $$\mathbf{Pr}\qty[E] \geq \sup\qty{\frac{m}{n}\qty(\ln{n}-\ln{m})} = \frac{1}{e}$$
+\end{enumerate}
+
+\end{document}
