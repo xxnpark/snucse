@@ -1,0 +1,131 @@
+\documentclass[10pt]{article}
+%\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{amsmath,amssymb,amsthm,physics,units,mathtools}
+\usepackage[shortlabels]{enumitem}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{algorithm,algpseudocode}
+\usepackage[shortlabels]{enumitem}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+}
+
+\begin{document}
+\begin{center}
+    {\LARGE MathDNN Homework 3} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 3}
+\begin{enumerate}[leftmargin=*, label=(\alph*)]
+    \item Since $\exp\qty(f_y) > 0$, $0 < \dfrac{\exp\qty(f_y)}{\sum_{j=1}^{k}\exp\qty(f_j)} < 1$, therefore $0 < \ell^{\mathrm{CE}}(f, y) = -\log\qty(\dfrac{\exp\qty(f_y)}{\sum_{j=1}^{k}\exp\qty(f_j)}) < \infty$.
+    \item Since 
+    $$\ell^{\mathrm{CE}}\qty(\lambda_y, y) = -\log\qty(\frac{\exp\qty(\qty(\lambda e_y)_y)}{\sum_{j=1}^{k}\exp\qty(\qty(\lambda e_y)_j)}) = -\log\qty(\frac{\exp\qty(\lambda)}{\exp\qty(\lambda) + \exp(0) \times (k - 1)})$$
+    we get $\ell^{\mathrm{CE}}\qty(\lambda_y, y) \to 0$ when $\lambda \to \infty$.
+\end{enumerate}
+
+\section*{Problem 4}
+Suppose a specific value $x = x^*$ is given. Then $I^* = \text{argmax}_i\qty{f_i(x^*)}$ uniquely exists, therefore $\forall i, \; f_{I^*}(x^*) > f_i(x^*)$. 
+Let $g_i(x) = f_{I^*}(x) - f_i(x)$, then $g_i(x^*) > 0$. Since all $f_i$ are continuous, $g_i$ are also continuous, so there exists $\delta_i > 0$ such that
+$$x \in N\qty(x^*, \delta_i) \Rightarrow g_i(x) = f_{I^*}(x) - f_i(x) > 0.$$
+Therefore for $x \in N\qty(x^*, \delta_i)$, $f(x) = f_{I^*}(x)$, and since $f_{I^*}$ is differentiable, $f'(x) = f_{I^*}'(x)$ for $x$ in this neighborhood.
+$\therefore f'(x^*) = f_{I^*}'(x^*).$
+
+\section*{Problem 5}
+\begin{enumerate}[leftmargin=*, label=(\alph*)]
+    \item The function is idempotent.
+    $$\sigma(\sigma(z)) = \begin{cases}
+        \sigma(z) & (z \geq 0) \\ \sigma(0) & (z < 0)
+    \end{cases} = \begin{cases}
+        z & (z \geq 0) \\ 0 & (z < 0)
+    \end{cases} = \sigma(z)$$
+    \item The derivative of softplus is $\sigma'(z) = \dfrac{e^z}{1 + e^z}$, therefore for all $z_1, z_2 \in \mathbb{R}$,
+    \begin{align*}
+        \left|\sigma'(z_1) - \sigma'(z_2)\right| &= \left|\frac{e^{z_1}}{1 + e^{z_1}} - \frac{e^{z_2}}{1 + e^{z_2}}\right| = \left|\frac{1}{1 + e^{z_1} + e^{z_2} + e^{z_1 + z_2}}\right|\left|\frac{e^{z_1} - e^{z_2}}{z_1 - z_2}\right|\left| z_1 - z_2 \right| \\
+        &= \left|\frac{e^z}{1 + e^{z_1} + e^{z_2} + e^{z_1 + z_2}}\right|\qty|z_1 - z_2| \;\; \qty(\exists z \in \qty(z_1, z_2) \,\; \because \text{MVT}) \\
+        &\leq \qty|z_1 - z_2| \;\; \qty(\because e^z < \max\qty{e^{z_1}, e^{z_2}} < 1 + e^{z_1} + e^{z_2} + e^{z_1 + z_2})
+    \end{align*}
+    so softplus has Lipschitz continuous derivatives. In the case of ReLU, since the derivative is 
+    $$\sigma'(z) = \begin{cases}
+        1 & (z \geq 0) \\ 0 & (z < 0)
+    \end{cases}$$
+    if we choose $z_1 = \epsilon$ and $z_2 = -\epsilon$ for an arbitrary $\epsilon > 0$,
+    \begin{align*}
+        \left|\sigma'(z_1) - \sigma'(z_2)\right| = \qty|1 - 0| = 1, \;\; \qty|z_1 - z_2| = 2\epsilon
+    \end{align*}
+    so it cannot be bounded by a fixed value $L$ such that $\qty|\sigma'(z_1) - \sigma'(z_2)| \leq L\qty|z_1 - z_2|$. Therefore ReLU does not have Lipschitz continuous derivatives.
+    \item We can obtain the follwing.
+    $$\sigma(z) = \frac{1}{1 + e^{-z}} = \frac{1}{2}\rho\qty(\frac{1}{2}z) + \frac{1}{2}, \;\; \rho(z) = \frac{1 - e^{-2z}}{1 + e^{-2z}} = 2\sigma(2z) - 1$$
+    We should determine $C_1, \cdots , C_L$ and $ d_1, \cdots , d_L$ such that considering the following mappings,
+    \vspace*{-1.1cm}
+    \begin{multicols}{2}
+        \begin{align*}
+            y_L &= A_Ly_{L-1} + b_L \\
+            y_{L-1} &= \sigma\qty(A_{L-1}y_{L-2} + b_{l-1}) \\
+            &\;\;\vdots \\
+            y_1 &= \sigma\qty(A_1x + b_1)
+        \end{align*}
+
+        \begin{align*}
+            y_L' &= C_Ly_{L-1}' + d_L \\
+            y_{L-1}' &= \rho\qty(C_{L-1}y_{L-2}' + d_{l-1}) \\
+            &\;\;\vdots \\
+            y_1' &= \rho\qty(C_1x + d_1)
+        \end{align*}
+    \end{multicols}
+    \vspace*{-2mm}
+    $y_L = y_L'$ with the same input $x$.
+    Now choose $C_1 = \dfrac{1}{2}A_1$ and $d_1 = \dfrac{1}{2}b_1$, then
+    $$y_1' = \rho\qty(\frac{1}{2}A_1x + \frac{1}{2}b_1) = 2\sigma\qty(A_1x + b_1) - 1 = 2y_1 - 1.$$
+    In the next step, choose $C_2 = \dfrac{1}{4}A_2$ and $d_2 = \dfrac{1}{2}b_2 + \dfrac{1}{4}A_2$, then
+    $$y_2' = \rho\qty(\frac{1}{4}A_2\qty(2y_1 - 1) + \frac{1}{2}b_2 + \frac{1}{4}A_2) = \rho\qty(\frac{1}{2}A_2y_1 + \frac{1}{2}b_2) = 2\sigma\qty(A_2y_1 + b_2) - 1 = 2y_2 - 1.$$
+    Now continuously choose $C_i = \dfrac{1}{4}A_i$ and $d_i = \dfrac{1}{2}b_i + \dfrac{1}{4}A_i$ for $i = 2, 3, \cdots , L-1$, then
+    $$y_{L-1}' = 2y_{L-1} - 1.$$
+    Finally choose $C_L = \dfrac{1}{2}A_L$ and  $d_L = b_L + \dfrac{1}{2}A_L$, then
+    $$y_L' = \frac{1}{2}A_L\qty(2y_{L-1} - 1) + b_L + \frac{1}{2}A_L = A_Ly_{L-1} + b_L = y_L.$$
+    Therefore $\sigma$ and $\rho$ are equivalent.
+\end{enumerate}
+
+\section*{Problem 6}
+The gradient of the minimizing function is the following. (Calculation partially brought from HW2)
+\begin{align*}
+    \nabla_\theta \ell\qty(f_\theta(X_i), Y_i) &= \ell'\qty(f_\theta(X_i), Y_i)\nabla_\theta f_\theta(X_i) \\
+    &= \ell'\qty(f_\theta(X_i), Y_i) \Big(\qty(\sigma ' \qty(aX_i+b)\odot u)X_i, \; \sigma ' \qty(aX_i+b)\odot u, \; \sigma\qty(aX_i+b)\Big)
+\end{align*}
+Since $\sigma(z) = \sigma'(z) = 0$ if $z<0$ and $a_j^0X_i + b_j^0 < 0$ for all $i$,
+\begin{align*}
+    \Big[\qty(\sigma ' \qty(a^0X_i+b^0)\odot u^0)X_i\Big]_j &= \sigma ' \qty(a_j^0X_i+b_j^0) u_j^0X_i = 0 \\
+    \Big[\sigma ' \qty(a^0X_i+b^0)\odot u^0\Big]_j &= \sigma ' \qty(a_j^0X_i+b_j^0) u_j^0 = 0 \\
+    \Big[\sigma\qty(a^0X_i+b^0)\Big]_j &= \sigma\qty(a_j^0X_i+b_j^0) = 0
+\end{align*}
+Therefore the gradients for the $j$-th outputs are all 0, so there is no change from $a_j^0, b_j^0, u_j^0$ to $a_j^1, b_j^1, u_j^1$.
+Consequently $a_j^1X_i + b_j^1 < 0$, and continuously the condition maintains throughout the training. Therefore the $j$-th ReLU output remains dead throughout the training.
+
+\section*{Problem 7}
+The derivative of the leaky ReLU function is
+$$\sigma'(z) = \begin{cases}
+    1 & (z \geq 0) \\ \alpha & (z < 0).
+\end{cases}$$
+Then going through the same progress from \textbf{Problem 6},
+\begin{align*}
+    \Big[\qty(\sigma ' \qty(a^0X_i+b^0)\odot u^0)X_i\Big]_j &= \sigma ' \qty(a_j^0X_i+b_j^0) u_j^0X_i = \alpha u_j^0X_i \mathbf{\neq 0} \\
+    \Big[\sigma ' \qty(a^0X_i+b^0)\odot u^0\Big]_j &= \sigma ' \qty(a_j^0X_i+b_j^0) u_j^0 = \alpha u_j^0 \mathbf{\neq 0} \\
+    \Big[\sigma\qty(a^0X_i+b^0)\Big]_j &= \sigma\qty(a_j^0X_i+b_j^0) = \alpha\qty(a_j^0X_i+b_j^0) \mathbf{\neq 0}
+\end{align*}
+we obtain that the gradients for the $j$-th outputs are not exactly 0.
+Therefore a decrement in $a_j, b_j, u_j$ occurs, so the training successfully works and does not go dead.
+
+\end{document}
