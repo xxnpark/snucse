@@ -1,0 +1,164 @@
+\documentclass{article}
+\usepackage{bm}
+\usepackage{amsmath, amsfonts, amssymb, physics}
+\usepackage{graphicx}
+\usepackage{mdwlist}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{palatino}
+\usepackage{hyperref}
+\usepackage{paralist}
+\usepackage{todonotes}
+\setlength{\marginparwidth}{2.15cm}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,backgrounds}
+\setlength\parindent{0pt}
+
+\begin{document}
+\vspace*{-1.5cm}
+{\centering \vbox{%
+\vspace{2mm}
+\large
+Engineering Mathematics 2 \hfill
+\\
+Seoul National University
+\\[4mm]
+Homework 4\\
+\textbf{2021-16988 Jaewan Park} \\[0.8mm]
+}}
+\par\noindent\rule{\textwidth}{0.5pt}
+
+\section*{Exercise 4.2}
+$X \sim B\qty(n, \dfrac{1}{6})$. Therefore $\mathbf{E}\qty[X] = \dfrac{n}{6}$, and $\mathbf{Var}\qty[X] = \dfrac{5n}{36}$.
+
+\vspace{3mm}
+Markov's inequality gives 
+$$p = \mathrm{Pr}\qty(X \geq \frac{n}{4}) \leq \frac{\mathbf{E}\qty[X]}{\frac{n}{4}} = \frac{2}{3}.$$
+Since $X$ follows a binomial distribution of expectation $\dfrac{n}{6}$, $\mathrm{Pr}\qty(X \geq \dfrac{n}{6} + \dfrac{n}{12}) = \mathrm{Pr}\qty(X \leq \dfrac{n}{6} - \dfrac{n}{12})$. Therefore Chebyshev's inequality gives
+$$p = \frac{1}{2}\mathrm{Pr}\qty(\qty|X - \frac{n}{6}| \geq \frac{n}{12}) \leq \frac{1}{2}\cdot\frac{\mathbf{Var}\qty[X]}{\qty(\frac{n}{12})^2} = \frac{10}{n}.$$
+Since $X$ is a sum of independent Poisson trials, Chernoff's bound gives
+$$p = \mathrm{Pr}\qty(X \leq \qty(1 + \frac{1}{2})\frac{n}{6}) \leq \exp\qty(-\frac{\frac{n}{6} \cdot \qty(\frac{1}{2})^2}{3}) = \exp\qty(-\frac{n}{72}).$$
+For $n >> 1$, $\exp\qty(-\dfrac{n}{72}) \leq \dfrac{10}{n} \leq \dfrac{2}{3}$, therefore in the order of Chernoff's bound, Chebyshev's inequality, Markov's inequality, we obtain gives tighter bounds.
+
+\section*{Exercise 4.3}
+\begin{enumerate}[(a)]
+  \item Let $X \sim B(n, p)$, then
+  \begin{align*}
+    M_X(t) &= \mathbf{E}\qty[e^{tX}] \\
+    &= \sum_{x}\mathrm{Pr}\qty(X=x)e^{tx} \\
+    &= \sum_{x}{n \choose x}p^x(1-p)^{n-x}e^{tx} = \sum_{x}{n \choose x}\qty(pe^t)^x(1-p)^{n-x} \\
+    &= \qty(1-p+pe^t)^n.
+  \end{align*}
+  \item $M_X(t) = \qty(1-p+pe^t)^n$ and $M_Y(t) = \qty(1-p+pe^t)^m$.
+  Since $X$ and $Y$ are independent, 
+  \begin{align*}
+    M_{X+Y}(t) &= \mathbf{E}\qty[e^{t(X+Y)}] = \mathbf{E}\qty[e^{tX}e^{tY}] \\
+    &= \mathbf{E}\qty[e^{tX}]\mathbf{E}\qty[e^{tY}] = M_X(t)M_Y(t) \\
+    &= \qty(1-p+pe^t)^{m+n}.
+  \end{align*}
+  \item Since $\qty(1-p+pe^t)^{m+n}$ is a moment generating function for a binomial random variable $B(m+n, p)$, we can say that the sum of two random variables $B(m, p)$ and $B(n, p)$ gives $B(m+n, p)$.
+\end{enumerate}
+
+\section*{Exercise 4.4}
+Let $X_n$ the random variable of the number of heads in $n$ flips.
+Then $X_n \sim B\qty(n, \dfrac{1}{2})$.
+Therefore
+\begin{align*}
+  \mathrm{Pr}\qty(X_{100} \geq 55) &= \sum_{x=55}^{100}\mathrm{Pr}\qty(X_{100} = x) \approx 0.1841.
+\end{align*}
+Since $\mathbf{E}\qty[X_{100}] = 50$, using Chernoff's bound, we obtain
+\begin{align*}
+  \mathrm{Pr}\qty(X_{100} \geq \qty(1 + \frac{1}{10})\cdot 50) \leq \exp\qty(-\frac{50\cdot\qty(\frac{1}{10})^2}{3}) \approx 0.8465.
+\end{align*}
+Therefore the boundary is too large in this case. 
+If $n=1000$,
+\begin{align*}
+  \mathrm{Pr}\qty(X_{1000} \geq 550) = \sum_{x=550}^{1000}\mathrm{Pr}\qty(X_{100} = x) \approx 0.0008653.
+\end{align*}
+Since $\mathbf{E}\qty[X_{1000}] = 500$, using Chernoff's bound, we obtain
+\begin{align*}
+  \mathrm{Pr}\qty(X_{1000} \geq \qty(1 + \frac{1}{10})\cdot 500) \leq \exp\qty(-\frac{500\cdot\qty(\frac{1}{10})^2}{3}) \approx 0.1889.
+\end{align*}
+Therefore the boundary is still too large, even larger in ratio compared to the explicit value.
+In the first case it was about 5 times higher, while in the second case it was about 219 times higher. 
+
+\section*{Exercise 4.9}
+\begin{enumerate}[(a)]
+  \item Let $\displaystyle X' = \frac{1}{t}\sum_{i=1}^{t}X_i$, then since all $X_i$s are independent and have an identical distribution with $X$,
+  \begin{align*}
+    \mathbf{E}\qty[X'] &= \mathbf{E}\qty[\frac{1}{t}\sum_{i=1}^{t}X_i] = \frac{1}{t}\sum_{i=1}^{t}\mathbf{E}\qty[X_i] = \frac{1}{t}\sum_{i=1}^{t}\mathbf{E}\qty[X] = \mathbf{E}\qty[X] \\
+    \mathbf{Var}\qty[X'] &= \mathbf{Var}\qty[\frac{1}{t}\sum_{i=1}^{t}X_i] = \frac{1}{t^2}\sum_{i=1}^{t}\mathbf{Var}\qty[X_i] = \frac{1}{t^2}\sum_{i=1}^{t}\mathbf{Var}\qty[X] = \frac{1}{t}\mathbf{Var}\qty[X] = \frac{r^2\mathbf{E}\qty[X]^2}{t}. \\
+  \end{align*}
+  Using Chebyshev's inequality, we obtain
+  \begin{align*}
+    \mathrm{Pr}\Big(\big|X' - \mathbf{E}\qty[X]\big| \geq \epsilon\mathbf{E}\qty[X]\Big) \leq \frac{\mathbf{Var}\qty[X']}{\qty(\epsilon\mathbf{E}\qty[X])^2} = \frac{r^2}{t\epsilon^2}.
+  \end{align*}
+  In order to conclude in $\displaystyle \mathrm{Pr}\Big(\big|X' - \mathbf{E}\qty[X]\big| \leq \epsilon\mathbf{E}\qty[X]\Big) \geq 1 - \delta$, we need $\dfrac{r^2}{t\epsilon^2} \leq \delta$. 
+  Therefore $t \geq \dfrac{r^2}{\epsilon^2\delta}$, so $t = O\qty(\dfrac{r^2}{\epsilon^2\delta})$ samples are sufficient.
+  \item This is the case of $\delta = \dfrac{1}{4}$. Therefore $t = O\qty(\dfrac{4r^2}{\epsilon^2}) = O\qty(\dfrac{r^2}{\epsilon^2})$ samples are enough.
+  \item Try running the process $n$ times, and let the weak estimates from each process $\mu_1, \mu_2, \cdots, \mu_n$.
+  And let the median of these values $M$, which we will take as our new estimate of $\mathbf{E}\qty[X]$.
+  
+  \vspace{3mm}
+  Now let $Y_i = \begin{cases}
+    1 & \Big(\big|\mu_i - \mathbf{E}\qty[X]\big| \geq \epsilon\mathbf{E}\qty[X]\Big) \\
+    0 & \qty(\text{otherwise})
+  \end{cases}$
+  and $\displaystyle Y = \sum_{i=1}^{n}Y_i$. 
+  According to problem (b), $\mathrm{Pr}\qty(Y_i = 1) \leq \dfrac{1}{4}$, so $\mathbf{E}\qty[Y_i] \leq \dfrac{1}{4}$ and $\mathbf{E}\qty[Y] \leq \dfrac{n}{4}$.
+  Since $M$ is the median of $\mu_1, \mu_2, \cdots, \mu_n$, we can say
+  \begin{align*}
+    \mathrm{Pr}\Big(\big|M-\mathbf{E}\qty[X]\big| \geq \epsilon\mathbf{E}\qty[X]\Big) = \mathrm{Pr}\qty(Y \geq \frac{n}{2}).
+  \end{align*}
+  Also, since $Y$ is a sum of independent Poisson trials, using Chernoff's bound, we obtain
+  \begin{align*}
+    \mathrm{Pr}\qty(Y \geq \frac{n}{2}) = \mathrm{Pr}\qty(Y \geq (1+1)\frac{n}{4}) \leq \exp\qty(-\frac{\frac{n}{4}\cdot 1^2}{3}) = \exp\qty(-\frac{n}{12})
+  \end{align*}
+  In order to conclude in $\displaystyle \mathrm{Pr}\Big(\big|M-\mathbf{E}\qty[X]\big| \leq \epsilon\mathbf{E}\qty[X]\Big) \geq 1 - \delta$, we need $\exp\qty(-\dfrac{n}{12}) \leq \delta$.
+  Therefore $n \geq 12\log{\dfrac{1}{\delta}}$, so $n = O\qty(12\log{\dfrac{1}{\delta}}) = O\qty(\log{\dfrac{1}{\delta}})$ tries are enough, and $t = n \times O\qty(\dfrac{r^2}{\epsilon^2}) = O\qty(\dfrac{r^2}{\epsilon^2}\log{\dfrac{1}{\delta}})$ samples are sufficient.
+\end{enumerate}
+
+\section*{Exercise 4.10}
+Let $X_i$ random variables of the result of the $i$th game. Then $\mathrm{Pr}\qty(X_i = 99) = \dfrac{1}{200}$, $\mathrm{Pr}\qty(X_i = 2) = \dfrac{4}{25}$, $\mathrm{Pr}\qty(X_i = -1) = \dfrac{167}{200}$.
+Now let $X = \sum_{i=1}^{1000000}X_i$, then for all $t > 0$ Markov's inequality gives
+\begin{align*}
+  \mathrm{Pr}\qty(X \geq 10000) &= \mathrm{Pr}\qty(e^{tX} \geq e^{10000t}) \\
+  &\leq \frac{\mathbf{E}\qty[e^{tX}]}{e^{10000t}} = \frac{\mathbf{E}\qty[\prod_{i=1}^{1000000}e^{tX_i}]}{e^{10000t}} = \frac{\prod_{i=1}^{1000000}\mathbf{E}\qty[e^{tX_i}]}{e^{10000t}} \\
+  &= \frac{\qty(\frac{1}{200}e^{99t} + \frac{4}{25}e^{2t} + \frac{167}{200}e^{-t})^{1000000}}{e^{10000t}}.
+\end{align*}
+When $t$ is about $0.0006$, the above value is at its minimum. 
+At this point, the resulting bound is approximately $0.00016$; the probability is very low.
+
+\section*{Exercise 4.13}
+\begin{enumerate}[(a)]
+  \item Markov's inequality gives
+  \begin{align*}
+    \mathrm{Pr}\qty(X \geq xn) &= \mathrm{Pr}\qty(e^{tx} \geq e^{txn}) \\
+    &\leq \frac{\mathbf{E}\qty[e^{tx}]}{e^{txn}} = \frac{\prod_{i=1}^{n}\mathbf{E}\qty[e^{tX_i}]}{e^{txn}} = \frac{\qty(pe^t + (1-p))^n}{e^{txn}} \\
+    &= \qty(pe^{t-tx} + (1-p)e^{-tx})^n.
+  \end{align*}
+  When $t = \log\dfrac{(1-p)x}{p(1-x)}$, $\dfrac{d}{dt}\qty(pe^{t-tx} + (1-p)e^{-tx}) = 0$, so $pe^{t-tx} + (1-p)e^{-tx}$ is at its minimum.
+  Therefore
+  \begin{align*}
+    \mathrm{Pr}\qty(X \geq xn) &\leq \qty(\qty(\frac{x}{p})^x\qty(\frac{1-x}{1-p})^{1-x})^n = e^{-nF(x, p)}
+  \end{align*}
+  \item
+  \begin{align*}
+    \frac{d}{dx}\qty(F(x, p) - 2(x-p)^2) &= \log{\frac{x}{p}} - \log{\frac{1-x}{1-p}} - 4(x-p) \\
+    \frac{d^2}{dx^2}\qty(F(x, p) - 2(x-p)^2) &= \frac{1}{x} + \frac{1}{1-x} - 4 \geq 0 \;\;\qty(\because \; 0 < x < 1)
+  \end{align*}
+  For $p$ where $0 < p < 1$, when $x=p$ the second derivative is non-negative and the first derivative is $0$.
+  Therefore there is a global minimum at $x=p$, so $F(x, p) - 2(x-p)^2 \geq F(p, p) - 2(p-p)^2 = 0$.
+  \item From (a) and (b), we obtain the following.
+  \begin{align*}
+    \mathrm{Pr}\qty(X \geq (p+\epsilon)n) \leq e^{-nF(p+\epsilon, p)} \leq e^{-n\cdot 2(p+\epsilon - p)^2} = e^{-2n\epsilon^2}
+  \end{align*}
+  \item Let $Y_i = 1 - X_i$ and $\displaystyle Y = \sum_{i=1}^{n}Y_i$, then $\displaystyle Y = n - \sum_{i=1}^{n}X_i = n - X$.
+  Since $Y_i$s are independent Poisson trials with $\mathrm{Pr}\qty(Y_i = 1) = 1-p$, we can simmilarly apply (c) to $Y$, which gives us
+  \begin{align*}
+    \mathrm{Pr}\qty(X \leq (p-\epsilon)n) = \mathrm{Pr}\qty(Y \geq (1-p+\epsilon)n) \leq e^{-2n\epsilon^2}.
+  \end{align*}
+\end{enumerate}
+
+\end{document}
