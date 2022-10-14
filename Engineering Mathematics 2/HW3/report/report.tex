@@ -1,0 +1,101 @@
+\documentclass{article}
+\usepackage{bm}
+\usepackage{amsmath, amsfonts, amssymb, physics}
+\usepackage{graphicx}
+\usepackage{mdwlist}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{palatino}
+\usepackage{hyperref}
+\usepackage{paralist}
+\usepackage{todonotes}
+\setlength{\marginparwidth}{2.15cm}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,backgrounds}
+
+\begin{document}
+\vspace*{-1.5cm}
+{\centering \vbox{%
+\vspace{2mm}
+\large
+Engineering Mathematics 2 \hfill
+\\
+Seoul National University
+\\[4mm]
+Homework 3\\
+\textbf{2021-16988 Jaewan Park} \\[0.8mm]
+}}
+\par\noindent\rule{\textwidth}{0.5pt}
+
+\section*{Exercise 3.3}
+Let $X_i$ random variables of the number that appears at the $i$th roll. 
+Then all $X_i$s are independent and identically distributed, and $\mathbf{E}\qty[X_i] = \dfrac{7}{2}$, $\mathbf{Var}\qty[X_i] = \dfrac{35}{12}$.
+Since $X = \sum_{i=1}^{100}X_i$, $\mathbf{E}\qty[X] = 350$ and $\mathbf{Var}\qty[X] = \dfrac{875}{3}$.
+Therefore, using Chebyshev’s inequality, we obtain the following.
+\begin{align*}
+  \mathrm{Pr}\qty(\big|X-350\big| \geq 50) = \mathrm{Pr}\qty(\big|X-\mathbf{E}\qty[X]\big| \geq 50) &\leq \frac{\mathbf{Var}\qty[X]}{50^2} = \frac{7}{60}
+\end{align*}
+
+\section*{Exercise 3.6}
+Let $X_i$ random variables of the number of flips made from the appearance of the $(i-1)$th head to the appearance of the $i$th head.
+Then all $X_i$s are independent and identically distributed over a geometric distribution of probability $p$.
+Therefore $\mathbf{Var}\qty[X_i] = \dfrac{1-p}{p^2}$.
+Now let $X$ the random variable of the number of flips until the $k$th head appears.
+Then $X = \sum_{i=1}^{k}X_i$, and since all $X_i$s are independent, 
+$$\mathbf{Var}\qty[X] = \mathbf{Var}\qty[\sum_{i=1}^{k}X_i] = \sum_{i=1}^{k}\mathbf{Var}\qty[X_i] = \frac{k(1-p)}{p^2}.$$
+
+\section*{Exercise 3.7}
+Let $X_i$ random variables of the rate of increase between the price at the $(i+1)$th day and the $i$th day.
+Then $\mathrm{Pr}\qty(X_i = r) = p$, $\mathrm{Pr}\qty(X_i = \dfrac{1}{r}) = 1-p$. Therefore
+$$\mathbf{E}\qty[X_i] = pr + \frac{1-p}{r}, \;\; \mathbf{E}\qty[X_i^2] = pr^2 + \frac{1-p}{r^2}.$$
+Now let $X$ the random variable of the price after $d$ days. Then $X = 1 \times \prod_{i=1}^{d}X_i$, and since all $X_i$s are independent,
+\begin{align*}
+  \mathbf{E}\qty[X] &= \mathbf{E}\qty[\prod_{i=1}^{d}X_i] = \prod_{i=1}^{d}\mathbf{E}\qty[X_i] = \qty(pr + \frac{1-p}{r})^d \\
+  \mathbf{Var}\qty[X] &= \mathbf{E}\qty[X^2] - \qty(\mathbf{E}\qty[X])^2 \\
+  &= \mathbf{E}\qty[\qty(\prod_{i=1}^{d}X_i)^2] - \qty(pr + \frac{1-p}{r})^{2d} = \mathbf{E}\qty[\prod_{i=1}^{d}X_i^2] - \qty(pr + \frac{1-p}{r})^{2d} \\
+  &= \prod_{i=1}^{d}\mathbf{E}\qty[X_i^2] - \qty(pr + \frac{1-p}{r})^{2d} \\
+  &= \qty(pr^2 + \frac{1-p}{r^2})^d - \qty(pr + \frac{1-p}{r})^{2d}
+\end{align*}
+
+\section*{Exercise 3.15}
+\begin{align*}
+  \mathbf{Var}\qty[X] &= \mathbf{E}\qty[X^2] - \qty(\mathbf{E}\qty[X])^2 \\
+  &= \mathbf{E}\qty[\qty(\sum_{i=1}^{n}X_i)^2] - \qty(\mathbf{E}\qty[\sum_{i=1}^{n}X_i])^2 = \mathbf{E}\qty[\qty(\sum_{i=1}^{n}X_i)^2] - \qty(\sum_{i=1}^{n}\mathbf{E}\qty[X_i])^2 \\
+  &= \mathbf{E}\qty[\sum_{i=1}^{n}X_i^2 + \sum_{i \neq j}X_iX_j] - \sum_{i=1}^{n}\qty(\mathbf{E}\qty[X_i])^2 - \sum_{i \neq j}\mathbf{E}\qty[X_i]\mathbf{E}\qty[X_j] \\
+  &= \sum_{i=1}^{n}\mathbf{E}\qty[X_i^2] + \sum_{i \neq j}\mathbf{E}\qty[X_iX_j] - \sum_{i=1}^{n}\qty(\mathbf{E}\qty[X_i])^2 - \sum_{i \neq j}\mathbf{E}\qty[X_i]\mathbf{E}\qty[X_j] \\
+  &= \sum_{i=1}^{n}\qty(\mathbf{E}\qty[X_i^2] - \qty(\mathbf{E}\qty[X_i])^2) + \sum_{i \neq j}\qty(\mathbf{E}\qty[X_iX_j] - \mathbf{E}\qty[X_i]\mathbf{E}\qty[X_j]) \\
+  &= \sum_{i=1}^{n}\mathbf{Var}\qty[X_i] \;\; \qty(\because \forall i \neq j, \;\; \mathbf{E}\qty[X_iX_j] = \mathbf{E}\qty[X_i]\mathbf{E}\qty[X_j])
+\end{align*}
+
+\section*{Exercise 3.20}
+Since $Y$ is a nonnegative random variable, we can apply Marcov's inequality, which gives
+$$\mathrm{Pr}\qty(Y \geq 1) \leq \frac{\mathbf{E}\qty[Y]}{1}.$$
+Since $\mathrm{Pr}\qty(Y \neq 0) = \mathrm{Pr}\qty(Y \geq 1)$, we obtain $\mathrm{Pr}\qty(Y \neq 0) \leq {\mathbf{E}\qty[Y]}$.
+Now let $X = Y \;|\; Y \neq 0$, then Jensen's inequality gives
+$$\qty(\mathbf{E}\qty[X])^2 \leq \mathbf{E}\qty[X^2], \;\; \qty(\mathbf{E}\qty[Y \;|\; Y \neq 0])^2 \leq \mathbf{E}\qty[Y^2 \;|\; Y \neq 0].$$
+Each can be simplified as
+\begin{align*}
+  \mathbf{E}\qty[Y \;|\; Y \neq 0] &= \sum_{y=0}^{\infty}y\mathrm{Pr}\qty(Y=y \;|\; Y \neq 0) \\
+  &= \sum_{y=0}^{\infty}y\cdot\frac{\mathrm{Pr}\qty(Y=y \cap Y \neq 0)}{\mathrm{Pr}\qty(Y \neq 0)} = \sum_{y=1}^{\infty}y\cdot\frac{\mathrm{Pr}\qty(Y=y)}{\mathrm{Pr}\qty(Y \neq 0)} \\
+  &= \frac{1}{\mathrm{Pr}\qty(Y \neq 0)}\sum_{y=1}^{\infty}y\mathrm{Pr}\qty(Y=y) = \frac{\mathbf{E}\qty[Y]}{\mathrm{Pr}\qty(Y \neq 0)} \\
+  \mathbf{E}\qty[Y^2 \;|\; Y \neq 0] &= \sum_{y=0}^{\infty}y^2\mathrm{Pr}\qty(Y=y \;|\; Y \neq 0) \\
+  &= \sum_{y=0}^{\infty}y^2\cdot\frac{\mathrm{Pr}\qty(Y=y \cap Y \neq 0)}{\mathrm{Pr}\qty(Y \neq 0)} = \sum_{y=1}^{\infty}y^2\cdot\frac{\mathrm{Pr}\qty(Y=y)}{\mathrm{Pr}\qty(Y \neq 0)} \\
+  &= \frac{1}{\mathrm{Pr}\qty(Y \neq 0)}\sum_{y=1}^{\infty}y^2\mathrm{Pr}\qty(Y=y) = \frac{\mathbf{E}\qty[Y^2]}{\mathrm{Pr}\qty(Y \neq 0)}.
+\end{align*}
+Therefore
+$$\qty(\frac{\mathbf{E}\qty[Y]}{\mathrm{Pr}\qty(Y \neq 0)})^2 \leq \frac{\mathbf{E}\qty[Y^2]}{\mathrm{Pr}\qty(Y \neq 0)}, \;\; \frac{\qty(\mathbf{E}\qty[Y])^2}{\mathbf{E}\qty[Y^2]} \leq \mathrm{Pr}\qty(Y \neq 0).$$
+$$\therefore \frac{\qty(\mathbf{E}\qty[Y])^2}{\mathbf{E}\qty[Y^2]} \leq \mathrm{Pr}\qty(Y \neq 0) \leq \mathbf{E}\qty[Y]$$
+
+\section*{Exercise 3.26}
+Let $X = \dfrac{X_1 + X_2 + \cdots + X_n}{n}$, then since all $X_i$s are independent, 
+\begin{align*}
+  \mathbf{E}\qty[X] &= \mathbf{E}\qty[\dfrac{X_1 + X_2 + \cdots + X_n}{n}] = \frac{\mu + \mu + \cdots + \mu}{n} = \mu \\
+  \mathbf{Var}\qty[x]&= \mathbf{Var}\qty[\dfrac{X_1 + X_2 + \cdots + X_n}{n}] = \frac{\sigma^2 + \sigma^2 + \cdots + \sigma^2}{n^2} = \frac{\sigma^2}{n}.
+\end{align*}
+Now Chebyshev’s inequality gives
+$$\mathrm{Pr}\qty(\qty|X - \mathbf{E}\qty[X]| > \epsilon) \leq \frac{\mathbf{Var}\qty[X]}{\epsilon^2}, \;\; \mathrm{Pr}\qty(\qty|X - \mu| > \epsilon) \leq \frac{\sigma^2}{n\epsilon^2}.$$
+Therefore
+$$0 \leq \lim_{n \to \infty}\mathrm{Pr}\qty(\qty|X - \mu| > \epsilon) \leq \lim_{n \to \infty}\frac{\sigma^2}{n\epsilon^2} = 0, \;\; \lim_{n \to \infty}\mathrm{Pr}\qty(\qty|X - \mu| > \epsilon) = 0.$$
+
+\end{document}
