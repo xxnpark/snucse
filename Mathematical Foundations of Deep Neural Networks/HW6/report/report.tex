@@ -1,0 +1,240 @@
+\documentclass[10pt]{article}
+%\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{amsmath,amssymb,amsthm,physics,units,mathtools}
+\usepackage[shortlabels]{enumitem}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{algorithm,algpseudocode}
+\usepackage{listings}
+\usepackage[shortlabels]{enumitem}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+    pdfpagemode=FullScreen,
+}
+\NewDocumentCommand{\code}{v}{%
+\texttt{#1}%
+}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{lgray}{RGB}{240,239,239}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+    % frame=tb,
+    aboveskip=3mm,
+    belowskip=3mm,
+    showstringspaces=false,
+    columns=flexible,
+    basicstyle=\ttfamily,
+    numbers=none,
+    backgroundcolor=\color{lgray},
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue},
+    commentstyle=\color{dkgreen},
+    stringstyle=\color{mauve},                
+    keepspaces=true,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=3
+}
+
+\begin{document}
+\begin{center}
+    {\LARGE MathDNN Homework 6} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 1}
+Let $A_i$, $b_i$ the parameters for the linear relationship between layers $y_i$ and $y_{i+1}$. ($A_i \in \mathbb{R}^{m \times n}$, $b_i \in \mathbb{R}^{m}$, $y_i \in \mathbb{R}^{n}$, $y_{i+1} \in \mathbb{R}^{m}$)
+Then applying dropout before the activation function results in 
+$$y_{i+1} = \sigma\qty(A_iy_i' + b_i), \;\; \qty[y_i']_j = \begin{cases}
+    0 & \text{(with probability p)} \\ \dfrac{\qty[y_i]_j}{1-p} & \text{(otherwise)}
+\end{cases}$$
+while the opposite gives
+$$\qty[y_{i+1}]_j = \begin{cases}
+    0 & \text{(with probability p)} \\ \dfrac{\qty[\sigma\qty(A_iy_i + b_i)]_j}{1-p} & \text{(otherwise)}
+\end{cases}.$$
+For notational convenience, denote the resulting $y_{i+1}$ from each cases $y_{i+1}^1$ and $y_{i+1}^2$. 
+We should find the appropriate $\sigma$ where $\mathbf{E}\qty[\qty(y_{i+1}^1)_j] = \mathbf{E}\qty[\qty(y_{i+1}^2)_j]$ for $j = 1, 2, \cdots, m$. 
+We can generally obtain the following.
+\begin{align*}
+    \mathbf{E}\qty[\qty[y_{i+1}^1]_j] &= \mathbf{E}\qty[\qty[\sigma\qty(A_iy_i' + b_i)]_j] = \mathbf{E}\qty[\sigma\qty(\qty[A_iy_i' + b_i]_j)] \\
+    &= \mathbf{E}\qty[\sigma\qty(\qty[A_i]_{j,:}\cdot y_i' + \qty[b_i]_j)] \\
+    &= \mathbf{E}\qty[\sigma\qty(\qty[A_i]_{j,1}\qty[y_i']_1 + \cdots + \qty[A_i]_{j,n}\qty[y_i']_n + \qty[b_i]_j)] \\
+    &= \mathbf{E}\qty[\sigma\qty(\qty[A_i]_{j,1}\qty[y_i']_1)] + \cdots + \mathbf{E}\qty[\sigma\qty(\qty[A_i]_{j,n}\qty[y_i']_n)] + \mathbf{E}\qty[\sigma\qty(\qty[b_i]_j)] \\
+    &= \sigma\qty(\qty[A_i]_{j,1}\frac{\qty[y_i]_1}{1-p}) \times (1-p) + \cdots + \sigma\qty(\qty[A_i]_{j,n}\frac{\qty[y_i]_n}{1-p}) \times (1-p) + \sigma\qty(\qty[b_i]_j) \\
+    \mathbf{E}\qty[\qty[y_{i+1}^2]_j] &= \frac{\qty[\sigma\qty(A_iy_i + b_i)]_j}{1-p} \times (1-p) \\
+    &= \sigma\qty(\qty[A_i]_{j,1}\qty[y_i]_1) + \cdots + \sigma\qty(\qty[A_i]_{j,n}\qty[y_i]_n) + \sigma\qty(\qty[b_i]_j)
+\end{align*}
+For the three cases, results differ as the following.
+\begin{enumerate}[(1), leftmargin=*]
+    \item \code{nn.ReLU()} \\
+    For $a > 0$, $\mathrm{ReLU}(ax) = a\mathrm{ReLU}(x)$ from the definition of ReLU. Therefore the two results are equivalent.
+    \begin{align*}
+        \mathbf{E}\qty[\qty[y_{i+1}^1]_j] &= \sigma\qty([A_i]_{j,1}\frac{\qty[y_i]_1}{1-p}) \times (1-p) + \cdots + \sigma\qty([A_i]_{j,n}\frac{\qty[y_i]_n}{1-p}) \times (1-p) + \sigma\qty(\qty[b_i]_j) \\
+        &= \sigma\qty(\qty[A_i]_{j,1}\qty[y_i]_1) + \cdots + \sigma\qty(\qty[A_i]_{j,n}\qty[y_i]_n) + \sigma\qty(\qty[b_i]_j) \\
+        &= \mathbf{E}\qty[\qty[y_{i+1}^2]_j]
+    \end{align*}
+    \item \code{nn.Sigmoid()} \\
+    Generally, $\sigma\qty([A_i]_{j,k}\dfrac{\qty[y_i]_k}{1-p})(1-p) = \sigma\qty(\qty[A_i]_{j,1}\qty[y_i]_1)$ does not stand for the sigmoid function. 
+    Therefore changing the order gives nonequivalent results.
+    \item \code{nn.LeakyReLU()} \\
+    For $a > 0$, $\mathrm{LeakyReLU}(ax) = a\mathrm{LeakyReLU}(x)$ from the definition of leaky ReLU. 
+    Therefore similar to the ReLU function, changing the order gives equivalent results.
+\end{enumerate}
+Therefore in cases of ReLU and leaky ReLU, the order of dropout and activation functions does not matter.
+
+\section*{Problem 2}
+The weight initializing code of PyTorch's \code{nn.Linear} model is given as the following.
+\begin{lstlisting}[language=Python]
+def reset_parameters(self) -> None:
+    # Setting a=sqrt(5) in kaiming_uniform is the same as initializing with
+    # uniform(-1/sqrt(in_features), 1/sqrt(in_features)). For details, see
+    # https://github.com/pytorch/pytorch/issues/57109
+    init.kaiming_uniform_(self.weight, a=math.sqrt(5))
+    if self.bias is not None:
+        fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
+        bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
+        init.uniform_(self.bias, -bound, bound)
+\end{lstlisting}
+The weight and bias elements are all initialized from $\mathcal{U}(-\mathtt{bound}, \mathtt{bound})$  where $\mathtt{bound} = \dfrac{1}{\sqrt{\mathtt{fan\_in}}}$.
+In this case, $\mathtt{fan\_in} = n_\ell$ for each step.
+Therefore all elements of $\qty[A_k]$ and $\qty[b_k]$ follow $\mathcal{U}\qty(-\dfrac{1}{\sqrt{n_{k-1}}}, \dfrac{1}{\sqrt{n_{k-1}}})$, and have mean 0, variance $\dfrac{1}{3n_{k-1}}$.
+
+\vspace{3mm}
+For $j = 1, 2, \cdots, n_0$, $\mathbf{E}\qty[\qty[x]_j] = 0$ and $\mathbf{Var}\qty[\qty[x]_j] = 1$.
+Since all variables are uncorrelated, for $j = 1, 2, \cdots, n_1$, 
+\begin{align*}
+    \mathbf{E}\qty[\qty[y_1]_j] &= \mathbf{E}\qty[\qty[A_1]_{j, 1}\qty[x]_1 + \cdots + \qty[A_1]_{j, n_0}\qty[x]_{n_0} + \qty[b_1]_j] \\
+    &= \mathbf{E}\qty[\qty[A_1]_{j, 1}]\mathbf{E}\qty[\qty[x]_1] + \cdots + \mathbf{E}\qty[\qty[A_1]_{j, n_0}]\mathbf{E}\qty[\qty[x]_{n_0}] + \mathbf{E}\qty[\qty[b_1]_j] \\
+    &= 0 \\
+    \mathbf{Var}\qty[\qty[y_1]_j] &= \mathbf{Var}\qty[\qty[A_1]_{j, 1}\qty[x]_1 + \cdots + \qty[A_1]_{j, n_0}\qty[x]_{n_0} + \qty[b_1]_j] \\
+    &= \mathbf{Var}\qty[\qty[A_1]_{j, 1}]\mathbf{Var}\qty[\qty[x]_1] + \cdots + \mathbf{Var}\qty[\qty[A_1]_{j, n_0}]\mathbf{Var}\qty[\qty[x]_{n_0}] + \mathbf{Var}\qty[\qty[b_1]_j] \\
+    &= \frac{n_0 + 1}{3n_0}.
+\end{align*}
+Let $y_0 = x$. 
+Then generally, we can inductively show that for $l = 1, 2, \cdots, L$, all elements of $y_\ell$ have the same mean and variance as the following.
+\begin{align*}
+    \mathbf{E}\qty[\qty[y_\ell]_j] &= \mathbf{E}\qty[\qty[A_\ell]_{j, 1}]\mathbf{E}\qty[\qty[y_{\ell-1}]_1] + \cdots + \mathbf{E}\qty[\qty[A_\ell]_{j, n_{\ell-1}}]\mathbf{E}\qty[\qty[y_{\ell-1}]_{n_{\ell-1}}] + \mathbf{E}\qty[\qty[b_\ell]_j] \\
+    &= 0 \\
+    \mathbf{Var}\qty[\qty[y_\ell]_j] &= \mathbf{Var}\qty[\qty[A_\ell]_{j, 1}]\mathbf{Var}\qty[\qty[y_{\ell-1}]_1] + \cdots + \mathbf{Var}\qty[\qty[A_\ell]_{j, n_{\ell-1}}]\mathbf{Var}\qty[\qty[y_{\ell-1}]_{n_{\ell-1}}] + \mathbf{Var}\qty[\qty[b_\ell]_j] \\
+    &= \frac{\mathbf{Var}\qty[\qty[y_{\ell-1}]_1]\cdot n_{\ell-1} + 1}{3n_{\ell-1}}
+\end{align*}
+The variance cannot be further simplified, but if the bias is 0, we can simply say $\mathbf{Var}\qty[\qty[y_\ell]_j] = \dfrac{1}{3^\ell}$.
+
+\section*{Problem 3}
+\noindent\fbox{%
+\parbox{0.98\textwidth}{%
+    \textit{Notation} For a matrix or vector $X$, the notation $[X]_{i, j}$ or $[X]_i$ refers to the element of $X$ at that index, and $\qty{f(i, j)}_{i, j}$ refers to a matrix of which element at $(i, j)$ is $f(i, j)$.
+}%
+}
+\begin{enumerate}[(1), leftmargin=*]
+    \item For $\ell = L$, 
+    \begin{align*}
+        \frac{\partial y_\ell}{\partial y_{\ell-1}} = \frac{\partial y_L}{\partial y_{L-1}} = A_L.
+    \end{align*}
+    For $\ell = 2, \cdots, L-1$,
+    \begin{align*}
+        \frac{\partial y_\ell}{\partial y_{\ell-1}} &= \frac{\partial}{\partial y_{\ell-1}}\qty(\sigma\qty(A_\ell y_{\ell-1} + b_\ell) + y_{\ell-1}) \\
+        &= \qty{\frac{\partial}{\partial\qty[y_{\ell-1}]_j}\Big[\sigma\qty(A_\ell y_{\ell-1} + b_\ell) + y_{\ell-1}\Big]_i}_{i, j} \\
+        &= \qty{\frac{\partial}{\partial\qty[y_{\ell-1}]_j}\Big(\sigma\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i) + \qty[y_{\ell-1}]_i\Big)}_{i, j} \\
+        &= \qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\cdot\frac{\partial}{\partial\qty[y_{\ell-1}]_j}\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i) + 1}_{i, j} \\
+        &= \qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\cdot\frac{\partial}{\partial\qty[y_{\ell-1}]_j}\qty(\sum_{k=1}^{n_{\ell-1}}\qty[A_\ell]_{i,k}\qty[y_{\ell-1}]_k + \qty[b_\ell]_i)}_{i, j} \\
+        &= \qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\cdot\qty[A_\ell]_{i, j} + 1}_{i, j} \\
+        &= \text{diag}\:\Big(\sigma'\qty(A_\ell y_{\ell-1} + b_\ell)\Big) A_\ell + \qty{1}_{i, j}.
+    \end{align*}
+    \item For $\ell = L$,
+    \begin{align*}
+        \frac{\partial y_L}{\partial b_\ell} = \frac{\partial y_L}{\partial b_L} = \frac{\partial}{\partial b_L}\qty(A_L y_{L-1} + b_L) = 1.
+    \end{align*}
+    For $\ell = 1, \cdots, L-1$, we can obtain the following.
+    \begin{align*}
+        \frac{\partial y_\ell}{\partial b_\ell} &= \frac{\partial}{\partial b_\ell}\qty(\sigma\qty(A_\ell y_{\ell-1} + b_\ell) + y_{\ell-1}) = \frac{\partial}{\partial b_\ell}\sigma\qty(A_\ell y_{\ell-1} + b_\ell) \\
+        &= \qty{\frac{\partial}{\partial\qty[b_\ell]_j}\qty[\sigma\qty(A_\ell y_{\ell-1} + b_\ell)]_i}_{i, j} = \qty{\frac{\partial}{\partial\qty[b_\ell]_j}\sigma\qty(\qty[A_\ell y_{\ell-1} + b_\ell]_i)}_{i, j} = \qty{\frac{\partial}{\partial\qty[b_\ell]_j}\sigma\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)}_{i, j} \\
+        &= \qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\cdot\frac{\partial}{\partial\qty[b_\ell]_j}\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)}_{i, j} \\
+        &= \qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\cdot\delta_{ij}}_{i, j} \;\; (\delta_{ij} \text{: Kronecker Delta})\\
+        &= \text{diag}\:\Big(\sigma'\qty(A_\ell y_{\ell-1} + b_\ell)\Big)
+    \end{align*}
+    Therefore 
+    \begin{align*}
+        \frac{\partial y_L}{\partial b_\ell} &= \frac{\partial y_L}{\partial y_{L-1}}\frac{\partial y_{L-1}}{\partial y_{L-2}}\cdots\frac{\partial y_{\ell+1}}{\partial y_{\ell}}\frac{\partial y_\ell}{\partial b_\ell} \\
+        &= A_L\qty(\text{diag}\:\Big(\sigma'\qty(A_{L-1} y_{L-2} + b_{L-1})\Big) A_{L-1} + \qty{1}_{i, j}) \\
+        &\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\cdots\qty(\text{diag}\:\Big(\sigma'\qty(A_{\ell+1} y_{\ell} + b_{\ell+1})\Big) A_{\ell+1} + \qty{1}_{i, j})\text{diag}\qty(\sigma'\qty(A_\ell y_{\ell-1} + b_\ell)).
+    \end{align*}
+    For $\ell = L$,
+    \begin{align*}
+        \frac{\partial y_L}{\partial A_\ell} = \frac{\partial y_L}{\partial A_L} = \frac{\partial}{\partial A_L}\qty(A_L y_{L-1} + b_L) = y_{L-1}.
+    \end{align*}
+    For $\ell = 1, \cdots, L-1$, we can obtain the following.
+    \begin{align*}
+        \qty[\frac{\partial y_L}{\partial A_\ell}]_{i, j} &= \frac{\partial y_L}{\partial \qty[A_\ell]_{i, j}} = \frac{\partial y_L}{\partial y_\ell}\frac{\partial y_\ell}{\partial \qty[A_\ell]_{i, j}} = \frac{\partial y_L}{\partial y_\ell}\qty{\frac{\partial\qty[y_\ell]_k}{\partial \qty[A_\ell]_{i, j}}}_{k} \\
+        &= \frac{\partial y_L}{\partial y_\ell}\qty{\frac{\partial}{\partial \qty[A_\ell]_{i, j}}\Big(\sigma\qty(\qty[A_\ell y_{\ell-1}]_k + \qty[b_\ell]_k) + \qty[y_{\ell-1}]_k\Big)}_{k} = \frac{\partial y_L}{\partial y_\ell}\qty{\frac{\partial}{\partial \qty[A_\ell]_{i, j}}\sigma\qty(\qty[A_\ell y_{\ell-1}]_k + \qty[b_\ell]_k)}_{k} \\
+        &= \frac{\partial y_L}{\partial y_\ell}\qty{\sigma'\qty(\qty[A_\ell y_{\ell-1}]_k + \qty[b_\ell]_k)\qty(\frac{\partial}{\partial \qty[A_\ell]_{i, j}}\qty(\qty[A_\ell y_{\ell-1}]_k + \qty[b_\ell]_k))}_{k} \\
+        &= \frac{\partial y_L}{\partial y_\ell}\begin{bmatrix}
+            0 \\ \vdots \\ {\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\qty[y_{\ell - 1}]_j} \\ \vdots \\ 0
+        \end{bmatrix} \;\; (\text{All elements except the } i \text{-th element are }0.)\\
+        &= \qty[\frac{\partial y_L}{\partial y_\ell}]_{i}\sigma'\qty(\qty[A_\ell y_{\ell-1}]_i + \qty[b_\ell]_i)\qty[y_{\ell - 1}]_j \\
+        &= \qty[\sigma'\qty(A_\ell y_{\ell-1} + b_\ell)]_i\qty[\frac{\partial y_L}{\partial y_\ell}]_{i}\qty[y_{\ell - 1}]_j
+    \end{align*}
+    Therefore
+    \begin{align*}
+        \frac{\partial y_L}{\partial A_\ell} &= \text{diag}\:\qty(\sigma'\qty(A_\ell y_{\ell-1} + b_\ell))\qty(\dfrac{\partial y_L}{\partial y_\ell})^\intercal y_{\ell-1}^\intercal \\
+        &= \text{diag}\:\qty(\sigma'\qty(A_\ell y_{\ell-1} + b_\ell))\qty(\dfrac{\partial y_L}{\partial y_{L-1}})^\intercal\qty(\dfrac{\partial y_{L-1}}{\partial y_{L-2}})^\intercal\cdots\qty(\dfrac{\partial y_{\ell+1}}{\partial y_\ell})^\intercal y_{\ell-1}^\intercal \\
+        &= \text{diag}\:\qty(\sigma'\qty(A_\ell y_{\ell-1} + b_\ell))A_L^\intercal\qty(\text{diag}\:\Big(\sigma'\qty(A_{L-1} y_{L-2} + b_{L-1})\Big) A_{L-1} + \qty{1}_{i, j})^\intercal \\
+        &\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\cdots\qty(\text{diag}\:\Big(\sigma'\qty(A_{\ell+1} y_{\ell} + b_{\ell+1})\Big) A_{\ell+1} + \qty{1}_{i, j})^\intercal y_{\ell-1}^\intercal. \\
+    \end{align*}
+    \item For $i \leq \ell$, 
+    \begin{align*}
+        \frac{\partial y_L}{\partial b_i} &= A_L\qty(\text{diag}\:\Big(\sigma'\qty(A_{L-1} y_{L-2} + b_{L-1})\Big) A_{L-1} + \qty{1}_{i, j}) \\
+        &\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\cdots\qty(\text{diag}\:\Big(\sigma'\qty(A_{i+1} y_{i} + b_{i+1})\Big) A_{i+1} + \qty{1}_{i, j})\text{diag}\qty(\sigma'\qty(A_i y_{i-1} + b_i)) \\
+        \frac{\partial y_L}{\partial A_i} &= \text{diag}\:\qty(\sigma'\qty(A_i y_{i-1} + b_i))A_L^\intercal\qty(\text{diag}\:\Big(\sigma'\qty(A_{L-1} y_{L-2} + b_{L-1})\Big) A_{L-1} + \qty{1}_{i, j})^\intercal \\
+        &\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\cdots\qty(\text{diag}\:\Big(\sigma'\qty(A_{i+1} y_{i} + b_{i+1})\Big) A_{i+1} + \qty{1}_{i, j})^\intercal y_{i-1}^\intercal. \\
+    \end{align*}
+    The given conditions guarantee that for any $\ell$ and $i \leq \ell$, at least one of $A_{L-1}, \cdots, A_{i+1}$ and one of $\text{diag}\:\Big(\sigma'\qty(A_{L-1} y_{L-2} + b_{L-1})\Big), \cdots, \text{diag}\:\Big(\sigma'\qty(A_{i+1} y_{i} + b_{i+1})\Big)$ is $0$.
+    However, due to the $\qty{1}_{i, j}$ term in each calculation, the gradients do not vanish, rather remain in large values.
+\end{enumerate}
+
+\section*{Problem 4}
+\begin{enumerate}[(1), leftmargin=*]
+    \item The number of trainable parameters between two layers can be calculated as $C_{\mathrm{out}} \times \qty(C_{\mathrm{in}} \times F \times F + 1)$, where $F$ is the size of the convolution filter and $C_{\mathrm{in}}$ and $C_{\mathrm{out}}$ are each the number of channels for input and output.
+    The addition of $1$ is made due to the bias.
+    In the original construction, the total number of parameters is
+    $$128 \times (256 \times 1 \times 1 + 1) + 128 \times (128 \times 3 \times 3 + 1) + 256 \times (128 \times 1 \times 1 + 1) = 213504.$$
+    In the modified construction, the total number of parameters is
+    $$\Big(4 \times (256 \times 1 \times 1 + 1)\Big) \times 32 + \Big(4 \times (4 \times 3 \times 3 + 1)\Big) \times 32 + \Big(256 \times (4 \times 1 \times 1 + 1)\Big) \times 32 = 78592.$$
+    Therfore the modified version reduces the number of trainable parameters considerably.
+    \item The convolution model can be implemented via PyTorch as the following.
+    (The final summation is done for 32 objects, thus for convenience the repetition is abbreviated as `...' in the code.)
+    \begin{lstlisting}[language=Python]
+class STMConvLayer(nn.Module):
+    def __init__(self):
+        super(STMConvLayer , self).__init__()
+        self.conv1layers = [nn.Conv2d(256, 4, 1) for _ in range(32)]
+        self.conv2layers = [nn.Conv2d(4, 4, 3) for _ in range(32)]
+        self.conv3layers = [nn.Conv2d(4, 256, 1) for _ in range(32)]
+    def forward(self, x):
+        # [apply 1x1conv with 4 output channels
+        #  apply 3x3conv with 4 output channels (with padding=1)
+        #  apply 1x1conv with 256 output channels] X 32
+        # Add all 32 outputs
+        out_list = [nn.ReLU(self.conv1layers[i](x)) for i in range(32)]
+        out_list = [nn.ReLU(self.conv2layers[i](out_list[i])) for i in range(32)]
+        out_list = [nn.ReLU(self.conv3layers[i](out_list[i])) for i in range(32)]
+        out = out_list[0] + out_list[1] + ... + out_list[31]
+        return out
+    \end{lstlisting}
+\end{enumerate}
+
+\end{document}
