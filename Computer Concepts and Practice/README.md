@@ -1,6 +1,6 @@
 # Computer Concepts and Practice
 
-수업명 | 컴퓨터구조
+수업명 | 컴퓨터의 개념 및 실습
 :----:|----
 교수 | [김형주](http://idb.snu.ac.kr/)
 강의 학기 | Spring 2021
