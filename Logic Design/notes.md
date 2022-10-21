@@ -1,0 +1,462 @@
+# 논리설계
+
+### Lecture 1 : Introduction
+
+- Switch
+    - mechanical switch → problems
+        - size too big
+        - hard to make automatic
+        - propagating networks are very slow (should push mechanically)
+    - use semiconductor switch or transistor instead
+- Transistor
+    - CMOS technology
+        - MOS = Metal-Oxide Semiconductor
+        - C = Complementary (usually use nMOS and pMOS together)
+        - voltage controled switches
+    - nMOS
+        - 3 terminals : Source - Gain - Drain
+        - 3 layers : Polysilicon, SiO2, Substrate
+        - high voltage at G (G > S) → electrons in substrate move to G → channel between S and D → closed (connected)
+        - current flow from D to S (Vdd > Vss)
+    - pMOS
+        - 0(low) voltage at G (G < S) → closed (connected)
+        - current flow from S to D (Vss > Vdd)
+    - nMOS and pMOS used in pair
+        - pMOS : if 0 voltage delivered → noise added
+        - nMOS : if high voltage delivered → noise added
+        - other cases → less error
+        - each input needs a pair of transistors
+    - Gates
+        - NOT gate (inverter) → 2 switches
+        - NAND, NOR gate → 4 switches
+        - three input NAND gate → 6 switches (not use two input NAND gate x 2)
+        - AND, OR gate → 2 switches (NAND, NOR + NOT)
+    - Digital vs Analog
+        - actually digital components have continuous behavior
+        - however just use them by abstracting the errors, ignore transition state
+        - why? the system does not propagate small errors, and they are always reset to 0 or 1
+    - Combinational Logic vs Sequential Logic
+        - Combinational : output values only depend on current input values (memory less)
+            - Step 1. determine encoding for input and output (draw block diagram)
+            - Step 2. describe internal behavior (specify truth table)
+            - Step 3. implement output as a function of input
+        - Sequential : output values depend on previous input values too
+            - cannot simply draw truth table, should draw state diagram first
+    - Examples
+        - Calendar Subsystem : number of days in a month (Combinational Logic)
+            - inputs : month(4), leap year flag(1)
+            - outputs : number of days(4)
+        - Door Combination Lock (Sequential Logic)
+            - inputs : sequence of input values, reset, new
+            - outputs : door open or close
+            - memory : result before
+            - data-path (compare values) and control (determine output)
+            - FSM (Finite-State Machine) at control
+    
+    ### Lecture 2 : Combinational Logic
+    
+    - Logic Functions
+        - Possible Logic Functions : n inputs → 2^n group of inputs → 2^(2^n) functions
+        - we can implement all logic functions from NOT, NOR, NAND (actually only need NOR or NAND)
+            - NOT X = X NOR X = X NAND X
+            - X NAND Y = NOT ((NOT X) NOR (NOT Y))
+            - X NOR Y = NOT ((NOT X) NAND (NOT Y))
+        - Boolean Algebra
+            - any logic function can be expressed as a truth table and can be written as an expression in boolean algebra
+            - axioms and theorems
+                - identity : `X + 0 = X`, `X · 1 = X`
+                - null : `X + 1 = 1`, `X · 0 = 0`
+                - idempotency : `X + X = X`, `X · X = X`
+                - involution : `(X’)’ = X`
+                - complementarity : `X + X’ = 1`, `X · X’ = 0`
+                - commutativity : `X + Y = Y + X`, `X · Y = Y · X`
+                - associativity : `(X + Y) + Z = X + (Y + Z)`, `(X · Y) · Z = X · (Y · Z)`
+                - distributivity : `X · (Y + Z) = X · Y + X · Z`, `X + Y · Z = (X + Y) · (X + Z)`
+                - uniting : `X · Y + X · Y’ = X`, `(X + Y) · (X + Y’) = X`
+                - absorption : `X + X · Y = X`, `X · (X + Y) = X`, `(X + Y’) · Y = X · Y`, `X · Y’ + Y = X + Y`
+                - factoring : `(X + Y) · (X’ + Z) = X · Z + X’ · Y`, `X · Y + X’ · Z = (X + Z) · (X’ + Y)`
+                - concensus : `X · Y + Y · Z + X’ · Z = X · Y + X’ · Z`, `(X + Y) · (Y + Z’) · (X’ + Z) = (X + Y) · (X’ + Z)`
+                - de Morgan’s law : `(X + Y)’ = X’ · Y’`, `(X · Y)’ = X’ + Y’`
+                - generalized de Morgan’s law : `f’(X, Y, ⋯, 0, 1, +, ·) = f(X’, Y’, ⋯, 1, 0, ·, +)`
+            - duality exists between laws (`+ ⇔ ·`, `1 ⇔ 0`)
+        - Perfect Induction : proof by truth table
+    - Logic Realization
+        - different realizations exist, but should choose depending on criteria (minimize cost? delay?)
+            - reduce number of inputs (literals)
+                - fewer transistors (one input = nMOS + pMOS)
+                - faster gates
+                - fan-ins(number of inputs) are limited in some technologies
+            - reduce number of gates
+                - smaller circuits
+                - less cost
+            - reduce number of levels of gates
+                - reduced signal propagation delays
+                    - for minimum delay, need more gates (wider, less deep circuits)
+        - Logic Minimization : reduce number of gates and complexity (and cost)
+        - Logic Optimization : reduce delay
+            - sometimes glitches are caused by delay
+    - Canonical Forms (Two-Level Logic)
+        - unique and standard from of boolean expression
+        - SoP (Sum of Products)
+            - AND → OR
+            - disjunctive normal form
+            - minterm expansion (minterm : AB’C, all inputs should be included)
+            - ON-set : set of cases whose output is 1
+        - PoS (Product of Sums)
+            - OR → AND
+            - conjunctive normal form
+            - maxterm expansion (maxterm : all cases that bring false output ORed)
+            - OFF-set : set of cases whose output is 0
+        - Don’t Care terms
+    - Minimization Techniques
+        - Uniting Theorem
+            - A(B’ + B) = A
+        - Boolean Cube
+            - m subcube (2^m nodes) in n cube → n - m literals
+        - Karnaugh Map
+
+### Lecture 3 : Working With Combinational Logic
+
+- Simplification
+    - Terms
+        - MSB (Most Significant Bit) vs LSB (Least Significant Bit) : left most vs right most
+        - Implicant : element or group of elements of ON-set or DC-set
+        - Prime Implicant : implicants that can’t be combined with others to form a larger subcube
+        - Essential Prime Implicant : prime implicant which alone covers an element of a ON-set
+    - we should grow implicants to prime implicants, and minimize the number of prime implicants
+    - Algorithm
+        - Step 1. choose element of the ON-set
+        - Step 2. find maximal groupings of 1s ans Xs adjacent to that element, find all prime implicants
+        - Step 3. find essential prime implicants
+        - Step 4. for 1s not covered with essentials, select the smallest number of prime implicants to cover them
+- Two-Level Logic using NAND, NOR gates
+    - use de Morgan’s law
+    - bubble to bubble approach
+- Multi-Level Logic
+    - if there are several common parts in a canonical form, better to use multi-level logic to reduce number of literals and gates
+    - Advantages
+        - smaller circuits (number of gates)
+        - smaller fan-in (number of literals)
+    - Disadvantages
+        - slower (more delay)
+        - difficult to design
+        - hard to optimize
+        - analysis is more complex
+    - tradeoff between delay and gate count
+- AOI (AND-OR-Invert) Gates
+    - multiple gates packaged as a single circuit block
+    - directly implementable with CMOS transistors
+    - SOP form → NOT implement
+- Time Behavior
+    - Waveforms
+    - Terms
+        - Gate Delay : time for change at input to cause change at output
+        - Rise Time : time for output to transition from low to high voltage
+        - Fall Time : time for output to transition from high to low voltage
+        - Pulse Width : time that output stays high or low between changes
+- Hardware Description Languages (HDL)
+    - Structural Description
+        - textual replacement for schematic
+        - hierarchical composition of modules from primitives
+    - Data-Flow Stype Description
+        - textual replacement for truth table
+    - Behavioral Description
+        - describe not ‘what’ the module does, but ‘how’
+    - Verilog
+    - HDL vs Programming Languages
+        - continuous assignment : a gate’s output is a function of its inputs at all times, no need to wait
+        - propagation delay
+        - size explicitly spelled out
+        - no pointers
+        - parallelism
+
+### Lecture 4 : Combinational Logic Technologies
+
+- Random Logic (Standard Gates, Fixed Gates, Discrete Gates)
+    - not used a lot in the field
+    - too many gates needed, too big
+- Regular Logic
+    - design faster, make engineering changes easier to make
+    - MUX (Multiplexer)
+        - 2^n data inputs, n control inputs, 1 output
+        - choose 1 data input → output
+            - each data input is chosen per each minterm of control inputs
+            - data input = I0, I1, I2, I3 / control input = A, B / output = Z
+            - Z = A’B’I0 + A’BI1 + AB’I2 + ABI3
+        - 2^n : 1 multiplexer can implement any function of n variables
+            - fix data input
+            - actually 2^n-1 : 1 multiplexer is enough
+                - not only fix data input
+                - use last control input → data input
+    - DEMUX (Demultiplexer)
+        - 1 data input, n control inputs, 2^n outputs
+        - n : 2^n decoder
+            - data input also called as ‘enable’ (G, E)
+        - each output represents each minterm
+            - minterm generator
+- Two-Level Programmable Logic
+    - PLA (Programmable Logic Array)
+        - two level SoP : AND gates → OR gates
+        - fuse, anti-fuse
+        - if limit in number of minterms, apply boolean logic theorems (technology mapping)
+        - Advantages
+            - there are lots of common minterms
+            - multi-output minimization
+        - Disadvantages
+            - most expensive
+            - slowest
+    - PAL (Programmable Array Logic)
+        - AND, OR gates fixed
+        - Advantages
+            - fastest
+            - medium cost
+        - Disadvantages
+            - less programmable
+            - limited number of inputs for OR gates, could be a limiting factor
+    - ROM
+        - entries(rows) = words
+        - width of row = word-size (number of bits)
+        - input = address
+        - a word is selected by inputs → output
+        - all minterms are present in words
+            - 2^n words needed when there are n inputs
+            - like PLA, but there are all possible AND gates
+        - completely flexible OR array (unlike PAL)
+        - Advantages
+            - design time short (no need manual minimization)
+            - all minterms needed
+            - better when little sharing of minterms
+            - cheapest
+            - mediem speed
+        - Disadvantages
+            - one more input → double of more words needed
+            - can’t use DC terms
+
+### Lecture 5 : Case Studies in Combinational Logic Design
+
+- Design Procedure
+    - Block Diagram (encoding) → Truth Table (behavior) → Outputs as Equations of Inputs (minimization by K-maps, CAD tools, HDL)
+    - Step 3 added : choose implementation target device
+        - Random Logic : standard(discrete, fixed) gates
+        - Regular Logic : MUX, DEMUX, other decoders
+        - Programmable Logic : PLA, PAL, ROM
+- Case Studies
+    - BCD to 7-segment Display Controller
+    - Logical Function Unit
+    - Process Line Controller
+    - Calendar Subsystem
+- Integer Representations
+- Adders
+- Arithmetic Logic Units (ALU)
+
+### Lecture 6 : Sequential Logic Design
+
+- Sequential Logic Circuit (SLC)
+    - current state, inputs → next state, outputs
+    - state should be memorized
+    - Latch
+        - level triggered sequential circuit
+        - R-S Latch
+            - Cross-coupled NOR gates (when using NAND → input R’ and S’) → two NOR gates
+            - RS = 00 - hold (Q = (Q’)’, Q’ = (Q)’) / 10 - reset / 01 - set / 11 - (X)
+            - Q(T1) = S + R’Q(T0)
+            - problem : 11 → 00 causes oscillation
+        - Gated R-S Latch
+            - ‘enable’ input → four NOR gates
+            - enable = 0 → RS = 00
+            - enable = 1 → R, S from input
+            - use clock → R, S change during clock = 0, stable during clock = 1
+            - R, S should be stable during enable = 1
+    - Clock
+        - wait long enough for inputs (R and S) to settle
+        - Period : time between ticks
+        - Duty-Cycle : percentage of high time between ticks
+        - use clock for enable signal
+        - Timing Constraints
+            - Setup Time : minimum time before the clock edge which the input must be stable (dependent on transistor circuit delay)
+            - Hold Time : minimum time after the clock edge which the input must be stable (dependent on transistor circuit delay)
+            - Propagation Delay : delay between rising edge of the clock and the change in the output
+            - Minimum Clock Width : should be long enough to ensure that D will change Q (if too short, not enough time to insert external input to master stage)
+    - Flip-Flop
+        - edge triggered sequential circuit
+        - Master-Slave (R-S) Flip-Flop
+            - use two gated R-S latches → twice as much logic → four NOR gates + four AND gates + one NOT gate
+            - clock = 1 : store value in first latch → clock = 0 : insert the stored value to the second(main) latch
+            - R, S should be stable only at falling edge of clock
+            - output changes a few gate delays after falling edge of clock
+            - 1s catching problem : 0-1-0 glitch on R or S is caught by master stage
+        - D Flip-Flop
+            - not allow 00 or 11 input → eliminate 1s catching problem
+            - use R-S master slave Flip-Flop → R = D’ / S = D → four NOR gates + four AND gates + two NOT gates
+            - Edge-triggered D Filp-Flop → 6 NOR gates
+            - add inverter to clock → negative or positive edge triggered change
+- Register
+    - collections of FFs
+    - share CLK, R, S
+    - Shift Register
+        - store last 4 input values in sequence
+        - Universal Shift Register
+            - CLK, CLR input
+            - has load option, load inputx
+            - S1, S0 determines function
+            - S0S1 = 00 - hold / 01 - shift right / 10 - shift left / 11 - load new input
+        - Pattern Recognizer
+    - Counter
+        - Binary Counter
+            - Universal Binary Counter
+        - Offset Counter
+            - Starting Offset Counter
+            - Ending Offset Counter
+            - Both
+
+### Lecture 7 : Finite State Machines (FSMs)
+
+- Forms of Sequential Logic
+    - Asynchronous : state changes occur whenever inputs change
+    - Synchronous : state changes occur in specific step (clock)
+- FSM
+    - State
+    - Transition
+    - Clock
+    - all sequential systems can be represented with a state diagram
+- State Diagram → Sequential Logic Circuit Diagram
+    - 9 Steps
+        1. state / output table or diagram
+        2. minimize number of states if possible
+            - same output & same next state → equivalent state
+        3. state variable assignment
+            - minimize number of state variables that change on transition
+            - maximize number of state variables that do not  change in group of related states
+            - use unused states well : minimal risk or minimal cost
+            - each bit has well defined meaning with respect to inputs and outputs
+            - consider using more than the minimum number of state variables (ex : one hot encoding → gives simple equations)
+        4. transition / output table
+        5. choose a FF type
+        6. excitation table
+            - excitation input = current D value (FF) = next Q value (FF)
+        7. excitation equations
+            - if system enteres unused states (don’t care terms) → should move to used state after some inputs
+            - if not acceptable, should change don’t care terms to specific states
+        8. output equations
+        9. draw logic diagram
+    - 1 ~ 2 : state / output diagram
+    - 3 ~ 6 :  state / output table
+    - 7 ~ 9 : excitation / output equations
+- Mealy Machine vs Moore Machine
+    - Mealy
+        - output determined by current state & current input
+        - output associated with transition
+        - cannot be used for systems with asynchronous inputs
+        - have less states
+            - different outputs on arcs(n^2) rather than states(n)
+        - may be dangerous to use
+            - input change can cause output change as soon as logic is done
+            - problem when two machines are interconnected
+        - react faster to  inputs
+            - no need to wait for clock
+    - Moore
+        - output determined by current state
+        - output associated with state
+        - can be used with asynchronous inputs
+        - needs more states
+        - safer to use
+            - outputs change at clock edge (one cycle later)
+        - react slower to inputs
+            - more logic may be needed to decode state to outputs → more gate delays even after clock edge
+    
+    ### Lecture 8 : Sequential Circuit Analysis and Timing
+    
+    - Types of FFs
+        - D FF : D → Q
+        - JK FF : J = S, K = R but JK = 11 → Q = Q’
+        - T FF : posedge T, EN = 0 → Q = Q / EN = 1 → Q = Q’
+    - Analysis of Circuit : Equation → Table → Diagram
+        1. Excitation and Output Equations
+        2. State / Output Table
+            - Output → Mealy or Moore
+        3. State DIagram
+    - Timing Analysis
+        - Propagation Delay
+            - Propagation Delay = Sum of Propagation Delay of Combinational Output Logic
+            - input X → O delay : only applicable for mealy type output
+            - CLK → O delay : LH, HL delay both
+        - Setup Time
+            - change during setup time → metastable state (oscillation)
+            - Setup Time > max time of all paths from X to excitation + setup time of circuit
+        - Hold Time
+            - Hold Time > hold time of circuit - min time of all paths from X to excitation
+        - Maximum CLK Frequency
+            - Minimum CLK Period = Propagation Delay of CLKed part (CLK → Output) + Combinational Logic Delay for Excitation (Output → D) + Setup Time of input at FF
+            - find worst delay path (independent of transition direction H → L or L → H) out of all FF inputs
+        - Metastability : oscillation in output
+        - Variable Entered Table
+
+### Lecture 9 : Sequential Circuit Design Practice
+
+- State Determinization
+    - asynchoronous inputs → not needed
+    - enable → just assume always asserted
+    - 8 bit shift register → think of 2 bit first and then generalize
+- CLK Skew
+    - difference between arrival times of CLK at different devices
+    - Gated CLK
+        - short duty cycle
+        - comes too soon (or late) after asserting enable → not next CLK edge
+    - delay along long lines
+        - ㅇ
+    - eliminates the goods of synchronous design
+    - propagation delay of FF (CLK → Out) + min combinational delay for excitation > clock skew + hold time input at FF
+- Asynchronous Inputs
+    - if asynchronous inputs invade setup time or hold time, input change may or may not be affected
+    - may move to unexpected state
+    - Start Synchronizer (apply change of asynchronous input during setup or hold time at once)
+        - if output goes to metastability state, may cause oscillation
+        - just partial solution → use another synchronizer, probability of metastability will dramatically drop
+- Output Glitches
+    - state change : when 01 → 10, goes to 00 or 11 because of slightly different delays
+    - if connected to synchronous input, usually no problem
+    - asynchronous input → output glitch occurs
+    - Output Stabilizer
+        - output delayed, but usually no problem
+
+Lecture 10 : CPLD, FPGA
+
+- CPLD (Complex Programmable Logic Device)
+    - PLD (Programmable Logic Device) → Function Block
+        - programmable AND arrays
+        - product term allocators
+        - several macrocells (connected by MUXs)
+    - Programmable Interconnect (Switch Matrix)
+        - connection between input, output and PLDs
+        - external input, macrocell output → function block input (to AND array)
+        - external outputs
+    - I/O Block
+        - 1 I/O pin
+        - Tri-State Output Buffer → choose between input or output device
+- FPGA (Field Programmable Gate Array)
+    - CLB (Configurable Logic Block)
+        - 3 Look Up Tables → implement any function of 4(3) inputs
+            - implemented by SRAM
+            - stores truth table of function (ex: 4 inputs → 16 rows, 16x1 SRAM)
+            - any function of 5 inputs
+            - some function of 6 inputs
+            - some function of 9 inputs
+        - 2 D FFs
+        - Outputs
+    - Programmable Interconnect
+        - Direct Wires
+        - Single Wires
+        - Double Wires
+        - Long Wires
+        - Programmable Connections
+        - PSM (Programmable Switch Matrix)
+    - I/O Block
+        - 1 I/O pin
+        - Tri-State Output Buffer → choose
+        - 2 FFs → input synchronizer, output stabilizer
+    - Place and Routing
+        - Place : on which CLB a specific function should be implemented
+        - Routing : how to interconnect CLBs
+            - avoid use of PSM as much as possible (reduce delay)
+- CPLD vs FPGA
+    - FPGA has larger number of small blocks
