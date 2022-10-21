@@ -6,6 +6,7 @@
 * [공학수학 1 (Engineering Mathematics 1)](./Engineering%20Mathematics%201)
 * [공학수학 2 (Engineering Mathematics 2)](./Engineering%20Mathematics%202)
 * [이산수학 (Discrete Mathematics)](./Discrete%20Mathematics)
+* [선형대수학 (Linear Algetra)](./Linear%20Algebra)
 * [컴퓨터 프로그래밍 (Computer Programming)](./Computer%20Programming)
 * [자료구조 (Data Structures)](./Data%20Structures)
 * [알고리즘 (Algorithms)](./Algorithms/)
