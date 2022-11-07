@@ -1,0 +1,164 @@
+\documentclass[10pt]{article}
+%\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{amsmath,amssymb,amsthm,physics,units,mathtools}
+\usepackage{mdwlist}
+\usepackage{paralist}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{algorithm,algpseudocode}
+\usepackage{listings}
+\usepackage[colorlinks=true]{hyperref}
+\setcounter{MaxMatrixCols}{50}
+\NewDocumentCommand{\code}{v}{%
+\texttt{#1}%
+}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{lgray}{RGB}{240,239,239}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+    % frame=tb,
+    aboveskip=3mm,
+    belowskip=3mm,
+    showstringspaces=false,
+    columns=flexible,
+    basicstyle=\ttfamily,
+    numbers=none,
+    backgroundcolor=\color{lgray},
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue},
+    commentstyle=\color{dkgreen},
+    stringstyle=\color{mauve},                
+    keepspaces=true,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=3
+}
+
+\begin{document}
+\begin{center}
+    {\LARGE MathDNN Homework 8} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 1}
+Since $\mathcal{T}$ is a $2 \times 2$ average pool operator with stride $2$, $A$ will be given as
+\begin{equation*}
+    A = \begin{bmatrix*}
+        \frac{1}{4} & \frac{1}{4}   & 0             & \cdots        & 0             & 0             & 0             & 0             & \frac{1}{4}   & \frac{1}{4}   & 0             & \cdots        & 0             & 0             & 0             & 0             & & & \cdots & & & \\
+        0           & 0             & \frac{1}{4}   & \frac{1}{4}   & 0             & \cdots        & 0             & 0             & 0             & 0             & \frac{1}{4}   & \frac{1}{4}   & 0             & \cdots        & 0             & 0             & & & \cdots & & & \\
+        \vdots      &               &               &               & \ddots        & \ddots        &               &               &               &               &               &               & \ddots        & \ddots        &               &               & & & \cdots & & & \\
+        0           & 0             & 0             & 0             & \cdots        & 0             & \frac{1}{4}   & \frac{1}{4}   & 0             & 0             & 0             & 0             & \cdots        & 0             & \frac{1}{4}   & \frac{1}{4}   & & & \cdots & & & \\
+        \\
+                    &               &               &               &               &               &               &               &               &               &               &               &               &               &               &               & & & \ddots       \\  
+    \end{bmatrix*}.
+\end{equation*}
+and
+$$[\mathcal{T}(X)]_{i, j} = \frac{1}{4}\Big([X]_{2i-1, 2j-1} + [X]_{2i-1, 2j} + [X]_{2i, 2j-1} + [X]_{2i, 2j}\Big).$$
+So by the definition of $\mathcal{T}^\top$, we can calculate
+\begin{align*}
+    \sum_{i=1}^{m/2}\sum_{j=1}^{n/2}[Y]_{i,j}\qty[\mathcal{T}(X)]_{i,j} &= \sum_{i=1}^{m/2}\sum_{j=1}^{n/2}\frac{1}{4}[Y]_{i, j}\Big([X]_{2i-1, 2j-1} + [X]_{2i-1, 2j} + [X]_{2i, 2j-1} + [X]_{2i, 2j}\Big) \\
+    &= \sum_{i=1}^{m}\sum_{j=1}^{n}\frac{1}{4}[Y]_{\left\lceil i/2 \right\rceil, \left\lceil j/2 \right\rceil}\qty[X]_{i, j} = \sum_{i=1}^{m}\sum_{j=1}^{n}\qty[\mathcal{T}^\top(Y)]_{i, j}\qty[X]_{i, j}.
+\end{align*}
+Therefore we can compute $\mathcal{T}^\top$ by calculating $\qty[\mathcal{T}^\top(Y)]_{i, j} = \dfrac{1}{4}[Y]_{\left\lceil i/2 \right\rceil, \left\lceil j/2 \right\rceil}$. 
+This is equivalent to $\dfrac{1}{4}$ times the nearest neighbor upsampling.
+
+\section*{Problem 2}
+\begin{lstlisting}[language=Python]
+# Using Nearest Neighbor Upsampling
+layer = nn.Upsample(scale_factor=r, mode='nearest')
+
+# Using Transpose Convolution
+layer = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=r, stride=r)
+layer.weight.data = torch.ones(layer.weight.data.shape)
+\end{lstlisting}
+The two implementations above are equivalent.
+Transpose convolution with same kernel size and stride can be understood as nearest neighbor upsampling where all elements of the weight tensor are 1.
+
+\section*{Problem 3}
+\begin{enumerate}[(a)]
+    \item Since $f$ is a convex function, we can apply Jensen's inequality to $f$, which gives
+    \begin{align*}
+        D_f\qty(X||Y) &= \int f\qty(\frac{p_X(x)}{p_Y(x)})p_Y(x)dx = \mathbf{E}\qty[f\qty(\frac{p_X(Y)}{p_Y(Y)})] \\
+        &\geq f\qty(\mathbf{E}\qty[\frac{p_X(Y)}{p_Y(Y)}]) = f\qty(\int\frac{p_X(x)}{p_Y(x)}p_Y(x)dx) = f(1) = 0.
+    \end{align*}
+    \item If $f(t) = -\log t$, 
+    \begin{align*}
+        D_f\qty(X||Y) &= \int -\log\qty(\frac{p_X(x)}{p_Y(x)})p_Y(x)dx = \int \log\qty(\frac{p_Y(x)}{p_X(x)})p_Y(x)dx = D_{\mathrm{KL}}(Y||X).
+    \end{align*}
+    If $f(t) = t\log t$, 
+    \begin{align*}
+        D_f\qty(X||Y) &= \int \qty(\frac{p_X(x)}{p_Y(x)})\log\qty(\frac{p_X(x)}{p_Y(x)})p_Y(x)dx = \int \log\qty(\frac{p_Y(x)}{p_X(x)})p_X(x)dx = D_{\mathrm{KL}}(X||Y).
+    \end{align*}
+\end{enumerate}
+
+\section*{Problem 4}
+We should show $G(u) \leq x \Leftrightarrow u \leq F(x)$ for all $u \in (0, 1)$ and $x \in \mathbb{R}$.
+
+\vspace{2mm}
+First, if $G(u) \leq x$, we obtain $F(G(u)) \leq F(x)$ since $F$ is nondecreasing. 
+Also, since $F$ is right continuous and $\lim_{x \to -\infty}F(x) = 0$, $G(u)$ exists such that $u \leq F(G(u))$. 
+Therefore $u \leq F(G(u)) \leq F(x)$, so $u \leq F(x)$.
+
+\vspace{2mm}
+Next, if $u \leq F(x)$, we obtain $G(u) \leq x$ from the definition of $G(u)$.
+
+\vspace{2mm}
+Therefore we obtain $G(u) \leq x \Leftrightarrow u \leq F(x)$, so
+$$\mathrm{Pr}\qty(G(U) \leq t) = \mathrm{Pr}\qty(U \leq F(t)) = F(t).$$
+
+\section*{Problem 5}
+From the relation $Y = \varphi(X) = A^{-1}(X - b)$, we obtain the following.
+\begin{align*}
+    p_X(x) &= p_Y\qty(A^{-1}(x - b))\qty|\det\frac{\partial A^{-1}(x - b)}{\partial x}(x)| \\
+    &= \frac{1}{\sqrt{(2\pi)^n}}e^{-\frac{1}{2}\left\lVert A^{-1}(x - b) \right\rVert^2}\qty|\det A^{-1}| = \frac{1}{\sqrt{(2\pi)^n}}e^{-\frac{1}{2}\left\lVert A^{-1}(x - b) \right\rVert^2}\qty|\det A|^{-1} \\
+    &= \frac{1}{\sqrt{(2\pi)^n}}e^{-\frac{1}{2}\qty(A^{-1}(x - b))^\intercal\qty(A^{-1}(x - b))}\frac{1}{\sqrt{\det AA^\intercal}} \\
+    &= \frac{1}{\sqrt{(2\pi)^n\det AA^{\intercal}}}e^{-\frac{1}{2}(x-b)^\intercal {A^{-1}}^\intercal A^{-1}(x-b)} = \frac{1}{\sqrt{(2\pi)^n}\det AA^{\intercal}}e^{-\frac{1}{2}(x-b)^\intercal {A^{\intercal}}^{-1} A^{-1}(x-b)} \\
+    &= \frac{1}{\sqrt{(2\pi)^n\det AA^{\intercal}}}e^{-\frac{1}{2}(x-b)^\intercal\qty(AA^\intercal)^{-1}(x-b)}
+\end{align*}
+
+\section*{Problem 6}
+All indices in the pseudocode start from 1.
+\begin{algorithm}[H]
+    \caption{Inverse Permutation}\label{quicksort}
+    \begin{algorithmic}
+        \Procedure{InversePermutation}{$\sigma$}
+            \State $\sigma'$ = $[\;]$ \Comment{Empty List}
+            \While{$i = 1, 2, \cdots, n$}
+                \While{$j = 1, 2, \cdots, n$}
+                    \If{$\sigma(j) = i$}
+                        \State $\sigma'(i) = j$
+                        \State \textbf{break}
+                    \EndIf
+                \EndWhile
+            \EndWhile
+            \State \textbf{return} $\sigma'$
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+\section*{Problem 7}
+\begin{enumerate}[(a)]
+    \item For any $x \in \mathbb{R}^n$,
+    \begin{align*}
+        \qty(P_\sigma x)_i = e^\intercal_{\sigma(i)}x = x_{\sigma(i)}.
+    \end{align*}
+    \item Since the rows of $P_\sigma$ are standard unit vectors, they are orthonormal and $P_\sigma$ is an orthogonal matrix.
+    Therefore $P_\sigma P_\sigma^\intercal = P_\sigma^\intercal P_\sigma = I$, and $P_\sigma^\intercal = P_\sigma^{-1}$. 
+    Also, for all $i = 1, \cdots, n$, $\qty[P_\sigma]_{i, \sigma(i)} = 1$ and all other elements are $0$. 
+    Then for $P_\sigma^\intercal$, we can say $\qty[P_\sigma^\intercal]_{\sigma(i), i} = 1$ for all $i = 1, \cdots, n$, which is equivalent to stating $\qty[P_\sigma^\intercal]_{j, \sigma^{-1}(j)} = 1$ for all $i = 1, \cdots, n$.
+    This gives $P_\sigma^\intercal = P_{\sigma^{-1}}$. 
+    Therefore $P_\sigma^\intercal = P_\sigma^{-1} = P_{\sigma^{-1}}$
+    \item $\det P_\sigma = (-1)^t \det I = (-1)^t$, where $t$ is the number of row changes. Therefore $\qty|\det P_\sigma| = 1$.
+\end{enumerate}
+
+\end{document}
