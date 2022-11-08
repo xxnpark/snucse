@@ -64,9 +64,9 @@ class Net2(nn.Module):
             for i in range(len(self.classifier)):
                 if i % 2 == 0:
                     self.classifier[i].weight.copy_(
-                        torch.reshape(model.classifier[i].weight, self.classifier[i].weight.shape)
+                        torch.reshape(net1.classifier[i].weight, self.classifier[i].weight.shape)
                     )
-                    self.classifier[i].bias.copy_(model.classifier[i].bias)
+                    self.classifier[i].bias.copy_(net1.classifier[i].bias)
 
     def forward(self, x):
         x = self.features(x)
