@@ -1,0 +1,167 @@
+\documentclass{article}
+\usepackage{bm}
+\usepackage{amsmath, amsfonts, amssymb, physics}
+\usepackage{graphicx}
+\usepackage{mdwlist}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{palatino}
+\usepackage{hyperref}
+\usepackage{paralist}
+\usepackage{todonotes}
+\setlength{\marginparwidth}{2.15cm}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,backgrounds}
+\setlength\parindent{0pt}
+
+\begin{document}
+\vspace*{-1.5cm}
+{\centering \vbox{%
+\vspace{2mm}
+\large
+Engineering Mathematics 2 \hfill
+\\
+Seoul National University
+\\[4mm]
+Homework 5\\
+\textbf{2021-16988 Jaewan Park} \\[0.8mm]
+}}
+\par\noindent\rule{\textwidth}{0.5pt}
+
+\section*{Exercise 5.4}
+Let $P\qty(n, a, b)$ the probability that out of $n$ people, there are $a$ days that are birthdays of two people and $b$ days that are birthdays of one person.
+When $n=1$, only $b=1$ is available, so $P(1, 0, 1) = 1$.
+Considering leap years, assume there are 366 days in a year. Then we obtain the following recurrence relation.
+$$P(n, a, b) = P(n-1, a-1, b+1)\frac{b+1}{366} + P(n-1, a, b-1)\frac{366-a-(b-1)}{366}$$
+We desire days with three people sharing birthdays to not exist, so the total probability can be calculated as the sum of $P(n, a, b)$ where $2a+b = n$.
+Therefore, let this event $E$, then we can exactly calculate the probability using the following conditions.
+$$\mathrm{Pr}\qty(E) = \sum_{2a+b=100}P(100, a, b)$$
+$$P(n, a, b) = P(n-1, a-1, b+1)\frac{b+1}{366} + P(n-1, a, b-1)\frac{366-a-(b-1)}{366}$$
+$$P(1, 0, 1) = 1, \;\; P(1, 1, 0) = 0, \;\; P(1, 0, 0) = 0$$
+
+\section*{Exercise 5.9}
+Placing the elements into their buckets each takes $O(1)$ time each, and $O(n)$ time in total.
+Now let $X_j$ the number of elements in the $j$th bucket. Then in the second step, the time to sort the $j$th bucket is at most $c\qty(X_j)^2$ for some constant $c$.
+Then the expected time for the second step is
+\begin{align*}
+    \mathbf{E}\qty[\sum_{j=1}^{n}c\qty(X_j)^2] &= c\sum_{j=1}^{n}\mathbf{E}\qty[\qty(X_j)^2] = cn\mathbf{E}\qty[\qty(X_1)^2]
+\end{align*}
+Since all elements are chosen from $[0, 2k)$ with probability at most $\dfrac{a}{2k}$, the expectation of $\qty(X_1)^2$ is at most the expectation of $X^2$, where $X$ is a random variable distributed over $B\qty(n, \dfrac{a}{n})$.
+Therefore the expected time for the second step is bounded by the following.
+\begin{align*}
+    cn\mathbf{E}\qty[\qty(X_1)^2] &\leq cn\mathbf{E}\qty[X^2] \\
+    &= cn\qty(n(n-1)\qty(\frac{a}{n})^2 + n\qty(\frac{a}{n})) \\
+    &= cn\qty(a^2 + a) - ca^2
+\end{align*}
+Therefore the total required time is $O(n)$, which is linear to the number of elements.
+
+\section*{Exercise 5.10}
+\begin{enumerate}[(a)]
+    \item Let $X_i$ the number of balls in bin $i$. $X_i$ is distributed over the Poisson distribution of mean $1$.
+    Therefore 
+    $$\mathrm{Pr}\qty(X_i = 1) = \frac{e^{-1}1^j}{1!} = \frac{1}{e}$$
+    and the event where all bins have one balls each can be viewed in the Poisson persective as the intersection of events $X_i=1$ for all $i$.
+    Therefore the probability is bounded by $e\sqrt{n}$ multiplied to the Poisson probability, which gives
+    $$e\sqrt{n} \times \mathrm{Pr}\qty(\bigcap_{i=1}^{n}\qty(Y_i=1)) = \frac{\sqrt{n}}{e^{n-1}}$$
+    as the upper bound.
+    \item The probability can be calculated as the following.
+    $$\frac{n}{n} \times \frac{n-1}{n} \times \cdots \times \frac{1}{n} = \frac{n!}{n^n}$$
+    \item Let $Y$ a Poisson random variable with parameter $n$, then the probability that $Y$ takes on the value $n$ in
+    $$\mathrm{Pr}\qty(Y = n) = \frac{e^{-n}n^n}{n!}$$
+    Therefore the two results from (a) and (b) approximately differ by this probability.
+    
+    \vspace{2mm}
+    \textbf{Theorem 5.6} explains this. 
+    The difference between the Poisson approximation and the actual case is only the initial work on setting the number of balls as $n$ in the Poisson point of view; disregarding this difference makes the two distributions equivalent.
+    Therefore this differnce gives exactly the value calculated above$\qty(=\dfrac{e^{-n}n^n}{n!})$ as the differnce factor between two probabilities.
+\end{enumerate}
+
+\section*{Exercise 5.12}
+\begin{enumerate}[(a)]
+    \item The probability for a ball to land in a bin by itself is $\qty(1 - \dfrac{1}{n})^{b-1}$.
+    If we start with $b$ balls at a round, then the number of remaining balls after that round is $b\qty(1 - \qty(1 - \dfrac{1}{n})^{b-1})$.
+    \item From (a), we obtain
+    \begin{align*}
+        x_{j+1} &= x_j\qty(1 - \qty(1 - \frac{1}{n})^{x_j-1}) \\
+        &\leq x_j\qty(1 - \qty(1 - \frac{x_j-1}{n})) = \frac{x_j^2 - x_j}{n} \\
+        &\leq \frac{x_j^2}{n}.
+    \end{align*}
+    It can be inductively calculated that the number of balls remaining is at most $\dfrac{n}{2}$.
+    Therefore, for any $i$,
+    \begin{align*}
+        x_{i+k} &\leq \frac{x_{i+k-1}^2}{n} \leq \frac{x_{i+k-2}^4}{n^3} \leq \frac{x_{i+k-3}^8}{n^7} \\
+        &\leq \cdots \leq \frac{x_i^{2^k}}{n^{2^k-1}} \\
+        &\leq \frac{\qty(\frac{n}{2})^{2^k}}{n^{2^k-1}} \leq \frac{n}{2^{2^k}}
+    \end{align*}
+    so if $k = O(\log\log{n})$, we obtain $x_{i+k} \leq 1$, therefore the total number of rounds needed is $i+k = O(\log\log{n})$ since $i$ is an arbitrary constant.
+\end{enumerate}
+
+\section*{Exercise 5.14}
+\begin{enumerate}[(a)]
+    \item We can calculate each as the following.
+    \begin{align*}
+        \mathrm{Pr}\qty(Z=\mu+h) &= \frac{e^{-\mu}\mu^{\mu+h}}{\qty(\mu+h)!}, \;\; \mathrm{Pr}\qty(Z=\mu-h-1) = \frac{e^{-\mu}\mu^{\mu-h-1}}{\qty(\mu-h-1)!}
+    \end{align*}
+    This gives that $\mathrm{Pr}\qty(Z=\mu+h) \geq \mathrm{Pr}\qty(Z=\mu-h-1)$ is equivalent to 
+    $$\mu^{2h+1} \geq \frac{(\mu+h)!}{(\mu-h-1)!}.$$
+    This is true in that 
+    \begin{align*}
+        \frac{(\mu+h)!}{(\mu-h-1)!} &= (\mu+h)(\mu+h-1)\cdots(\mu-h) \\
+        &= (\mu+h)(\mu-h)(\mu+(h-1))(\mu-(h-1))\cdots(\mu+1)(\mu-1)\mu \\
+        &= \qty(\mu^2-h^2)\qty(\mu^2-(h-1)^2)\cdots\qty(\mu^2-1^2)\mu \\
+        &\leq \qty(\mu^2)^h\mu = \mu^{2h+1}.
+    \end{align*}
+    \item From $\mathrm{Pr}\qty(Z=\mu+h) \geq \mathrm{Pr}\qty(Z=\mu-h-1)$ when $0 \leq h \leq \mu-1$, we obtain the following.
+    \begin{align*}
+        \mathrm{Pr}\qty(Z\geq\mu) &= \sum_{z=\mu}^{\infty}\mathrm{Pr}\qty(Z=z) = \sum_{h=0}^{\infty}\mathrm{Pr}\qty(Z=\mu+h) \\
+        &\geq \sum_{h=0}^{\mu-1}\mathrm{Pr}\qty(Z=\mu+h) \\
+        &\geq \sum_{h=0}^{\mu-1}\mathrm{Pr}\qty(Z=\mu-h-1) \\
+        &= \sum_{z=0}^{\mu-1}\qty(Z=z) = \mathrm{Pr}\qty(Z<\mu)
+    \end{align*}
+    Since $\mathrm{Pr}\qty(Z\geq\mu) + \mathrm{Pr}\qty(Z<\mu) = 1$, we obtain $\mathrm{Pr}\qty(Z\geq\mu) \geq \dfrac{1}{2}$.
+\end{enumerate}
+
+\section*{Exercise 5.16}
+\begin{enumerate}[(a)]
+    \item $X_1X_2\cdots X_k = 1$ if and only if $X_1=\cdots=X_k = 1$, and 0 if any of the $X_i$s are 0.
+    Therefore
+    \begin{align*}
+        \mathbf{E}\qty[X_1X_2\cdots X_k] &= \mathrm{Pr}\qty(X_1=1 \wedge \cdots \wedge X_k=1) \\
+        &= \mathrm{Pr}\qty(\text{The first }k\text{ bins are empty.}) \\
+        &= \frac{(n-k)^n}{n^n} = \qty(1 - \frac{k}{n})^n.
+    \end{align*}
+    Similarly, $Y_1Y_2\cdots Y_k = 1$ if and only if $Y_1=\cdots=Y_k = 1$. Since all $Y_i$s are independent, we obtain
+    \begin{align*}
+        \mathbf{E}\qty[Y_1Y_2\cdots Y_k] &= \mathrm{Pr}\qty(Y_1=1 \wedge \cdots \wedge Y_k=1) \\
+        &= \mathrm{Pr}\qty(Y_1=1)\mathrm{Pr}\qty(Y_2=1)\cdots\mathrm{Pr}\qty(Y_k=1) \\
+        &= \qty(1-\frac{1}{n})^{kn}.
+    \end{align*}
+    Since $1 - \dfrac{k}{n} \leq \qty(1 - \dfrac{1}{n})^k$ for all positive integers $n$ and $k$, we get
+    $$\mathbf{E}\qty[X_1X_2\cdots X_k] \leq \mathbf{E}\qty[Y_1Y_2\cdots Y_k]$$
+    \item Considering the Taylor series of $e^x$, we obtain the following.
+    \begin{align*}
+        \mathbf{E}\qty[e^{tX}] &= \mathbf{E}\qty[\sum_{m=0}^{\infty}\frac{(tX)^m}{m!}] = \sum_{m=0}^{\infty}\frac{t^m}{m!}\mathbf{E}\qty[X^m] \\
+        \mathbf{E}\qty[e^{tY}] &= \mathbf{E}\qty[\sum_{m=0}^{\infty}\frac{(tY)^m}{m!}] = \sum_{m=0}^{\infty}\frac{t^m}{m!}\mathbf{E}\qty[Y^m]
+    \end{align*}
+    Therefore $\mathbf{E}\qty[e^{tX}] \leq \mathbf{E}\qty[e^{tY}]$ is equivalent to $\mathbf{E}\qty[X^m] \leq \mathbf{E}\qty[Y^m]$ for all $m \geq 0$. This is true in that
+    \begin{align*}
+        \mathbf{E}\qty[X^m] &= \mathbf{E}\qty[\qty(\sum_{i=1}^{n}X_i)^m] \\
+        &= \mathbf{E}\qty[\sum_{c_1 + \cdots + c_n = m}\qty(\frac{m!}{c_1! \cdots c_n!}\prod_{i=1}^{n}X_i^{c_i})] = \sum_{c_1 + \cdots + c_n = m}\qty(\frac{m!}{c_1! \cdots c_n!}\mathbf{E}\qty[\prod_{i=1}^{n}X_i^{c_i}]) \\
+        &= \sum_{c_1 + \cdots + c_n = m}\qty(\frac{m!}{c_1! \cdots c_n!}\mathbf{E}\qty[\prod_{i=1}^{n}X_i]) \;\;\qty(\because X_i\text{s are independent and identically distributed.}) \\
+        &\leq \sum_{c_1 + \cdots + c_n = m}\qty(\frac{m!}{c_1! \cdots c_n!}\mathbf{E}\qty[\prod_{i=1}^{n}Y_i]) \;\; \qty(\because \text{(a)}) \\
+        &= \mathbf{E}\qty[Y^m] \;\; \qty(\because \text{Similar to }X).
+    \end{align*}
+    \item For any $t$, 
+    \begin{align*}
+        \mathrm{Pr}\qty(X \geq (1+\delta)\mathbf{E}\qty[X]) &= \mathrm{Pr}\qty(e^{tX} \geq e^{t(1+\delta)\mathbf{E}\qty[X]}) \\
+        &\leq \frac{\mathbf{E}\qty[e^{tX}]}{e^{t(1+\delta)\mathbf{E}\qty[X]}} \;\; \qty(\because \text{Markov's inequality}) \\
+        &\leq \frac{\mathbf{E}\qty[e^{tY}]}{e^{t(1+\delta)\mathbf{E}\qty[X]}} \;\; \qty(\because \text{(b)}) \\
+        &= \frac{e^{\mathbf{E}\qty[Y]\qty(e^t-1)}}{e^{t(1+\delta)\mathbf{E}\qty[X]}} \\
+        &= \qty(\frac{e^{\qty(e^t-1)}}{e^{t(1+\delta)}})^{\mathbf{E}\qty[X]}. \;\; \qty(\because \mathbf{E}\qty[X] = \mathbf{E}\qty[Y]) \\
+    \end{align*}
+    Substitute $t = \ln(1+\delta)$, then
+    $$\mathrm{Pr}\qty(X \geq (1+\delta)\mathbf{E}\qty[X]) \leq \qty(\frac{e^\delta}{(1+\delta)^{1+\delta}})^{\mathbf{E}\qty[X]}.$$
+\end{enumerate}
+
+\end{document}
