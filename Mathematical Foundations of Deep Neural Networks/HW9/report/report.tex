@@ -1,0 +1,151 @@
+\documentclass[10pt]{article}
+%\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{amsmath,amssymb,amsthm,physics,units,mathtools,bm}
+\usepackage{mdwlist}
+\usepackage{paralist}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{algorithm,algpseudocode}
+\usepackage{listings}
+\usepackage[colorlinks=true]{hyperref}
+\setcounter{MaxMatrixCols}{50}
+\NewDocumentCommand{\code}{v}{%
+\texttt{#1}%
+}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{lgray}{RGB}{240,239,239}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+    % frame=tb,
+    aboveskip=3mm,
+    belowskip=3mm,
+    showstringspaces=false,
+    columns=flexible,
+    basicstyle=\ttfamily,
+    numbers=none,
+    backgroundcolor=\color{lgray},
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue},
+    commentstyle=\color{dkgreen},
+    stringstyle=\color{mauve},                
+    keepspaces=true,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=3
+}
+
+\begin{document}
+\begin{center}
+    {\LARGE MathDNN Homework 9} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 3}
+Consider $\Omega$ and $\Omega^\complement$ as ordered and sorted sets. 
+Now define $f$ and $g$ as $f(x) = i|_{x\text{ is the }i\text{th element of }\Omega}$ and $g(y) = j|_{y\text{ is the }j\text{th element of }\Omega^\complement}$ for $x \in \Omega$ and $y \in \Omega^\complement$ each.
+We can calculate the Jacobian matrix between the layers in the form of
+\begin{equation*}
+    \frac{\partial z}{\partial x} = \qty{\frac{\partial z_i}{\partial x_j}}_{i, j}, \;\;\;\;
+    \frac{\partial z_i}{\partial x_j} = \begin{cases}
+        1 & \Big(i \in \Omega, \; i = j\Big) \\
+        \frac{\partial \qty[s_\theta(x_\Omega)]_{g(i)}}{\partial x_j}e^{\qty[s_\theta(x_\Omega)]_{g(i)}}x_i + \frac{\partial \qty[t_\theta(x_\Omega)]_{g(i)}}{\partial x_j} & \qty(i \in \Omega^\complement, \; j \in \Omega) \\
+        e^{\qty[s_\theta(x_\Omega)]_{g(i)}} \qty(= e^{\qty[s_\theta(x_\Omega)]_{g(j)}}) & \qty(i \in \Omega^\complement, \; j \in \Omega^\complement, \; i = j) \\
+        0 & \Big(\text{otherwise}\Big)
+    \end{cases}.
+\end{equation*}
+Selecting $\sigma$ such that $\sigma^{-1}(i) = \begin{cases}
+    f^{-1}(i) & (i \leq |\Omega|) \\
+    g^{-1}\qty(i - |\Omega|) & (i > |\Omega|)
+\end{cases}$ gives
+\begin{align*}
+    P_\sigma\frac{\partial z}{\partial x}P_{\sigma^{-1}} &= \begin{bmatrix}
+        {\partial z_{\sigma^{-1}(1)}}/{\partial x_{\sigma^{-1}(1)}} & {\partial z_{\sigma^{-1}(1)}}/{\partial x_{\sigma^{-1}(2)}} & \cdots & {\partial z_{\sigma^{-1}(1)}}/{\partial x_{\sigma^{-1}(n)}} \\
+        {\partial z_{\sigma^{-1}(2)}}/{\partial x_{\sigma^{-1}(1)}} & {\partial z_{\sigma^{-1}(2)}}/{\partial x_{\sigma^{-1}(2)}} & \cdots & {\partial z_{\sigma^{-1}(2)}}/{\partial x_{\sigma^{-1}(n)}} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        {\partial z_{\sigma^{-1}(n)}}/{\partial x_{\sigma^{-1}(1)}} & {\partial z_{\sigma^{-1}(n)}}/{\partial x_{\sigma^{-1}(2)}} & \cdots & {\partial z_{\sigma^{-1}(n)}}/{\partial x_{\sigma^{-1}(n)}} \\
+    \end{bmatrix} \\
+    &= \begin{bmatrix}
+        I & 0 \\
+        * & \mathrm{diag}\qty(e^{s_\theta\qty(x_\Omega)})
+    \end{bmatrix}.
+\end{align*}
+Therefore $\dfrac{\partial z}{\partial x}$ can be decomposed in the form of 
+\begin{equation*}
+    \frac{\partial z}{\partial x} = P_{\sigma^{-1}}\begin{bmatrix}
+        I & 0 \\
+        * & \mathrm{diag}\qty(e^{s_\theta\qty(x_\Omega)})
+    \end{bmatrix}P_\sigma,
+\end{equation*}
+and we can calculate the determinant as
+\begin{align*}
+    \log\qty|\frac{\partial z}{\partial x}| &= \log\begin{vmatrix}
+        I & 0 \\
+        * & \mathrm{diag}\qty(e^{s_\theta\qty(x_\Omega)})
+    \end{vmatrix} \\
+    &= \log\prod_{i \in \Omega^\complement}e^{\qty[s_\theta\qty(x_\Omega)]_{g(i)}} = \sum_{i \in \Omega^\complement}\qty[s_\theta\qty(x_\Omega)]_{g(i)} \\
+    &= \mathbf{1}_{n-|\Omega|}^\intercal s_\theta\qty(x_\Omega).
+\end{align*}
+
+\section*{Problem 4}
+\begin{enumerate}[(a)]
+    \item Since $-\log$ is a convex function, we can apply Jensen's inequality to $-\log$, which gives
+    \begin{align*}
+        D_{\mathrm{KL}}(X||Y) &= \int_{\mathbb{R}^d}f(x)\log\qty(\frac{f(x)}{g(x)})dx = \mathbf{E}\qty[\log\qty(\frac{f(X)}{g(X)})] = \mathbf{E}\qty[-\log\qty(\frac{g(X)}{f(X)})] \\
+        &\geq -\log\qty(\mathbf{E}\qty[\frac{g(X)}{f(X)}]) = -\log\qty(\int_{\mathbb{R}^d}f(x)\cdot\frac{g(x)}{f(x)}dx) = -\log{1} = 0.
+    \end{align*}
+    \item Since $X_1, \cdots, X_d$ and $Y_1, \cdots, Y_d$ are each independent, when $f_1, \cdots, f_d$ and $g_1, \cdots, g_d$ are PDFs for $X_1, \cdots, X_d$ and $Y_1, \cdots, Y_d$ each,
+    we can say
+    \begin{equation*}
+        f(x) = f_1\qty(x_1) \cdots f_d\qty(x_d), \;\; g(y) = g_1\qty(y_1) \cdots g_d\qty(y_d)
+    \end{equation*}
+    for any $x = \qty(x_1, \cdots, x_d)$ and $y = \qty(y_1, \cdots, y_d)$.
+    Therefore
+    \begin{align*}
+        D_{\mathrm{KL}}(X||Y) &= \mathbf{E}\qty[-\log\qty(\frac{g(X)}{f(X)})] = \mathbf{E}\qty[-\log\qty(\frac{g_1\qty(X_1)}{f_1\qty(X_1)})] + \cdots + \mathbf{E}\qty[-\log\qty(\frac{g_d\qty(X_d)}{f_d\qty(X_d)})] \\
+        &= D_{\mathrm{KL}}(X_1||Y_1) + \cdots + D_{\mathrm{KL}}(X_d||Y_d).
+    \end{align*}
+\end{enumerate}
+
+\section*{Problem 5}
+The PDF of a multivariate Gaussian random variable $X \sim \mathcal{N}\qty(\mu, \Sigma)$ with dimension $d$ is given by 
+\begin{equation*}
+    p_X(x) = \frac{1}{\sqrt{(2\pi)^{d}\det\Sigma}}\exp\qty(-\frac{1}{2}\qty(x-\mu)^\intercal\Sigma^{-1}\qty(x-\mu)).
+\end{equation*}
+Let $X_0$, $X_1$ random variables that follow $\mathcal{N}\qty(\mu_0, \Sigma_0)$, $\mathcal{N}\qty(\mu_1, \Sigma_1)$ each.
+Also let their PDFs $f_0$, $f_1$.
+Then
+\begin{align*}
+    D_{\mathrm{KL}}\qty(\mathcal{N}\qty(\mu_0, \Sigma_0) || \mathcal{N}\qty(\mu_1, \Sigma_1)) \\
+    &\hspace{-3cm}= \mathbf{E}\qty[-\log\qty(\frac{f_1(X_0)}{f_0(X_0)})] = \mathbf{E}\biggl[\log{f_0(X_0)} - \log{f_1(X_0)}\biggr] \\
+    &\hspace{-3cm}= \mathbf{E}\qty[\frac{1}{2}\log\frac{\det\Sigma_1}{\det\Sigma_0} - \frac{1}{2}\qty(X_0-\mu_0)^\intercal\Sigma_0^{-1}\qty(X_0-\mu_0) + \frac{1}{2}\qty(X_0-\mu_1)^\intercal\Sigma_1^{-1}\qty(X_0-\mu_1)] \\
+    &\hspace{-3cm}= \frac{1}{2}\log\frac{\det\Sigma_1}{\det\Sigma_0} - \frac{1}{2}\mathbf{E}\qty[\mathrm{tr}\qty(\qty(X_0-\mu_0)^\intercal\Sigma_0^{-1}\qty(X_0-\mu_0))] + \frac{1}{2}\mathbf{E}\qty[\qty(X_0-\mu_1)^\intercal\Sigma_1^{-1}\qty(X_0-\mu_1)] \\
+    &\hspace{-3cm}= \frac{1}{2}\log\frac{\det\Sigma_1}{\det\Sigma_0} - \frac{1}{2}\mathbf{E}\qty[\mathrm{tr}\qty(\qty(X_0-\mu_0)\qty(X_0-\mu_0)^\intercal\Sigma_0^{-1})] + \frac{1}{2}\qty(\qty(\mu_0-\mu_1)^\intercal\Sigma_1^{-1}\qty(\mu_0-\mu_1) + \mathrm{tr}\qty(\Sigma_1^{-1}\Sigma_0)) \\
+    &\hspace{-3cm}= \frac{1}{2}\log\frac{\det\Sigma_1}{\det\Sigma_0} - \frac{1}{2}\mathrm{tr}\qty(\mathbf{E}\qty[\qty(X_0-\mu_0)\qty(X_0-\mu_0)^\intercal]\Sigma_0^{-1}) + \frac{1}{2}\qty(\qty(\mu_1-\mu_0)^\intercal\Sigma_1^{-1}\qty(\mu_1-\mu_0) + \mathrm{tr}\qty(\Sigma_1^{-1}\Sigma_0)) \\
+    &\hspace{-3cm}= \frac{1}{2}\log\frac{\det\Sigma_1}{\det\Sigma_0} - \frac{1}{2}\mathrm{tr}\qty(\Sigma_0\Sigma_0^{-1}) + \frac{1}{2}\qty(\qty(\mu_1-\mu_0)^\intercal\Sigma_1^{-1}\qty(\mu_1-\mu_0) + \mathrm{tr}\qty(\Sigma_1^{-1}\Sigma_0)) \\
+    &\hspace{-3cm}= \frac{1}{2}\qty(\mathrm{tr}\qty(\Sigma_1^{-1}\Sigma_0) + \qty(\mu_1-\mu_0)^\intercal\Sigma_1^{-1}\qty(\mu_1-\mu_0) - d + \log\qty(\frac{\det\Sigma_1}{\det\Sigma_0})).
+\end{align*}
+
+\section*{Problem 6}
+For each $\theta$, let $\phi_\theta \in \Phi$ the value of $\phi$ that makes $h(\theta, \phi) = 0$.
+Then we obtain
+\begin{align*}
+    \sup_{\theta, \phi}g(\theta, \phi) &= \sup_{\theta}\qty(\sup_{\phi}g(\theta, \phi)) \\
+    &= \sup_{\theta}\qty(\sup_{\phi}\Big(f(\theta) - h(\theta, \phi)\Big)) = \sup_{\theta}\qty(f(\theta) - \inf_{\phi}h(\theta, \phi)) \\
+    &= \sup_{\theta}f(\theta)
+\end{align*}
+since $\inf_{\phi}h(\theta, \phi) = 0$, more precisely $\min_{\phi}h(\theta, \phi) = 0$ when $\phi = \phi_\theta$.
+Therefore we can conclude that
+$$\mathrm{argmax}\,f = \qty{\theta \,|\, (\theta, \phi) \in \mathrm{argmax}\,g}$$
+and the two given optimization problems are equivalent.
+
+\end{document}
