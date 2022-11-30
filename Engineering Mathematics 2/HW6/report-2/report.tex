@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage{setspace}
+\usepackage{bm}
+\usepackage{amsmath, amsfonts, amssymb, physics}
+\usepackage{graphicx}
+\usepackage{mdwlist}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{palatino}
+\usepackage{hyperref}
+\usepackage{paralist}
+\usepackage{todonotes}
+\setlength{\marginparwidth}{2.15cm}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,backgrounds}
+\setlength\parindent{0pt}
+
+\begin{document}
+\vspace*{-1.5cm}
+{\centering \vbox{%
+\vspace{2mm}
+\large
+Engineering Mathematics 2 \hfill
+\\
+Seoul National University
+\\[4mm]
+Homework 6-2\\
+\textbf{2021-16988 Jaewan Park} \\[0.8mm]
+}}
+\par\noindent\rule{\textwidth}{0.5pt}
+
+\setstretch{1.3}
+\section*{Exercise 6.13}
+Enumerate the ${n \choose k}$ possible $k$-vertex sets in $G_{n, p}$ and define $X_i$ and $X$ such that
+$$X_i = \begin{cases}
+    1 & (\text{The }i\text{th set is a clique.}) \\
+    0 & (\text{Otherwise})
+\end{cases}, \;\; X = \sum_{i=1}^{{n \choose k}}X_i$$
+Since $\mathrm{Pr}\qty(X_i=1) = p^{{k \choose 2}}$, we obtain $\mathbf{E}\qty[X] = {n \choose k}p^{{k \choose 2}} = \Theta\qty(n^kp^{{k \choose 2}}) = \Theta\qty(\qty(pn^{2/(k-1)})^{k(k-1)/2})$.
+Therefore in the case of $p = o(n^{-2/(k-1)})$,
+$$\lim_{n \to \infty}\qty(pn^{2/(k-1)})^{k(k-1)/2} = 0,$$
+so $\mathbf{E}\qty[X] = o(1)$.
+Also since $X$ is a nonnegative integer random variable, we have
+$$\mathrm{Pr}\qty(X \geq 1) \leq \sum_{i=0}^{\infty}\mathrm{Pr}\qty(X > i) = \mathbf{E}\qty[X] = o(1).$$
+Therefore if $p = o(n^{-2/(k-1)})$. the probability that $G_{n, p}$ has a clique of size $k$ is asymptotically $o(1)$.
+
+\vspace{2mm}
+In the case of $p = \omega(n^{-2/(k-1)})$, we obtain
+\begin{align*}
+    \mathbf{Var}\qty[X] &\leq \mathbf{E}\qty[X] + \sum_{i \neq j}\mathbf{Cov}\qty(X_i, X_j) \leq \mathbf{E}\qty[X] + \sum_{i \neq j}\mathbf{E}\qty[X_i X_j] \\
+    &= {n \choose k}p^{{k \choose 2}} + \sum_{i=1}^{k-2}{n \choose k+i}p^{2{k \choose 2} - {k - i \choose 2}} = \sum_{i=0}^{k-2}{n \choose k+i}p^{2{k \choose 2} - {k - i \choose 2}} \\
+    &= \sum_{i=0}^{k-2}\Theta\qty(n^{k+i}p^{2{k \choose 2} - {k - i \choose 2}}) \\
+    &= o\qty(n^{2k}p^{2{k \choose 2}}) = o\qty(\qty(\mathbf{E}\qty[X])^2).
+\end{align*}
+Applying Chebyshev's inequality gives
+$$\mathrm{Pr}\qty(X = 0) \leq \mathrm{Pr}\qty(\qty|X - \mathbf{E}\qty[X]| \geq \mathbf{E}\qty[X]) \leq \frac{\mathbf{Var}\qty[X]}{\qty(\mathbf{E}\qty[X])^2} = o(1).$$
+Therefore if $p = \omega(n^{-2/(k-1)})$. the probability that $G_{n, p}$ does not have a clique of size $k$ is asymptotically $o(1)$.
+
+
+\section*{Exercise 6.15}
+We have
+$$\mathbf{E}\qty[X] = {n \choose 3}\qty(\frac{1}{n})^3 = \frac{n(n-1)(n-2)}{6n^3} \leq \frac{1}{6}$$
+Since $X$ is a nonnegative integer random variable, by Markov's inequality we can conclude 
+$$\mathrm{Pr}\qty(X \geq 1) \leq \mathbf{E}\qty[X] \leq \frac{1}{6}.$$
+Now sample the ${n \choose 3}$ possible triangles in an arbitrary order, and define $X_i$ such that
+$$X_i = \begin{cases}
+    1 & (\text{The }i\text{th triangle exists in the graph.}) \\
+    0 & (\text{Otherwise})
+\end{cases}.$$
+Then we can consider two cases of calculating $\mathrm{Pr}\qty(X_j=1 \,|\, X_i=1)$ for any $i$ and $j$. 
+If the $j$th triangle shares one or no vertices with the $i$th triangle, $\mathrm{Pr}\qty(X_j=1 \,|\, X_i=1) = {1}/{n^3}$, and there are a total of ${n-3 \choose 3} + {3 \choose 1}{n-3 \choose 2}$ triangles of this case.
+If the $j$th triangle shares two vertices with the $i$th triangle, $\mathrm{Pr}\qty(X_j=1 \,|\, X_i=1) = {1}/{n^2}$, and there are a total of ${3 \choose 2}{n-3 \choose 1}$ triangles of this case.
+Therefore we obtain
+\begin{align*}
+    \mathbf{E}\qty[X \,|\, X_i = 1] &= \mathbf{E}\qty[X_i \,|\, X_i = 1] + \sum_{j \neq i}\mathbf{E}\qty[X_j \,|\, X_i = 1] = 1 + \sum_{j \neq i}\mathrm{Pr}\qty(X_j = 1 \,|\, X_i = 1) \\
+    &= 1 + \qty({n-3 \choose 3} + {3 \choose 1}{n-3 \choose 2})\frac{1}{n^3} + {3 \choose 2}{n-3 \choose 1}\frac{1}{n^2}.
+\end{align*}
+The conditional expectation inequality gives
+$$\mathrm{Pr}\qty(X \geq 1) = \mathrm{Pr}\qty(X > 0) \geq \sum_{i=1}^{{n \choose 3}}\frac{\mathrm{Pr}\qty(X_i = 1)}{\mathbf{E}\qty[X \,|\, X_i = 1]} = {n \choose 3}\frac{\frac{1}{n^3}}{1 + \qty({n-3 \choose 3} + {3 \choose 1}{n-3 \choose 2})\frac{1}{n^3} + {3 \choose 2}{n-3 \choose 1}\frac{1}{n^2}}.$$
+Therefore $\displaystyle \lim_{n \to \infty} \mathrm{Pr}\qty(X \geq 1) \geq \lim_{n \to \infty}{n \choose 3}\frac{\frac{1}{n^3}}{1 + \qty({n-3 \choose 3} + {3 \choose 1}{n-3 \choose 2})\frac{1}{n^3} + {3 \choose 2}{n-3 \choose 1}\frac{1}{n^2}} = \frac{1}{7}$.
+
+\section*{Exercise 6.17}
+Consider the events where each $K_k$ subgraph of $K_n$ is monochromatic. 
+The probability of each event to happen is $2^{1 - {k \choose 2}}$. 
+Also, for two distinct events to be dependent, the subgraphs should share an edge. 
+One subgraph has less than ${k \choose 2}{n-2 \choose k-2}$ dependent graphs, since each edge is in ${n-2 \choose k-2}$ other graphs. Also ${n-2 \choose k-2} < {k \choose 2}{n \choose k-2}$. 
+Therefore, by the Lovasz local lemma, when
+$$4{k \choose 2}{n \choose k-2}2^{1 - {k \choose 2}} < 1$$
+is satisfied, we can say that it is possible to color the edges of $K_n$ so that it has no monochromatic $K_k$ subgraphs.
+
+\end{document}

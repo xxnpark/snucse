@@ -1,0 +1,102 @@
+\documentclass{article}
+\usepackage{setspace}
+\usepackage{bm}
+\usepackage{amsmath, amsfonts, amssymb, physics}
+\usepackage{graphicx}
+\usepackage{mdwlist}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{palatino}
+\usepackage{hyperref}
+\usepackage{paralist}
+\usepackage{todonotes}
+\setlength{\marginparwidth}{2.15cm}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,backgrounds}
+\setlength\parindent{0pt}
+
+\begin{document}
+\vspace*{-1.5cm}
+{\centering \vbox{%
+\vspace{2mm}
+\large
+Engineering Mathematics 2 \hfill
+\\
+Seoul National University
+\\[4mm]
+Homework 6-1\\
+\textbf{2021-16988 Jaewan Park} \\[0.8mm]
+}}
+\par\noindent\rule{\textwidth}{0.5pt}
+
+\setstretch{1.3}
+\section*{Exercise 6.2}
+\begin{enumerate}[(a)]
+    \item We can choose a total of ${n \choose 4}$ different copies of $K_4$ in $K_n$. 
+    Let $X$ the number of monochromatic copies, then $X$ is the sum of $X_i$s, where $X_i$ the random variable having $1$ if the $i$th copy is monochromatic and $0$ otherwise.
+    Each copy has $6$ edges, so with probability $2^{-5}$, the copy is monochromatic.
+    Therefore $\mathbf{E}\qty[X_i] = 2^{-5}$, so $\mathbf{E}\qty[X] = {n \choose 4}2^{-5}$.
+    From the expectation argument, we can say there exists a coloring of $K_n$ that makes the number of monochromatic copies at most ${n \choose 4}2^{-5}$.
+    \item The proof of (a) guarantees that randomly coloring each edges will give at least one case where there are at most ${n \choose 4}2^{-5}$ monochromatic copies of $K_4$. 
+    Since there are ${n \choose 2}$ edges and ${n \choose 4}$ copies in total, coloring all edges and checking all copies will take time of $O\qty(n^4)$.
+    Now let $p$ the probability that the algorithm succeeds, i.e. $p = \mathrm{Pr}\qty(X \leq {n \choose 4}2^{-5})$.
+    Then
+    \begin{align*}
+        {n \choose 4}2^{-5} &= \mathbf{E}\qty[X] \\
+        &= \sum_{x \leq {n \choose 4}2^{-5}}x\mathrm{Pr}\qty(X = x) + \sum_{x \geq {n \choose 4}2^{-5} + 1}x\mathrm{Pr}\qty(X = x) \\
+        &\geq \sum_{x \leq {n \choose 4}2^{-5}}1\cdot\mathrm{Pr}\qty(X = x) + \sum_{x \geq {n \choose 4}2^{-5} + 1}\qty({n \choose 4}2^{-5} + 1)\mathrm{Pr}\qty(X = x) \\
+        &= p + (1-p)\qty({n \choose 4}2^{-5} + 1),
+    \end{align*}
+    so we obtain 
+    \begin{equation*}
+        p \geq \frac{1}{{n \choose 4}2^{-5}}, \;\;\; \frac{1}{p} \leq {n \choose 4}2^{-5}.
+    \end{equation*}
+    Therefore the expected number of trials is at most ${n \choose 4}2^{-5} = O(n^4)$, so the total running time is $O(n^8)$.
+    \item Label the color of edges as $c_i \in \qty{A, B}$ where $i = 1, \cdots, {n \choose 2}$.
+    Then start coloring the edges in order of ascending $i$, by choosing $c_i$ as the color that gives the smaller expected number of monochromatic copies of $K_4$, given edges up to $i$ are colored.
+    We know that $\mathbf{E}\qty[X] = {n \choose 4}2^{-5}$, and by symmetry, also $\mathbf{E}\qty[X \,|\, c_1] = {n \choose 4}2^{-5}$.
+    Now for all $i$, since 
+    $$\mathbf{E}\qty[X \,|\, c_1 ,\cdots, c_i] = \frac{1}{2}\mathbf{E}\qty[X \,|\, c_1, \cdots, c_i, c_{i+1} = A] + \frac{1}{2}\mathbf{E}\qty[X \,|\, c_1, \cdots, c_i, c_{i+1} = B],$$
+    choosing appropriate $c_{i+1}$ will give $\mathbf{E}\qty[X \,|\, c_1, \cdots, c_i, c_{i+1}] \leq \mathbf{E}\qty[X \,|\, c_1, \cdots, c_i] \leq \cdots \leq \mathbf{E}\qty[X \,|\, c_1] = {n \choose 4}2^{-5}$. 
+    Therefore we can say $\mathbf{E}\qty[X \,|\, c_1, \cdots, c_{n \choose 2}] \leq {n \choose 4}2^{-5}$, so this algorithm works properly.
+    In terms of running time, we should check every copy of $K_4$ for each step of coloring a new edge. 
+    There are ${n \choose 2}$ edges in total and ${n \choose 4}$ copies in total, so the algorithm takes at most $O(n^6)$ time to find such a coloring.
+\end{enumerate}
+
+\section*{Exercise 6.6}
+First we should prove that such $k$-cut exists for any graph with $m$ edges. 
+Construct disjoint sets $V_1, \cdots, V_k$ such that they are partitions of $V$. 
+Let $C_i$ the random variable having $1$ if the $i$th edge connects vertices from two different sets in $V_1, \cdots, V_k$ and $0$ otherwise.
+Then 
+$$\mathbf{E}\qty[C_i] = \mathrm{Pr}\qty(C_i = 1) = 1 - \frac{k}{k^2} = \frac{k-1}{k}$$
+since the probability that $X_i$ connects two vertices from a specific partition is ${1}/{k^2}$.
+Let $C$ the value of the $k$-cut from partitions $V_1, \cdot, V_k$. 
+Then $C = \sum_{i=1}^{m}C_i$, so
+$$\mathbf{E}\qty[C] = \sum_{i=1}^{m}\mathbf{E}\qty(C_i) = \frac{(k-1)m}{k}.$$
+Therefore using the expectation argument, we can say such $k$-cut exists for any graph with $m$ edges.
+
+\vspace{3mm}
+Now we should suggest a deterministic algorithm that gives such cut for any graph.
+Let $n$ the number of vertices in the graph.
+Then start placing vertices $v_1, \cdots, v_n$ of the graph in $V_1, \cdots, V_k$ orderly, by choosing the set that will maximize the expected value of the cut.
+Since $\mathbf{E}\qty[C] = {(k-1)m}/{k}$, we can say $\mathbf{E}\qty[C \,|\, v_1] = {(k-1)m}/{k}$ by symmetry.
+Now for $j = 1, \cdots, n-1$, since 
+$$\mathbf{E}\qty[C \,|\, v_1, \cdots, v_j] = \frac{1}{k}\mathbf{E}\qty[C \,|\, v_1, \cdots, v_j, v_{j+1} \in V_1] + \cdots + \frac{1}{k}\mathbf{E}\qty[C \,|\, v_1, \cdots, v_j, v_{j+1} \in V_{k}],$$
+choosing appropriate $v_{i+1}$ will give $\mathbf{E}\qty[C \,|\, v_1, \cdots, v_j, v_{j+1}] \geq \mathbf{E}\qty[C \,|\, v_1, \cdots, v_j]$. 
+Therefore $\mathbf{E}\qty[C \,|\, v_1, \cdots, v_n] \geq \cdots \geq \mathbf{E}\qty[C \,|\, v_1] = {(k-1)m}/{k}$, so we end with a proper partition of vertices.
+The algorithm gives such a cut.
+
+\section*{Exercise 6.10}
+\begin{enumerate}[(a)]
+    \item When $\mathcal{F}$ is the family of all subsets with size $\lfloor n/2 \rfloor$, the subsets can not be subsets of each other unless they are the same ones.
+    \item By the definition of \textit{antichain}, only one of $X_i$ can be $1$, since if more than 1 $X_i$ being 1 indicates the existance of a subset between sets in $\mathcal{F}$.
+    Therefore $X \leq 1$, so we obtain
+    $$1 \geq \mathbf{E}\qty[X] = \sum_{k=0}^{n}\mathbf{E}\qty[X_k] = \sum_{k=0}^{n}\frac{f_k}{{n \choose k}}$$
+    since the set of the first $k$ numbers of the permutation should be one of the $f_k$ sets in $\mathcal{F}$. 
+    \item From (b), we can say
+    $$1 \geq \sum_{k=0}^{n}\frac{f_k}{{n \choose k}} \geq \sum_{k=0}^{n}\frac{f_k}{{n \choose \lfloor n/2 \rfloor}} = \frac{|\mathcal{F}|}{{n \choose \lfloor n/2 \rfloor}}.$$
+    Therefore $|\mathcal{F}| \leq {n \choose \lfloor n/2 \rfloor}$ for any antichain $\mathcal{F}$.
+\end{enumerate}
+
+\end{document}
