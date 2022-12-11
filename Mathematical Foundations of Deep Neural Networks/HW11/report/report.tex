@@ -1,0 +1,156 @@
+\documentclass[10pt]{article}
+%\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{amsmath,amssymb,amsthm,physics,units,mathtools,bm}
+\usepackage{mdwlist}
+\usepackage{paralist}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{algorithm,algpseudocode}
+\usepackage{listings}
+\usepackage[colorlinks=true]{hyperref}
+
+\NewDocumentCommand{\code}{v}{%
+\texttt{#1}%
+}
+
+\DeclareMathOperator*{\argmax}{argmax\,}
+\DeclareMathOperator*{\argmin}{argmin\,}
+\DeclareMathOperator*{\minimize}{minimize\,}
+\DeclareMathOperator*{\maximize}{maximize\,}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{lgray}{RGB}{240,239,239}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+    % frame=tb,
+    aboveskip=3mm,
+    belowskip=3mm,
+    showstringspaces=false,
+    columns=flexible,
+    basicstyle=\ttfamily,
+    numbers=none,
+    backgroundcolor=\color{lgray},
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue},
+    commentstyle=\color{dkgreen},
+    stringstyle=\color{mauve},                
+    keepspaces=true,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=3
+}
+
+\begin{document}
+\begin{center}
+    {\LARGE MathDNN Homework 11} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 1}
+\begin{enumerate}[(a)]
+    \item Since $\log$ is a concave function, using Jensen's inequality, we obtain the following.
+    \begin{align*}
+        \mathrm{VLB}_{\theta, \phi}^{(K)}(x) &= \mathbb{E}_{Z_1, \cdots, Z_K \sim q_{\phi}(z|x)}\qty[\log\frac{1}{K}\sum_{k=1}^{K}\frac{p_{\theta}\qty(x \,|\, Z_k)p_Z\qty(Z_k)}{q_{\phi}\qty(Z_k \,|\, x)}] \\
+        &\leq \log\qty(\mathbb{E}_{Z_1, \cdots, Z_K \sim q_{\phi}(z|x)}\qty[\frac{1}{K}\sum_{k=1}^{K}\frac{p_{\theta}\qty(x \,|\, Z_k)p_Z\qty(Z_k)}{q_{\phi}\qty(Z_k \,|\, x)}]) \\
+        &= \log\qty(\frac{1}{K}\sum_{k=1}^{K}\mathbb{E}_{Z_k \sim q_{\phi}(z|x)}\qty[\frac{p_{\theta}\qty(x \,|\, Z_k)p_Z\qty(Z_k)}{q_{\phi}\qty(Z_k \,|\, x)}]) \\
+        &= \log\qty(\frac{1}{K}\sum_{k=1}^{K}p_\theta(x)) = \log p_\theta(x)
+    \end{align*}
+    \item Using the given hint together with Jensen's inequality, we obtain the following.
+    \begin{align*}
+        \mathrm{VLB}_{\theta, \phi}^{(K)}(x) &= \mathbb{E}_{Z_{1}, \cdots, Z_{K} \sim q_{\phi}(z|x)}\qty[\log\frac{1}{K}\sum_{k=1}^{K}\frac{p_{\theta}\qty(x \,|\, Z_{k})p_Z\qty(Z_{k})}{q_{\phi}\qty(Z_{k} \,|\, x)}] \\
+        &= \mathbb{E}_{Z_{i_1}, \cdots, Z_{i_M} \sim q_\phi(z|x)}\qty[\log\qty(\mathbb{E}_{I = \qty{i_1, \cdots, i_M}}\qty[\frac{1}{M}\sum_{m=1}^{M}\frac{p_\theta\qty(x|Z_{i_m})p_Z\qty(Z_{i_m})}{q_\phi\qty(Z_{i_m}|x)}])] \\
+        &\geq \mathbb{E}_{Z_{i_1}, \cdots, Z_{i_M} \sim q_\phi(z|x)}\qty[\mathbb{E}_{I = \qty{i_1, \cdots, i_M}}\qty[\log\frac{1}{M}\sum_{m=1}^{M}\frac{p_\theta\qty(x|Z_{i_m})p_Z\qty(Z_{i_m})}{q_\phi\qty(Z_{i_m}|x)}]] \\
+        &= \mathbb{E}_{I = \qty{i_1, \cdots, i_M}}\qty[\mathbb{E}_{Z_{i_1}, \cdots, Z_{i_M} \sim q_\phi(z|x)}\qty[\log\frac{1}{M}\sum_{m=1}^{M}\frac{p_\theta\qty(x|Z_{i_m})p_Z\qty(Z_{i_m})}{q_\phi\qty(Z_{i_m}|x)}]] \\
+        &= \mathbb{E}_{I = \qty{i_1, \cdots, i_M}}\qty[\mathrm{VLB}_{\theta, \phi}^{(M)}(x)] = \mathrm{VLB}_{\theta, \phi}^{(M)}(x)
+    \end{align*}
+    \item We should choose $q_\phi$ powerful enough so that $q_\phi\qty(Z_k \,|\, x) = p_\theta\qty(Z_k \,|\, x)$ for all $k = 1, \cdots, K$.
+    \begin{align*}
+        \mathrm{VLB}_{\theta, \phi}^{(K)}(x) &= \mathbb{E}_{Z_1, \cdots, Z_K \sim q_\phi(z|x)}\qty[\log\frac{1}{K}\sum_{k=1}^{K}\frac{p_\theta\qty(x \,|\, Z_k)p_Z\qty(Z_k)}{q_\phi\qty(Z_k \,|\, x)}] \\
+        &=  \mathbb{E}_{Z_1, \cdots, Z_K \sim q_\phi(z|x)}\qty[\log\frac{1}{K}\sum_{k=1}^{K}\frac{p_\theta\qty(x \,|\, Z_k)p_Z\qty(Z_k)}{p_\theta\qty(Z_k \,|\, x)}] \\
+        &=  \mathbb{E}_{Z_1, \cdots, Z_K \sim q_\phi(z|x)}\qty[\log\frac{1}{K}\sum_{k=1}^{K}p_\theta(x)] = p_\theta(x)
+    \end{align*}
+\end{enumerate}
+
+\section*{Problem 2}
+\begin{enumerate}[(a)]
+    \item Since $\log$ is a concave function, using Jensen's inequality, we obtain the following.
+    \begin{align*}
+        \log p_{\theta}\qty(X_i) &= \log\qty(\mathbb{E}_{Z \sim q_{\phi}(z|X_i)}\qty[\frac{p_{\theta}\qty(X_i \,|\, Z)r_\lambda\qty(Z)}{q_{\phi}\qty(Z \,|\, X_i)}]) \\
+        &\geq \mathbb{E}_{Z \sim q_{\phi}(z|X_i)}\qty[\log\qty(\frac{p_{\theta}\qty(X_i \,|\, Z)r_\lambda\qty(Z)}{q_{\phi}\qty(Z \,|\, X_i)})] = \mathrm{VLB}_{\theta, \phi, \lambda}\qty(X_i)
+    \end{align*}
+    \item Gradients regarding $\theta$ and $\lambda$ can be easily derived as the follwing.
+    $$\nabla_{\theta}\mathrm{VLB}_{\theta, \phi, \lambda}\qty(X_i) = \nabla_{\theta}\mathbb{E}_{Z \sim q_{\phi}(z|X_i)}\qty[\log\qty(\frac{p_{\theta}\qty(X_i \,|\, Z)r_\lambda\qty(Z)}{q_{\phi}\qty(Z \,|\, X_i)})] = \mathbb{E}_{Z \sim q_{\phi}(z|X_i)}\qty[\nabla_{\theta}\log{p_{\theta}\qty(X_i \,|\, Z)}]$$
+    $$\nabla_{\lambda}\mathrm{VLB}_{\theta, \phi, \lambda}\qty(X_i) = \nabla_{\lambda}\mathbb{E}_{Z \sim q_{\phi}(z|X_i)}\qty[\log\qty(\frac{p_{\theta}\qty(X_i \,|\, Z)r_\lambda\qty(Z)}{q_{\phi}\qty(Z \,|\, X_i)})] = \mathbb{E}_{Z \sim q_{\phi}(z|X_i)}\qty[\nabla_{\lambda}\log{r_{\lambda}\qty(Z)}]$$
+    For gradients on $\phi$, we can use the log-derivative trick.
+    \begin{align*}
+        \nabla_{\phi}\mathrm{VLB}_{\theta, \phi, \lambda}\qty(X_i) &= \nabla_{\phi}\mathbb{E}_{Z \sim q_{\phi}(z|X_i)}\qty[\log\qty(\frac{p_{\theta}\qty(X_i \,|\, Z)r_\lambda\qty(Z)}{q_{\phi}\qty(Z \,|\, X_i)})] = \nabla_{\phi}\int\log\qty(\frac{p_{\theta}\qty(X_i \,|\, z)r_\lambda\qty(z)}{q_{\phi}\qty(z \,|\, X_i)})q_{\phi}\qty(z \,|\, X_i)dz \\
+        &= \int \qty(-\frac{\nabla_{\phi}q_\phi\qty(z \,|\, X_i)}{q_\phi\qty(z \,|\, X_i)}q_\phi\qty(z \,|\, X_i) + \log\qty(\frac{p_{\theta}\qty(X_i \,|\, z)r_\lambda\qty(z)}{q_{\phi}\qty(z \,|\, X_i)})\nabla_{\phi}q_\phi\qty(z \,|\, X_i))dz \\
+        &= \int \log\qty(\frac{p_{\theta}\qty(X_i \,|\, z)r_\lambda\qty(z)}{q_{\phi}\qty(z \,|\, X_i)})\frac{\nabla_{\phi}q_\phi\qty(z \,|\, X_i)}{q_\phi\qty(z \,|\, X_i)}q_\phi\qty(z \,|\, X_i)dz \\
+        &= \mathbb{E}_{Z \sim q_{\phi}(z|X_i)}\qty[\log\qty(\frac{p_{\theta}\qty(X_i \,|\, Z)r_\lambda\qty(Z)}{q_{\phi}\qty(Z \,|\, X_i)})\nabla_{\phi}\log{q_\phi\qty(Z \,|\, X_i)}]
+    \end{align*}
+    \item We can rewrite $\mathrm{VLB}$ as the following.
+    \begin{align*}
+        \mathrm{VLB}_{\theta, \phi, \lambda}\qty(X_i) &= \mathbb{E}_{Z \sim q_\phi\qty(z|X_i)}\qty[\log\qty(\frac{p_{\theta}\qty(X_i \,|\, Z)r_\lambda\qty(Z)}{q_{\phi}\qty(Z \,|\, X_i)})] \\
+        &= \mathbb{E}_{Z \sim q_\phi\qty(z|X_i)}\qty[\log p_\theta\qty(X_i \,|\, Z)] - D_{\mathrm{KL}}\qty(q_\phi\qty(z \,|\, X_i) \:||\: r_\lambda(z))
+    \end{align*}
+    Then the first term can be calculated as
+    \begin{align*}
+        \mathbb{E}_{Z \sim q_\phi\qty(z|X_i)}\qty[\log p_\theta\qty(X_i \,|\, Z)] &= \mathbb{E}_{Z \sim \mathcal{N}\qty(\mu_\phi\qty(X_i), \Sigma_\phi\qty(X_i))}\qty[\log \mathcal{N}\qty(f_\theta(Z), \sigma^2I)] \\
+        &= \mathbb{E}_{Z \sim \mathcal{N}\qty(\mu_\phi\qty(X_i), \Sigma_\phi\qty(X_i))}\Big[-\frac{1}{2}\qty(X_i - f_\theta(Z))^\intercal\qty(\sigma^2I)^{-1}\qty(X_i - f_\theta(Z)) \\
+        &\hspace{8cm} - \frac{1}{2}\log\qty(\qty(2\pi)^k\qty|\sigma^2I|)\Big] \\
+        &= -\frac{1}{2\sigma^2}\mathbb{E}_{Z \sim \mathcal{N}\qty(\mu_\phi\qty(X_i), \Sigma_\phi\qty(X_i))}\qty[\left\lVert X_i - f_\theta\qty(Z) \right\rVert^2] - \frac{k}{2}\log\qty(2\pi\sigma^2) \\
+        &= -\frac{1}{2\sigma^2}\mathbb{E}_{\varepsilon \sim \mathcal{N}\qty(0, I)}\qty[\left\lVert X_i - f_\theta\qty(\mu_\phi\qty(X_i) + \sqrt{\Sigma_\phi\qty(X_i)}\varepsilon) \right\rVert^2] - \frac{k}{2}\log\qty(2\pi\sigma^2).
+    \end{align*}
+    Using the reparametrization trick simplifies the expectation term, and makes able the gradient of this first term be directly calculated.
+    The second term also can be calculated as the following.
+    \begin{align*}
+        &D_{\mathrm{KL}}\qty(q_\phi\qty(z \,|\, X_i) \:||\: r_\lambda(z)) \\
+        &\hspace{3mm} = \frac{1}{2}\qty(\mathrm{tr}\qty(\mathrm{diag}\qty(\lambda_2)^{-1}\Sigma_\phi\qty(X_i)) + \qty(\lambda_1 - \mu_\phi\qty(X_i))^\intercal\mathrm{diag}\qty(\lambda_2)^{-1}\qty(\lambda_1 - \mu_\phi\qty(X_i)) - k + \log\qty(\frac{\det\qty(\mathrm{diag}\qty(\lambda_2))}{\det\qty(\Sigma_\phi\qty(X_i))}))
+    \end{align*}
+    The gradient of the second term can also be directly calculated, so we can obtain the gradients via backpropagation.
+\end{enumerate}
+
+\section*{Problem 4}
+\begin{enumerate}[(a)]
+    \item Let $p_A = (p_{A1}, p_{A2}, p_{A3})$ and $p_B = (p_{B1}, p_{B2}, p_{B3})$.
+    Then 
+    $$\mathbb{E}_{p_A, p_B}\qty[\text{points for }B] = p_{A1}p_{B2} + p_{A2}p_{B3} + p_{A3}p_{B1} - p_{A1}p_{B3} - p_{A2}p_{B1} - p_{A3}p_{B2}.$$
+    Suppose $p_A^* = (p_{A1}^*, p_{A2}^*, p_{A3}^*)$, $p_B^* = (p_{B1}^*, p_{B2}^*, p_{B3}^*)$ is the solution for the given problem. Then we have
+    \begin{align*}
+        &p_{A1}^*p_{B2} + p_{A2}^*p_{B3} + p_{A3}^*p_{B1} - p_{A1}^*p_{B3} - p_{A2}^*p_{B1} - p_{A3}^*p_{B2} \\
+        &\hspace{2cm} \leq p_{A1}^*p_{B2}^* + p_{A2}^*p_{B3}^* + p_{A3}^*p_{B1}^* - p_{A1}^*p_{B3}^* - p_{A2}^*p_{B1}^* - p_{A3}^*p_{B2}^* \\
+        &\hspace{4cm} \leq p_{A1}p_{B2}^* + p_{A2}p_{B3}^* + p_{A3}p_{B1}^* - p_{A1}p_{B3}^* - p_{A2}p_{B1}^* - p_{A3}p_{B2}^*.
+    \end{align*}
+    for all $p_A, p_B \in \Delta^3$.
+    If $p_A^* = p_B^* = \qty(\dfrac{1}{3}, \dfrac{1}{3}, \dfrac{1}{3})$, all three terms are 0, so it is a solution of the problem.
+    Now we should show that this is the only solution for the problem. 
+    Suppose $p_A^* \neq \qty(\dfrac{1}{3}, \dfrac{1}{3}, \dfrac{1}{3})$ and generally let $p_{A1}^* < p_{A2}^*$. 
+    Now substitute $p_A = \qty(\dfrac{1}{3}, \dfrac{1}{3}, \dfrac{1}{3})$ and $p_B = (0, 0, 1)$, then
+    \begin{align*}
+        p_{A1}^*p_{B2} + p_{A2}^*p_{B3} + p_{A3}^*p_{B1} - p_{A1}^*p_{B3} - p_{A2}^*p_{B1} - p_{A3}^*p_{B2} &= p_{A2}^* - p_{A1}^* > 0 \\
+        p_{A1}p_{B2}^* + p_{A2}p_{B3}^* + p_{A3}p_{B1}^* - p_{A1}p_{B3}^* - p_{A2}p_{B1}^* - p_{A3}p_{B2}^* &= 0
+    \end{align*}
+    so the inequality becomes false. 
+    Similarly, suppose $p_B^* \neq \qty(\dfrac{1}{3}, \dfrac{1}{3}, \dfrac{1}{3})$ and generally let $p_{B1}^* < p_{B2}^*$. 
+    Now substitute $p_A = (0, 0, 1)$ and $p_B = \qty(\dfrac{1}{3}, \dfrac{1}{3}, \dfrac{1}{3})$, then
+    \begin{align*}
+        p_{A1}^*p_{B2} + p_{A2}^*p_{B3} + p_{A3}^*p_{B1} - p_{A1}^*p_{B3} - p_{A2}^*p_{B1} - p_{A3}^*p_{B2} &= 0 \\
+        p_{A1}p_{B2}^* + p_{A2}p_{B3}^* + p_{A3}p_{B1}^* - p_{A1}p_{B3}^* - p_{A2}p_{B1}^* - p_{A3}p_{B2}^* &= p_{B1}^* - p_{B2}^* < 0
+    \end{align*}
+    so the inequality also becomes false. 
+    Therefore always $p_A^* = p_B^* = \qty(\dfrac{1}{3}, \dfrac{1}{3}, \dfrac{1}{3})$, so it is the unique solution for the problem.
+    \item If $B$ chooses $p_B$ as given, the expected points for $B$ is always 0 regardless of $A$, so $A$ can choose any strategy.
+    However, if $B$ chooses strategies other than $p_B = \qty(\dfrac{1}{3}, \dfrac{1}{3}, \dfrac{1}{3})$, choosing any strategy may not be optimal for $A$.
+    Choosing $p_B = (1, 0, 0), (0, 1, 0), (0, 0, 1)$ results in $\mathbb{E}_{p_A, p_B}\qty[\text{points for }B] > 0$ each when $A$ chooses strategies such that $p_{A3} > p_{A2}$, $p_{A1} > p_{A3}$, $p_{A2} > p_{A1}$.
+\end{enumerate}
+
+\end{document}
