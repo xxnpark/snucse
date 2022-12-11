@@ -1,0 +1,95 @@
+\documentclass{article}
+\usepackage{setspace}
+\usepackage{bm}
+\usepackage{amsmath, amsfonts, amssymb, physics}
+\usepackage{graphicx}
+\usepackage{mdwlist}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{palatino}
+\usepackage{hyperref}
+\usepackage{paralist}
+\usepackage{todonotes}
+\setlength{\marginparwidth}{2.15cm}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,backgrounds}
+\setlength\parindent{0pt}
+
+\begin{document}
+\vspace*{-1.5cm}
+{\centering \vbox{%
+\vspace{2mm}
+\large
+Engineering Mathematics 2 \hfill
+\\
+Seoul National University
+\\[4mm]
+Homework 8 \\
+\textbf{2021-16988 Jaewan Park} \\[0.8mm]
+}}
+\par\noindent\rule{\textwidth}{0.5pt}
+
+\setstretch{1.3}
+\section*{Exercise 8.1}
+Since $X$ and $Y$ are uniform random variables, we have the following density functions for $x, y \in [0, 1]$. 
+$$f_X(x) = 1, \;\; f_Y(y) = 1$$
+The functions differ by whether $X+Y$ is larger than $1$ or not.
+If $0 \leq X+Y \leq 1$, we obtain
+\begin{gather*}
+    f_{X+Y}(z) = \int_{0}^{z}f_X(x)f_Y(z-x)dx = \int_{0}^{z} 1 \cdot 1 dx = z \\
+    F_{X+Y}(z) = \int_{-\infty}^{z}f_{X+Y}(z)dz = \int_{0}^{z}zdz = \frac{z^2}{2}.
+\end{gather*}
+If $1 < X+Y \leq 2$, we obtain
+\begin{gather*}
+    f_{X+Y}(z) = \int_{z-1}^{1}f_X(x)f_Y(z-x)dx = \int_{z-1}^{1} 1 \cdot 1 dx = 2 - z \\
+    F_{X+Y}(z) = \int_{-\infty}^{z}f_{X+Y}(z)dz = \int_{0}^{1}zdz + \int_{1}^{z}(2-z)dz = 2z - \frac{z^2}{2} - 1.
+\end{gather*}
+
+\section*{Exercise 8.4}
+Let $X$ and $Y$ the minute we each arrive at. 
+Both are uniform random variables over $[0, 60]$, and we should find the probability $\mathrm{Pr}\qty(\qty|X-Y| \leq 15)$.
+We have the following density functions for $x, y \in [0, 60]$. 
+$$f_X(x) = \frac{1}{60}, \;\; f_Y(y) = \frac{1}{60}$$
+The density and distribution functions for $X-Y$ differ by whether $X-Y$ is larger than $0$ or not.
+If $-60 \leq X-Y \leq 0$, we obtain
+\begin{gather*}
+    f_{X-Y}(z) = \int_{0}^{60+z}f_X(x)f_Y(x-z)dx = \frac{60+z}{3600} \\
+    F_{X-Y}(z) = \int_{-\infty}^{z}f_{X-Y}(z)dz = \int_{-60}^{z}\frac{60+z}{3600}dz = \frac{z}{60} + \frac{z^2}{7200} + \frac{1}{2}.
+\end{gather*}
+If $0 \leq X-Y \leq 60$, we obtain
+\begin{gather*}
+    f_{X-Y}(z) = \int_{z}^{60}f_X(x)f_Y(x-z)dx = \frac{60-z}{3600} \\
+    F_{X-Y}(z) = \int_{-\infty}^{z}f_{X-Y}(z)dz = \int_{-60}^{0}\frac{60+z}{3600}dz + \int_{0}^{z}\frac{60-z}{3600}dz = \frac{z}{60} - \frac{z^2}{7200} + \frac{1}{2}.
+\end{gather*}
+Therefore 
+$$\mathrm{Pr}\qty(\qty|X-Y| \leq 15) = \mathrm{Pr}\qty(X-Y \leq 15) - \mathrm{Pr}\qty(X-Y \leq -15) = F_{X+Y}(15) - F_{X+Y}(-15) = \frac{7}{16}.$$
+
+\section*{Exercise 8.9}
+Let $X$ a uniform random variable in $(0, 1)$ and $Y$ an exponentially distributed random variablle with parameter $\lambda$. 
+Then the connection between the two can be written as
+$$Y = -\frac{\log{X}}{\lambda}.$$
+This can be shown by retrieving the distribution function of $Y$, which is
+\begin{align*}
+    F_{Y}(y) &= \mathrm{Pr}\qty(Y \leq y) = \mathrm{Pr}\qty(-\frac{\log{X}}{\lambda} \leq y) = \mathrm{Pr}\qty(X \geq e^{-\lambda y}) = 1 - F_X\qty(e^{-\lambda y}) \\
+    &= \begin{cases}
+        0 & (y < 0) \\
+        1 - e^{-\lambda y} & (y \geq 0)
+    \end{cases}. 
+\end{align*}
+
+\section*{Exercise 8.19}
+Let $S$ the set of buses we want to take as soon as they arrive.
+Also let $W_i$ the wait time of the $i$th line and $W$ the wait time until the first bus's arrival, then $W_i \sim \exp\qty({1}/{\mu_i})$ and $W = \min_{i \in S}{W_i} \sim \exp\qty(\sum_{i \in S}\qty(1/\mu_i))$.
+Therefore
+$$\mathbf{E}\qty[W] = \frac{1}{\sum_{i \in S}\qty(1/\mu_i)}.$$
+The probability of $W_i$ being the mininum is $\frac{1/\mu_i}{\sum_{i \in S}\qty(1/\mu_i)}$, so each elements of $S$ will be chosen as the first bus with this probability. 
+Now let $T$ the travel time of the chosen bus, then 
+$$\mathbf{E}\qty[T] = \sum_{i \in S}t_i \cdot \frac{1/\mu_i}{\sum_{j \in S}\qty(1/\mu_j)} = \frac{\sum_{i \in S}\qty(t_i/\mu_i)}{\sum_{i \in S}\qty(1/\mu_i)}$$
+Therefore the total expected time to cross town when we choose a bus from $S$ is as the following.
+$$\mathbf{E}\qty[W] + \mathbf{E}\qty[T] = \frac{1}{\sum_{i \in S}\qty(1/\mu_i)} + \frac{\sum_{i \in S}\qty(t_i/\mu_i)}{\sum_{i \in S}\qty(1/\mu_i)} = \frac{1 + \sum_{i \in S}\qty(t_i/\mu_i)}{\sum_{i \in S}\qty(1/\mu_i)}$$
+Our concern is to choose $S$ that minimizes the above probability.
+If we name the bus lines $1, 2, \cdots, n$ in order of increasing $t_i$, we can restrict the range of possible tries of $S$ to one of $\qty{\qty{1}, \qty{1, 2}, \cdots, \qty{1, 2, \cdots, n}}$.
+If $S$ contains a specific bus line, lines with shorter travel time than that should also be in $S$.
+
+\end{document}
