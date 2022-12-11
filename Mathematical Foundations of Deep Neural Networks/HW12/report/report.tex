@@ -1,0 +1,80 @@
+\documentclass[10pt]{article}
+%\usepackage[left=2.3cm,right=2.3cm,top=2.5cm,bottom=3cm,a4paper]{geometry}
+\usepackage{fullpage}
+\usepackage{setspace}
+\setstretch{1.3}
+\usepackage{amsmath,amssymb,amsthm,physics,units,mathtools,bm}
+\usepackage{mdwlist}
+\usepackage{paralist}
+\setlength\parindent{0pt}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{algorithm,algpseudocode}
+\usepackage{listings}
+\usepackage[colorlinks=true]{hyperref}
+
+\NewDocumentCommand{\code}{v}{%
+\texttt{#1}%
+}
+
+\DeclareMathOperator*{\argmax}{argmax\,}
+\DeclareMathOperator*{\argmin}{argmin\,}
+\DeclareMathOperator*{\minimize}{minimize\,}
+\DeclareMathOperator*{\maximize}{maximize\,}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{lgray}{RGB}{240,239,239}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+    % frame=tb,
+    aboveskip=3mm,
+    belowskip=3mm,
+    showstringspaces=false,
+    columns=flexible,
+    basicstyle=\ttfamily,
+    numbers=none,
+    backgroundcolor=\color{lgray},
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue},
+    commentstyle=\color{dkgreen},
+    stringstyle=\color{mauve},                
+    keepspaces=true,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=3
+}
+
+\begin{document}
+\begin{center}
+    {\LARGE MathDNN Homework 12} \\
+\end{center}
+\begin{flushright}
+    Department of Computer Science and Engineering \\
+    2021-16988 Jaewan Park
+\end{flushright}
+
+\section*{Problem 2}
+Let $\mathcal{L}(\theta, \phi)$ the objective of the minimax problem, then
+\begin{align*}
+    \mathcal{L}(\theta, \phi) :&= \mathbb{E}_{X \sim p_{\mathrm{true}}}\qty[\log D_\phi(X)] + \lambda\mathbb{E}_{\tilde{X} \sim p_\theta}\qty[\log\qty(1 - D_\phi\qty(\tilde{X}))] \\
+    &= \int\Big(p_{\mathrm{true}}(x)\log D_\phi(x) + \lambda p_\theta(x)\log\qty(1 - D_\phi\qty(x))\Big)dx.
+\end{align*}
+Since 
+$$\frac{d}{dy}\qty(a\log{y} + b\log(1-y)) = \frac{a}{y} - \frac{b}{1-y} = 0 \,\Leftrightarrow\, y = \frac{a}{a+b}$$
+we can say $\mathcal{L}(\theta, \phi)$ is maximized by 
+$$D_\phi(x) = \frac{p_{\mathrm{true}}(x)}{p_{\mathrm{true}}(x) + \lambda p_\theta(x)}.$$
+and let the corresponding $\phi$ as $\phi^*$. Then we obtain
+\begin{align*}
+    \max_{\phi \in \mathbb{R}^p}\mathcal{L}(\theta, \phi) &= \mathcal{L}\qty(\theta, \phi^*) \\
+    &= \int\qty(p_{\mathrm{true}}(x)\log\qty(\frac{p_{\mathrm{true}}(x)}{p_{\mathrm{true}}(x) + \lambda p_\theta(x)}) + \lambda p_\theta(x)\log\qty(\frac{\lambda p_{\theta}(x)}{p_{\mathrm{true}}(x) + \lambda p_\theta(x)}))dx \\
+    &= D_f\qty(p_{\mathrm{true}} \,||\, p_\theta) - \Big(\qty(1+\lambda)\log\qty(1+\lambda) - \lambda\log\lambda\Big).
+\end{align*}
+Therefore we can say that the following problems are equivalent.
+\begin{align*}
+    \minimize_{\theta \in \mathbb{R}^p}\maximize_{\phi \in \mathbb{R}^p}\mathcal{L}(\theta, \phi) &\Leftrightarrow \minimize_{\theta \in \mathbb{R}^p}\qty(D_f\qty(p_{\mathrm{true}} \,||\, p_\theta) - \Big(\qty(1+\lambda)\log\qty(1+\lambda) - \lambda\log\lambda\Big)) \\
+    &\Leftrightarrow \minimize_{\theta \in \mathbb{R}^p}D_f\qty(p_{\mathrm{true}} \,||\, p_\theta)
+\end{align*}
+
+\end{document}
